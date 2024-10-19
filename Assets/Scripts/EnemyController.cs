@@ -78,7 +78,7 @@ public class EnemyController : MonoBehaviour
             }
         }
 
-        HP-=1;
+        
         switch (currentState)
         {
             case EnemyState.Patrol:

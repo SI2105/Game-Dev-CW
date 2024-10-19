@@ -1836,7 +1836,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eccfbee73e7044b9f8259a130de4b9a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 617495992}
   sightAngle: 45
   patrolRadius: 10
   patrolSpeed: 3.5
@@ -1846,6 +1846,7 @@ MonoBehaviour:
   strikeRange: 1.5
   stepBackDistance: 1
   chargeDelay: 1
+  HealthBar: {fileID: 120988960}
 --- !u!195 &225254321
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2083,7 +2084,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eccfbee73e7044b9f8259a130de4b9a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 617495992}
   sightAngle: 45
   patrolRadius: 10
   patrolSpeed: 3.5
@@ -2093,6 +2094,7 @@ MonoBehaviour:
   strikeRange: 1.5
   stepBackDistance: 1
   chargeDelay: 1
+  HealthBar: {fileID: 120988960}
 --- !u!195 &237559242
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -4347,7 +4349,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eccfbee73e7044b9f8259a130de4b9a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 617495992}
   sightAngle: 45
   patrolRadius: 10
   patrolSpeed: 3.5
@@ -4357,6 +4359,7 @@ MonoBehaviour:
   strikeRange: 1.5
   stepBackDistance: 1
   chargeDelay: 1
+  HealthBar: {fileID: 120988960}
 --- !u!195 &566664773
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -8071,7 +8074,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eccfbee73e7044b9f8259a130de4b9a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 617495992}
   sightAngle: 45
   patrolRadius: 10
   patrolSpeed: 3.5
@@ -8081,6 +8084,7 @@ MonoBehaviour:
   strikeRange: 1.5
   stepBackDistance: 1
   chargeDelay: 1
+  HealthBar: {fileID: 120988960}
 --- !u!195 &1172523080
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -9232,7 +9236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eccfbee73e7044b9f8259a130de4b9a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 617495992}
   sightAngle: 45
   patrolRadius: 10
   patrolSpeed: 3.5
@@ -9242,6 +9246,7 @@ MonoBehaviour:
   strikeRange: 1.5
   stepBackDistance: 1
   chargeDelay: 1
+  HealthBar: {fileID: 120988960}
 --- !u!195 &1340357668
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -11525,7 +11530,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eccfbee73e7044b9f8259a130de4b9a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 617495992}
   sightAngle: 45
   patrolRadius: 10
   patrolSpeed: 3.5
@@ -11535,6 +11540,7 @@ MonoBehaviour:
   strikeRange: 1.5
   stepBackDistance: 1
   chargeDelay: 1
+  HealthBar: {fileID: 120988960}
 --- !u!195 &1661350670
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -12350,7 +12356,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eccfbee73e7044b9f8259a130de4b9a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 617495992}
   sightAngle: 45
   patrolRadius: 10
   patrolSpeed: 3.5
@@ -12360,6 +12366,7 @@ MonoBehaviour:
   strikeRange: 1.5
   stepBackDistance: 1
   chargeDelay: 1
+  HealthBar: {fileID: 120988960}
 --- !u!195 &1873166675
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -13114,7 +13121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eccfbee73e7044b9f8259a130de4b9a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 617495992}
   sightAngle: 45
   patrolRadius: 10
   patrolSpeed: 3.5
@@ -13124,6 +13131,7 @@ MonoBehaviour:
   strikeRange: 1.5
   stepBackDistance: 1
   chargeDelay: 1
+  HealthBar: {fileID: 120988960}
 --- !u!195 &1982303659
 NavMeshAgent:
   m_ObjectHideFlags: 0

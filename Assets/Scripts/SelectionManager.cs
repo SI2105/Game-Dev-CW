@@ -16,7 +16,7 @@ public class SelectionManager : MonoBehaviour
     
     // Physics variables
     private Mouse mouse;
-    private float raycastDistance = 100f;
+    private float raycastDistance = 10f;
     private InteractableObject currInteractable;
 
     // Inventory of interactable items
@@ -55,7 +55,7 @@ public class SelectionManager : MonoBehaviour
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit, raycastDistance)){ // checks if the ray hits an object within 100f distance
-            Debug.Log("hit object: " + hit.transform.name);
+            // Debug.Log("hit object: " + hit.transform.name);
             Transform selectionTransform = hit.transform;
             InteractableObject interactable = selectionTransform.GetComponent<InteractableObject>(); // check if interacted object has an interactable component
 
@@ -64,13 +64,13 @@ public class SelectionManager : MonoBehaviour
                 currInteractable = interactable;
                 interaction_information_ui.SetActive(true);
                 interaction_text.text = "Press [E] to collect " + interactable.gameObject.name; // set ui text
-                Debug.Log("Interactable Object found, displaying UI.");
+                // Debug.Log("Interactable Object found, displaying UI.");
             }
             else
             {
                 currInteractable = null;
                 interaction_information_ui.SetActive(false);
-                Debug.Log("Interactable Object not found, displaying UI.");
+                // Debug.Log("Interactable Object not found, displaying UI.");
             }
         }
         else{

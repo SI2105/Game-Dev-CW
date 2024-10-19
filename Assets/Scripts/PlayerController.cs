@@ -12,27 +12,47 @@ public class PlayerController : MonoBehaviour
     // Camera variables
     private float movementX;
     private float movementY;
-    public Camera playerCamera;
+    [SerializeField] private Camera playerCamera;
 
     // Movement variables
-    public float speed = 10f;
-    public float maxWeight = 25f;
-    public float maxItem = 25f; 
+    [SerializeField] private float walkSpeed = 5f;
+    [SerializeField] private float sprintSpeed = 10f;
+    private bool isSprinting = false;
+    private float currSpeed;
 
     // Jumping variables
     private bool isGrounded;
-    public float jumpForce = 5f;
-    public float fallMultiplier = 2.5f;
-    public float jumpMultiplier = 2f;
+    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float fallMultiplier = 2.5f;
+    [SerializeField] private float jumpMultiplier = 2f;
+
+    // THA variables
+    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float maxStamina = 100f;
+    private float currHealth;
+    private float currStamina;
+
+    // THA UI
+    [SerializeField] public PlayerATH playerATH;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        currHealth = maxHealth;
+        currStamina = maxStamina;
+        currSpeed = walkSpeed;
+
+        playerATH.UpdateHealthBar(currHealth, maxHealth);
+        playerATH.UpdateStaminaBar(currStamina, maxStamina);
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
     }
 
     void OnMove(InputValue movementValue)
     {
-        // Gets the movement input from the player, A/D and W/S
+        // Gets the movement input from the player --> A/D and W/S
         Vector2 movementVector = movementValue.Get<Vector2>();
         movementX = movementVector.x; 
         movementY = movementVector.y; 
@@ -56,7 +76,8 @@ public class PlayerController : MonoBehaviour
         right.Normalize();
 
         // Creates the movement vector
-        Vector3 movement = (right * movementX + forward * movementY) * speed;
+        Vector3 movement = (right * movementX + forward * movementY) * currSpeed;
+        Debug.Log("current speed" + currSpeed);
 
         // if a movement is currently happening it updates the velocity with current values
         if (movement.magnitude > 0){
@@ -72,6 +93,32 @@ public class PlayerController : MonoBehaviour
     {
         HandleJumpInput();
         SmoothenJump();
+        Run();
+    }
+
+    private void Run(){
+        if (Input.GetKey(KeyCode.LeftShift) && currStamina > 0){
+            Sprint();
+        }
+        else{
+            StopSprint();
+        }
+    }
+
+    private void Sprint(){
+        if (currStamina > 0){
+            isSprinting = true;
+            currSpeed = sprintSpeed;
+            UseStamina(25f * Time.deltaTime);
+        } else {
+            StopSprint();
+        }
+    }
+
+    private void StopSprint(){
+        isSprinting = false;
+        currSpeed = walkSpeed;
+        RecoverStamina(5f * Time.deltaTime);
     }
 
     private void HandleJumpInput(){
@@ -97,9 +144,10 @@ public class PlayerController : MonoBehaviour
     {
         foreach (ContactPoint contact in collision.contacts)
         {
-            if (contact.point.y <= transform.position.y)
+            if (contact.point.y <= transform.position.y){
                 isGrounded = true;
                 return;
+            }
         }
         isGrounded = false;
     }
@@ -109,10 +157,55 @@ public class PlayerController : MonoBehaviour
         isGrounded = false;
     }
 
-    // Applies a jumo force to the rigidbody player component
+    // Applies a jump force to the rigidbody player component
     private void Jump()
     {
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
 
-}
+    private void UseStamina(float q){
+        currStamina -=q;
+        if (currStamina < 0){
+            currStamina = 0;
+        }
+        playerATH.UpdateStaminaBar(currStamina, maxStamina);
+        
+    }
+
+    private void RecoverStamina(float q){
+        currStamina += q;
+        if (currStamina > maxStamina){
+            currStamina = maxStamina;
+        }
+        playerATH.UpdateStaminaBar(currStamina, maxStamina);
+
+    }
+
+    private void TakeDamage(float q){
+        currHealth -= q;
+        if (currHealth < 0){
+            currHealth = 0;
+        }
+        playerATH.UpdateHealthBar(currHealth, maxHealth);
+
+    }
+
+    private void GainHealth(float q){
+        currHealth += q;
+        if (currHealth > 100){
+            currHealth = 100;
+        }
+        playerATH.UpdateHealthBar(currHealth, maxHealth);
+        
+    }
+    }
+
+    // void ToggleCursorLock(){
+    //     if (Cursor.lockState == CursorLockMode.Locked){
+    //         Cursor.lockState = CursorLockMode.None;
+    //         Cursor.visible = true;
+    //     } else {
+    //         Cursor.lockState = CursorLockMode.Locked;
+    //         Cursor.visible = false;
+    //     }
+    // }

@@ -1764,11 +1764,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7067685529ce4195a0ff1ef98c91e9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
   playerCamera: {fileID: 1842891965}
+  walkSpeed: 5
+  sprintSpeed: 10
   jumpForce: 5
   fallMultiplier: 2.5
   jumpMultiplier: 2
+  maxHealth: 100
+  maxStamina: 100
+  playerATH: {fileID: 0}
 --- !u!54 &225750313
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4774,7 +4778,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &705228638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10859,7 +10863,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1867258994
 Transform:
   m_ObjectHideFlags: 0
@@ -11339,7 +11343,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1948741000
 Transform:
   m_ObjectHideFlags: 0

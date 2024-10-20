@@ -144,6 +144,14 @@ public class PlayerController : MonoBehaviour
     {
         foreach (ContactPoint contact in collision.contacts)
         {
+            GameObject otherObject = collision.collider.gameObject;
+
+            Enemy enemy = otherObject.GetComponent<Enemy>();
+
+            if (enemy != null){
+                TakeDamage(10f);
+            }
+
             if (contact.point.y <= transform.position.y){
                 isGrounded = true;
                 return;
@@ -188,6 +196,7 @@ public class PlayerController : MonoBehaviour
         }
         playerATH.UpdateHealthBar(currHealth, maxHealth);
 
+        playerATH.StartDamageEffect();
     }
 
     private void GainHealth(float q){

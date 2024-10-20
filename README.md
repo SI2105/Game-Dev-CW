@@ -1,8 +1,27 @@
-# ECS57U Cousework Game
-# PP 3.1 Group D
+# Maze Trials
+## PP 3.1 Group D
+### You are in a maze, your objective is to escape. Who knows what you may find on the way.
+## How to Play the Game
+1. Read the controls on the menu they are as follows:
+    - W: Move Forward
+    - A: Move Left
+    - S: Move Back
+    - D: Move right
+    - Shift(Hold): Sprint
+    - Mouse Scroll: Change between slots
+    - Space: Jump
+    - F: Inventory
+    - E: Pick up
+    - Left Click: Attack
+    - Right Click: Use 
+1. Move Forward in the maze, Try to get out
+1. You will encounter enemies, who will charge at you.
+1. Use Left Click near them with crosshairs on the enemy to deal damage.
+## Tutorials Used
+1. 
+2. 
 
-
-# Development Procedure
+## Development Procedure
 
 1. Work on your own git branch in the format *<name>*   
 ```git checkout -b <inseryournamehere> ```

@@ -88,4 +88,8 @@ public class SelectionManager : MonoBehaviour
         interaction_information_ui.SetActive(false);
         currInteractable = null;
     }
+
+    void Hit(){
+
+    }
 }

@@ -35,8 +35,14 @@ public class PlayerController : MonoBehaviour
     // THA UI
     [SerializeField] public PlayerATH playerATH;
 
+    // Player Attack
+    private PlayerAttack playerAttack;
+
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         rb = GetComponent<Rigidbody>();
         currHealth = maxHealth;
         currStamina = maxStamina;
@@ -44,10 +50,6 @@ public class PlayerController : MonoBehaviour
 
         playerATH.UpdateHealthBar(currHealth, maxHealth);
         playerATH.UpdateStaminaBar(currStamina, maxStamina);
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
     }
 
     void OnMove(InputValue movementValue)
@@ -177,7 +179,6 @@ public class PlayerController : MonoBehaviour
             currStamina = 0;
         }
         playerATH.UpdateStaminaBar(currStamina, maxStamina);
-        
     }
 
     private void RecoverStamina(float q){

@@ -32,6 +32,10 @@ public class PlayerController : MonoBehaviour
     private float currHealth;
     private float currStamina;
 
+    // taking damage
+    private float damageCooldown = 1.5f;
+    private bool canTakeDamage = true;
+
     // THA UI
     [SerializeField] public PlayerATH playerATH;
 
@@ -148,9 +152,9 @@ public class PlayerController : MonoBehaviour
         {
             GameObject otherObject = collision.collider.gameObject;
 
-            Enemy enemy = otherObject.GetComponent<Enemy>();
+            EnemyController enemy = otherObject.GetComponent<EnemyController>();
 
-            if (enemy != null){
+            if (enemy != null && canTakeDamage){
                 TakeDamage(10f);
             }
 
@@ -198,6 +202,13 @@ public class PlayerController : MonoBehaviour
         playerATH.UpdateHealthBar(currHealth, maxHealth);
 
         playerATH.StartDamageEffect();
+        StartCoroutine(DamageCooldown());
+    }
+
+    private IEnumerator DamageCooldown(){
+        canTakeDamage = false;
+        yield return new WaitForSeconds(damageCooldown);
+        canTakeDamage = true;
     }
 
     private void GainHealth(float q){

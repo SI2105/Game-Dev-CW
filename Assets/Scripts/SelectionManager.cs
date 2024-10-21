@@ -58,6 +58,7 @@ public class SelectionManager : MonoBehaviour
             // Debug.Log("hit object: " + hit.transform.name);
             Transform selectionTransform = hit.transform;
             InteractableObject interactable = selectionTransform.GetComponent<InteractableObject>(); // check if interacted object has an interactable component
+            EnemyController enemy = selectionTransform.GetComponent<EnemyController>();
 
             if (interactable != null)
             {
@@ -66,8 +67,12 @@ public class SelectionManager : MonoBehaviour
                 interaction_text.text = "Press [E] to collect " + interactable.gameObject.name; // set ui text
                 // Debug.Log("Interactable Object found, displaying UI.");
             }
-            else
-            {
+            else if (enemy != null){
+                currInteractable =null;
+                interaction_information_ui.SetActive(true);
+                interaction_text.text = enemy.gameObject.name;
+            }
+            else{
                 currInteractable = null;
                 interaction_information_ui.SetActive(false);
                 // Debug.Log("Interactable Object not found, displaying UI.");
@@ -87,9 +92,5 @@ public class SelectionManager : MonoBehaviour
         // reset
         interaction_information_ui.SetActive(false);
         currInteractable = null;
-    }
-
-    void Hit(){
-
     }
 }

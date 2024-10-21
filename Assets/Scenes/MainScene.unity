@@ -1033,7 +1033,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -288, y: -103.5}
+  m_AnchoredPosition: {x: -288, y: -280.3}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &120988960
@@ -5304,8 +5304,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5146ca57bd6ef45938dd90a7d4d222f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackDamage: 20
-  attackRange: 2
+  attackDamage: 50
+  attackRange: 5
   attackCoolDown: 1
   playerCamera: {fileID: 592283032}
 --- !u!1001 &632985665
@@ -5743,7 +5743,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -288, y: -129.09999}
+  m_AnchoredPosition: {x: -288, y: -305.89996}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &698406512

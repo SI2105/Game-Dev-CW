@@ -69,6 +69,22 @@ public class PlayerController : MonoBehaviour
         MovePlayer();
     }
 
+    public float getPlayerHealth()
+    {
+        return currHealth;
+    }
+
+
+    public bool hasWon()
+    {
+        if (playerCamera.transform.position.x<80 & playerCamera.transform.position.x >72 & playerCamera.transform.position.z > 20)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private void MovePlayer(){
         Vector3 forward = playerCamera.transform.forward;
         Vector3 right = playerCamera.transform.right;

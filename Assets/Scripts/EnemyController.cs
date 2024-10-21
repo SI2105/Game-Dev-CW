@@ -186,7 +186,7 @@ public class EnemyController : MonoBehaviour
     private bool IsPlayerInSight()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        float hearingRange = 2;
+        float hearingRange = 4;
         
         Debug.Log(distanceToPlayer);
         if (distanceToPlayer <= hearingRange)

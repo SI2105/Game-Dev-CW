@@ -23,7 +23,8 @@ public class EnemyController : MonoBehaviour
     private float patrolTimer;
     private float sightCheckTimer;
     private bool isStriking = false;
-
+    private bool isDying = false; // Track if the enemy is in the dying process
+    private float disintegrationSpeed = 0.5f; // Speed at which the enemy scales down
     private Renderer enemyRenderer; 
     private enum EnemyState
     {
@@ -48,7 +49,6 @@ public class EnemyController : MonoBehaviour
 
         if (HP <= 0)
         {
-            SetColor(new Color(0.8f, 0.6f, 1.0f)); // Light purple when dead
             Die();
             return; // Skip all other updates if dead
         }
@@ -82,9 +82,11 @@ public class EnemyController : MonoBehaviour
         switch (currentState)
         {
             case EnemyState.Patrol:
+                SetColor(Color.blue);
                 Patrol();
                 break;
             case EnemyState.Attack:
+                SetColor(Color.red);
                 Attack();
                 break;
         }
@@ -113,15 +115,16 @@ public class EnemyController : MonoBehaviour
             
         }
 
-    private void Die()
-    {
 
-    
+private void Die()
+{
+    if (!isDying)
+    {
         // Stop the enemy's movement by disabling the NavMeshAgent
         agent.isStopped = true;
         agent.enabled = false;
         agent.velocity = Vector3.zero;
-       
+
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb == null)
         {
@@ -129,17 +132,44 @@ public class EnemyController : MonoBehaviour
         }
 
         // Enable gravity and physics interactions
-        rb.isKinematic = false; // Ensure the Rigidbody isn't kinematic
-        rb.useGravity = true;    // Enable gravity so the cube falls naturally
+        rb.isKinematic = false;
+        rb.useGravity = true;
 
-        
-        rb.AddForce(Vector3.back * 2f, ForceMode.Impulse); // Pushes the cube backward
+        // Apply a push force to make enemy fall
+        rb.AddForce(Vector3.back * 10f, ForceMode.Impulse);
+       
+
+        // Start the disintegration (scaling down) process
+        isDying = true;
     }
+
+    // Disintegration process by decreasing the scale
+    if (isDying)
+    {
+         // If the scale reaches zero or below, destroy the enemy object
+        if (transform.localScale.x <= 0)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        // Decrease the scale of the enemy until it disappears
+        if (transform.localScale.x > 0)
+        {
+            transform.localScale -= Vector3.one * disintegrationSpeed * Time.deltaTime; // Reduce the scale uniformly
+        }
+
+       
+    }
+}
+
 
 
     private void Attack()
     {
-        if (isStriking) return;  
+        if (isStriking){
+            SetColor(new Color(0.5f, 0.0f, 0.0f));
+            return;
+        }
 
         agent.speed = attackSpeed;
 
@@ -162,8 +192,8 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator StrikePlayer()
     {
-        isStriking = true;
         SetColor(new Color(0.5f, 0.0f, 0.0f));
+        isStriking = true;
         Vector3 directionAwayFromPlayer = (transform.position - player.position).normalized;
         Vector3 stepBackPosition = transform.position + directionAwayFromPlayer * stepBackDistance;
         agent.SetDestination(stepBackPosition);
@@ -176,19 +206,49 @@ public class EnemyController : MonoBehaviour
         isStriking = false;
     }
 
-    private void SetColor(Color color)
+private void SetColor(Color baseColor)
+{
+    if (enemyRenderer != null)
     {
-        if (enemyRenderer != null)
+        // Calculate how many 20-HP increments are left
+        int hpLevel = Mathf.FloorToInt(HP / 20); // Determine the range of HP in increments of 20
+
+        // Map the hpLevel to different shades, turning whiter as HP decreases
+        Color adjustedColor;
+
+        switch (hpLevel)
         {
-            enemyRenderer.material.color = color; // Change the color of the enemy's material
+            case 5: // 100 to 81 HP
+                adjustedColor = baseColor; // Full color at max HP
+                break;
+            case 4: // 80 to 61 HP
+                adjustedColor = Color.Lerp(baseColor, Color.white, 0.2f); // Slightly whiter
+                break;
+            case 3: // 60 to 41 HP
+                adjustedColor = Color.Lerp(baseColor, Color.white, 0.4f); // More whiter
+                break;
+            case 2: // 40 to 21 HP
+                adjustedColor = Color.Lerp(baseColor, Color.white, 0.6f); // Even whiter
+                break;
+            case 1: // 20 to 1 HP
+                adjustedColor = Color.Lerp(baseColor, Color.white, 0.8f); // Nearly white
+                break;
+            default: // 0 HP
+                adjustedColor = Color.white; // Turn completely white when dead
+                break;
         }
+
+        // Apply the adjusted color to the enemy's material
+        enemyRenderer.material.color = adjustedColor;
     }
+}
+
     private bool IsPlayerInSight()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        float hearingRange = 4;
+        float hearingRange = 1.5f;
         
-        Debug.Log(distanceToPlayer);
+        
         if (distanceToPlayer <= hearingRange)
         {
             return true; 

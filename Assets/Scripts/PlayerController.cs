@@ -217,6 +217,7 @@ public class PlayerController : MonoBehaviour
         }
         playerATH.UpdateHealthBar(currHealth, maxHealth);
 
+        rb.AddForce((Vector3.up + Vector3.right + Vector3.left) * 1f, ForceMode.Impulse); // push back when damage taken
         playerATH.StartDamageEffect();
         StartCoroutine(DamageCooldown());
     }

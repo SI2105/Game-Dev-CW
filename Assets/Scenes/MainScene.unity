@@ -5035,8 +5035,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 617495992}
-  sensX: 100
-  sensY: 100
+  sensX: 40
+  sensY: 40
 --- !u!81 &592283034
 AudioListener:
   m_ObjectHideFlags: 0

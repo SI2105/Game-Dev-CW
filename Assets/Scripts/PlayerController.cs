@@ -20,6 +20,9 @@ public class PlayerController : MonoBehaviour
     private bool isSprinting = false;
     private float currSpeed;
 
+    private float staminaCooldown = 5f;
+    private bool canUseStamina = true;
+
     // Jumping variables
     private bool isGrounded;
     [SerializeField] private float jumpForce = 5f;
@@ -119,7 +122,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Run(){
-        if (Input.GetKey(KeyCode.LeftShift) && currStamina > 0 && Input.GetKey(KeyCode.W)){
+        if (Input.GetKey(KeyCode.LeftShift) && canUseStamina && Input.GetKey(KeyCode.W)){
             Sprint();
         }
         else{
@@ -128,7 +131,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Sprint(){
-        if (currStamina > 0){
+        if (canUseStamina){
             isSprinting = true;
             currSpeed = sprintSpeed;
             UseStamina(25f * Time.deltaTime);
@@ -144,9 +147,8 @@ public class PlayerController : MonoBehaviour
     }
 
     private void HandleJumpInput(){
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && isGrounded)
+        if (Keyboard.current.spaceKey.wasPressedThisFrame && isGrounded && canUseStamina)
             Jump();
-
     }
 
     private void SmoothenJump()
@@ -191,6 +193,7 @@ public class PlayerController : MonoBehaviour
     private void Jump()
     {
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        UseStamina(5f);
     }
 
     private void UseStamina(float q){
@@ -198,16 +201,27 @@ public class PlayerController : MonoBehaviour
         if (currStamina < 0){
             currStamina = 0;
         }
+
+        if (currStamina == 0f && canUseStamina){
+            Debug.Log("starting cooldown");
+            StartCoroutine(RecoverStaminaCooldown());
+        }
         playerATH.UpdateStaminaBar(currStamina, maxStamina);
     }
 
     private void RecoverStamina(float q){
-        currStamina += q;
-        if (currStamina > maxStamina){
-            currStamina = maxStamina;
-        }
-        playerATH.UpdateStaminaBar(currStamina, maxStamina);
 
+        if (currStamina < maxStamina && canUseStamina){
+            currStamina += q;
+            if (currStamina > maxStamina){
+                currStamina = maxStamina;
+            }
+        }
+        if (!canUseStamina){
+            StartCoroutine(RecoverStaminaCooldown());
+        }
+        
+        playerATH.UpdateStaminaBar(currStamina, maxStamina);
     }
 
     private void TakeDamage(float q){
@@ -226,6 +240,12 @@ public class PlayerController : MonoBehaviour
         canTakeDamage = false;
         yield return new WaitForSeconds(damageCooldown);
         canTakeDamage = true;
+    }
+
+    private IEnumerator RecoverStaminaCooldown(){
+        canUseStamina = false;
+        yield return new WaitForSeconds(staminaCooldown);
+        canUseStamina = true;
     }
 
     private void GainHealth(float q){

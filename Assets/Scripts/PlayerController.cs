@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Run(){
-        if (Input.GetKey(KeyCode.LeftShift) && currStamina > 0){
+        if (Input.GetKey(KeyCode.LeftShift) && currStamina > 0 && Input.GetKey(KeyCode.WKey)){
             Sprint();
         }
         else{

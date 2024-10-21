@@ -237,12 +237,16 @@ public class PlayerController : MonoBehaviour
     }
     }
 
-    // void ToggleCursorLock(){
-    //     if (Cursor.lockState == CursorLockMode.Locked){
-    //         Cursor.lockState = CursorLockMode.None;
-    //         Cursor.visible = true;
-    //     } else {
-    //         Cursor.lockState = CursorLockMode.Locked;
-    //         Cursor.visible = false;
-    //     }
-    // }
+//void ToggleCursorLock()
+//{
+//    if (Cursor.lockState == CursorLockMode.Locked)
+//    {
+//        Cursor.lockState = CursorLockMode.None;
+//        Cursor.visible = true;
+//    }
+//    else
+//    {
+//        Cursor.lockState = CursorLockMode.Locked;
+//        Cursor.visible = false;
+//    }
+//}

@@ -49,7 +49,6 @@ public class EnemyController : MonoBehaviour
 
 
        
-        
         if (HP <= 0 & isDead!=true)
         {
             Die();
@@ -258,7 +257,7 @@ private void SetColor(Color baseColor)
     private bool IsPlayerInSight()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        float hearingRange = 1.5f;
+        float hearingRange = 3f;
         
         
         if (distanceToPlayer <= hearingRange)

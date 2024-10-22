@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -865,7 +865,7 @@ MonoBehaviour:
   _healthSliderText: {fileID: 660861654}
   _staminaSliderText: {fileID: 561288672}
   inventorySize: 3
-  hotbarManager: {fileID: 0}
+  hotbarManager: {fileID: 2049831008}
 --- !u!1001 &112473088
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8916,7 +8916,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 592283032}
   interaction_information_ui: {fileID: 1341215222}
-  playerATH: {fileID: 0}
+  playerATH: {fileID: 106983564}
 --- !u!4 &1145533426
 Transform:
   m_ObjectHideFlags: 0

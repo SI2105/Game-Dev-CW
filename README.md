@@ -9,7 +9,6 @@
     - D: Move right
     - Shift(Hold): Sprint
     - Space: Jump
-    - F: Inventory
     - E: Pick up
     - Left Click: Attack
     - P: Pause game

@@ -865,7 +865,7 @@ MonoBehaviour:
   _healthSliderText: {fileID: 660861654}
   _staminaSliderText: {fileID: 561288672}
   inventorySize: 3
-  hotbarManager: {fileID: 2049831008}
+  hotbarManager: {fileID: 0}
 --- !u!1001 &112473088
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3170,8 +3170,8 @@ Transform:
   m_GameObject: {fileID: 329466850}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.6619, y: -0, z: 63.4193}
-  m_LocalScale: {x: 16.361326, y: 1, z: 13.128203}
+  m_LocalPosition: {x: -0.9076, y: 0, z: 62.3928}
+  m_LocalScale: {x: 17.075064, y: 1, z: 13.33354}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1021846775}
@@ -5273,8 +5273,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 617495992}
-  sensX: 40
-  sensY: 40
+  sensX: 15
+  sensY: 15
 --- !u!81 &592283034
 AudioListener:
   m_ObjectHideFlags: 0
@@ -8916,7 +8916,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 592283032}
   interaction_information_ui: {fileID: 1341215222}
-  playerATH: {fileID: 106983564}
+  playerATH: {fileID: 0}
 --- !u!4 &1145533426
 Transform:
   m_ObjectHideFlags: 0
@@ -14461,7 +14461,7 @@ Transform:
   m_GameObject: {fileID: 1968505536}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 73.91, y: 1, z: 20.55}
+  m_LocalPosition: {x: 73.91, y: 1, z: 19.92}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

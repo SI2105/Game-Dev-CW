@@ -8,6 +8,7 @@ public class PlayerAttack : MonoBehaviour{
     [SerializeField] private float attackCoolDown = 1f;
     private bool canAttack = true;
 
+
     [SerializeField] private Camera playerCamera;
     private Mouse mouse;
 

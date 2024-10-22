@@ -13,7 +13,8 @@
     - F: Inventory
     - E: Pick up
     - Left Click: Attack
-    - Right Click: Use 
+    - Right Click: Use
+    - P: Pause game
 1. Move Forward in the maze, Try to get out
 1. You will encounter enemies, who will charge at you.
 1. Use Left Click near them with crosshairs on the enemy to deal damage.

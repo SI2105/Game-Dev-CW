@@ -47,6 +47,10 @@ public class EnemyController : MonoBehaviour
         HealthBar.value = HP;
 
 
+        if(!agent.enabled){
+            return;
+        }
+        
         if (HP <= 0)
         {
             Die();
@@ -166,6 +170,8 @@ private void Die()
 
     private void Attack()
     {
+
+    
         if (isStriking){
             SetColor(new Color(0.5f, 0.0f, 0.0f));
             return;

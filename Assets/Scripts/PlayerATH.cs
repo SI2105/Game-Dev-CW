@@ -18,6 +18,14 @@ public class PlayerATH : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _healthSliderText;
     [SerializeField] private TextMeshProUGUI _staminaSliderText;
 
+    private string[] inventory;
+    [SerializeField] private int inventorySize = 3;
+    [SerializeField] private HotbarManager hotbarManager;
+
+    void Awake(){
+        inventory = new string[inventorySize];
+    }
+
     public void UpdateHealthBar(float currHealth, float maxHealth){
         healthSlider.maxValue = maxHealth;
         healthSlider.value = currHealth;
@@ -85,6 +93,24 @@ public void UnPauseScreen(){
         Color color = redScreen.color;
         color.a = 0f;
         redScreen.color = color;
+}
+
+public void CollectItem(string iName){
+    for (int i = 0; i < inventory.Length; i++){
+        if (inventory[i] == null || inventory[i] == ""){
+            inventory[i] = iName;
+            hotbarManager.UpdateHotBarUI();
+            return;
+        }
+    }
+    Debug.Log("no more space in inventory");
+}
+
+public string GetInventoryItemName(int i){
+    if (i >= 0 && i < inventory.Length){
+        return inventory[i];
+    }
+    return null;
 }
 
 }

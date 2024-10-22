@@ -23,14 +23,19 @@ public class SelectionManager : MonoBehaviour
     // Inventory of interactable items
     private List<InteractableObject> collectedItems = new List<InteractableObject>();
 
+    public PlayerATH playerATH;
     private void Start()
     {
         mouse = Mouse.current;
         interaction_text = interaction_information_ui.GetComponent<TextMeshProUGUI>();
         if (interaction_text == null)
         {
-            Debug.LogError("TextMeshProUGUI component not found in interaction_information_ui");
+            Debug.LogError("TextMeshI not found");
         }
+        if (playerATH == null){
+            Debug.Log("Playerath not set");
+        }
+
     }
 
     void Update()
@@ -101,7 +106,7 @@ public class SelectionManager : MonoBehaviour
 
     void CollectObject(InteractableObject interactable)
     {
-        collectedItems.Add(interactable); // adds item to the inventory
+        playerATH.CollectItem(interactable.gameObject.name);// adds item to the inventory
         Destroy(interactable.gameObject); // destroys the item
 
         // reset

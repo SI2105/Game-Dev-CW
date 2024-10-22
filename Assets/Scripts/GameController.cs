@@ -17,6 +17,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         try{
+            //retrieve the player object
             player = FindObjectOfType<PlayerController>();
         }
 

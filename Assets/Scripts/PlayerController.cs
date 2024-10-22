@@ -89,7 +89,7 @@ public class PlayerController : MonoBehaviour
         return currHealth;
     }
 
-
+    //if the player has exited the maze, return true, otherwise return false
     public bool hasWon()
     {
         if (playerCamera.transform.position.x<80 & playerCamera.transform.position.x >72 & playerCamera.transform.position.z <20)
@@ -100,17 +100,20 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
+    //toggles the pause state of the game
       void TogglePause()
     {
         isPaused = !isPaused;
 
         if (isPaused)
         {
+            //set the paused screen which is gray
             playerATH.PauseScreen();
             PauseGame();
         }
         else
         {
+            //return the screen to normal
             playerATH.UnPauseScreen();
             ResumeGame();
         }

@@ -48,7 +48,7 @@ public class EnemyController : MonoBehaviour
         HealthBar.value = HP;
 
 
-       
+       //if the enemy has 0 HP and hasn't died yet, kill them
         if (HP <= 0 & isDead!=true)
         {
 
@@ -65,6 +65,7 @@ public class EnemyController : MonoBehaviour
             sightCheckTimer -= Time.deltaTime;
             if (sightCheckTimer <= 0)
             {
+                //if player cant be seen after 5 seconds, go back to patrol
                 sightCheckTimer = sightCheckInterval; 
                 if (!IsPlayerInSight())
                 {
@@ -77,6 +78,7 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
+            //if player is in range or sight, change to attack mode
             if (IsPlayerInSight())
             {
                 currentState = EnemyState.Attack;
@@ -101,6 +103,7 @@ public class EnemyController : MonoBehaviour
 
     private void Patrol()
     {
+        //make the enemy patrol in an area around it
         agent.speed = patrolSpeed;
 
         patrolTimer += Time.deltaTime;
@@ -116,6 +119,7 @@ public class EnemyController : MonoBehaviour
                 HP -= damage;
                 HealthBar.value = HP;
 
+                //if the HP is lesss than or equal to 0, kill the enemy
                 if (HP <= 0)
                 {
                     Die();
@@ -179,6 +183,7 @@ private void Die()
     {
 
     
+        //if  enemy is striking, set the color to dark red
         if (isStriking){
             SetColor(new Color(0.5f, 0.0f, 0.0f));
             return;
@@ -190,7 +195,7 @@ private void Die()
         {
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-            
+            //if player is withining striking range
             if (distanceToPlayer <= strikeRange)
             {
                 StartCoroutine(StrikePlayer());
@@ -209,12 +214,15 @@ private void Die()
         if(agent.enabled & agent.isOnNavMesh){
             SetColor(new Color(0.5f, 0.0f, 0.0f));
             isStriking = true;
+
+            //make the enemy step back before charging
             Vector3 directionAwayFromPlayer = (transform.position - player.position).normalized;
             Vector3 stepBackPosition = transform.position + directionAwayFromPlayer * stepBackDistance;
             agent.SetDestination(stepBackPosition);
             yield return new WaitForSeconds(chargeDelay);  
 
             
+            //make the enemy charge towards player
             agent.speed = strikeSpeed;
            
             agent.SetDestination(player.position);
@@ -265,12 +273,13 @@ private void SetColor(Color baseColor)
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
         float hearingRange = 3f;
         
-        
+        //if player is in hearing range, return true
         if (distanceToPlayer <= hearingRange)
         {
             return true; 
         }
 
+        //if enemy is not facing player, return false
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
         if (angleToPlayer > sightAngle / 2)
@@ -278,6 +287,7 @@ private void SetColor(Color baseColor)
             return false; 
         }
 
+        //if player can be seen by enemy, return true
         RaycastHit hit;
         if (Physics.Raycast(transform.position, directionToPlayer, out hit))
         {

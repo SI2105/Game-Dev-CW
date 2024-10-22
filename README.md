@@ -8,19 +8,24 @@
     - S: Move Back
     - D: Move right
     - Shift(Hold): Sprint
-    - Mouse Scroll: Change between slots
     - Space: Jump
     - F: Inventory
     - E: Pick up
     - Left Click: Attack
-    - Right Click: Use
     - P: Pause game
 1. Move Forward in the maze, Try to get out
 1. You will encounter enemies, who will charge at you.
 1. Use Left Click near them with crosshairs on the enemy to deal damage.
 ## Tutorials Used
-1. 
-2. 
+1. [Get Started with Unity](https://learn.unity.com/tutorial/get-started-with-the-unity-editor#)
+1. [Displaying Score and Text](https://learn.unity.com/tutorial/displaying-score-and-text?uv=2022.3&projectId=5f158f1bedbc2a0020e51f0d#)
+1. [3D Beginner: Roll-a-Ball Game](https://learn.unity.com/project/roll-a-ball?uv=2022.3) 
+1. [5 Minute MAIN MENU Unity Tutorial](https://www.youtube.com/watch?v=-GWjA6dixV4)
+1. [Unity Slider in 4 Minutes](https://www.youtube.com/watch?v=nTLgzvklgU8&ab_channel=Tarodev)
+1. [Selecting Items with Raycast & Creating Simple AI
+](https://www.youtube.com/watch?v=_GzSfnJNNI4)
+1. [Selecting Items with Raycast & Creating Simple AI
+](https://www.youtube.com/watch?v=f473C43s8nE)
 
 ## Development Procedure
 

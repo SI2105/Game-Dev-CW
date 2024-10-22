@@ -92,7 +92,7 @@ public class PlayerController : MonoBehaviour
 
     public bool hasWon()
     {
-        if (playerCamera.transform.position.x<80 & playerCamera.transform.position.x >72 & playerCamera.transform.position.z > 20)
+        if (playerCamera.transform.position.x<80 & playerCamera.transform.position.x >72 & playerCamera.transform.position.z <20)
         {
             return true;
         }

@@ -61,10 +61,19 @@ public class PlayerController : MonoBehaviour
 
     void OnMove(InputValue movementValue)
     {
-        // Gets the movement input from the player --> A/D and W/S
-        Vector2 movementVector = movementValue.Get<Vector2>();
-        movementX = movementVector.x; 
-        movementY = movementVector.y; 
+
+        if(!isPaused){
+            // Gets the movement input from the player --> A/D and W/S
+            Vector2 movementVector = movementValue.Get<Vector2>();
+            movementX = movementVector.x; 
+            movementY = movementVector.y; 
+        }
+         else
+        {
+            // Reset movement when paused
+            movementX = 0;
+            movementY = 0;
+        }
     }
 
     private void FixedUpdate() 
@@ -72,6 +81,7 @@ public class PlayerController : MonoBehaviour
         if(!isPaused){
             MovePlayer();
         }
+        
     }
 
     public float getPlayerHealth()
@@ -108,7 +118,9 @@ public class PlayerController : MonoBehaviour
 
     void PauseGame()
     {
-        
+        Rigidbody playerRigidbody = GetComponent<Rigidbody>();
+        playerRigidbody.velocity = Vector3.zero; // Stop the player's movement
+        playerRigidbody.angularVelocity = Vector3.zero;
         // Retrieve and disable all NavMeshAgents to freeze enemies
         NavMeshAgent[] enemies = FindObjectsOfType<NavMeshAgent>();
         foreach (NavMeshAgent agent in enemies)
@@ -119,7 +131,7 @@ public class PlayerController : MonoBehaviour
 
     void ResumeGame()
     {
-       
+
         // Retrieve and enable all NavMeshAgents to resume enemy movement
         NavMeshAgent[] enemies = FindObjectsOfType<NavMeshAgent>();
         foreach (NavMeshAgent agent in enemies)

@@ -103,6 +103,7 @@ public class PlayerController : MonoBehaviour
     //toggles the pause state of the game
       void TogglePause()
     {
+        //toggle the pause state of the game
         isPaused = !isPaused;
 
         if (isPaused)

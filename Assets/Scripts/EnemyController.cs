@@ -51,6 +51,7 @@ public class EnemyController : MonoBehaviour
        
         if (HP <= 0 & isDead!=true)
         {
+
             Die();
             return; // Skip all other updates if dead
         }
@@ -104,6 +105,7 @@ public class EnemyController : MonoBehaviour
 
         patrolTimer += Time.deltaTime;
         Vector3 offset = new Vector3(Mathf.Sin(patrolTimer) * patrolRadius, 0, Mathf.Cos(patrolTimer) * patrolRadius);
+
         agent.SetDestination(patrolCenter + offset);
     }
 
@@ -125,7 +127,7 @@ public class EnemyController : MonoBehaviour
 private void Die()
 {
 
-
+    StopAllCoroutines();
     if (!isDying)
     {
         // Stop the enemy's movement by disabling the NavMeshAgent
@@ -203,18 +205,22 @@ private void Die()
 
     private IEnumerator StrikePlayer()
     {
-        SetColor(new Color(0.5f, 0.0f, 0.0f));
-        isStriking = true;
-        Vector3 directionAwayFromPlayer = (transform.position - player.position).normalized;
-        Vector3 stepBackPosition = transform.position + directionAwayFromPlayer * stepBackDistance;
-        agent.SetDestination(stepBackPosition);
-        yield return new WaitForSeconds(chargeDelay);  
 
-        
-        agent.speed = strikeSpeed;
-        agent.SetDestination(player.position);
-        yield return new WaitForSeconds(0.5f); 
-        isStriking = false;
+        if(agent.enabled & agent.isOnNavMesh){
+            SetColor(new Color(0.5f, 0.0f, 0.0f));
+            isStriking = true;
+            Vector3 directionAwayFromPlayer = (transform.position - player.position).normalized;
+            Vector3 stepBackPosition = transform.position + directionAwayFromPlayer * stepBackDistance;
+            agent.SetDestination(stepBackPosition);
+            yield return new WaitForSeconds(chargeDelay);  
+
+            
+            agent.speed = strikeSpeed;
+           
+            agent.SetDestination(player.position);
+            yield return new WaitForSeconds(0.5f); 
+            isStriking = false;
+        }
     }
 
 private void SetColor(Color baseColor)

@@ -25,7 +25,8 @@ public class EnemyController : MonoBehaviour
     private bool isStriking = false;
     private bool isDying = false; // Track if the enemy is in the dying process
     private float disintegrationSpeed = 0.5f; // Speed at which the enemy scales down
-    private Renderer enemyRenderer; 
+    private Renderer enemyRenderer;
+    private bool isDead = false;
     private enum EnemyState
     {
         Patrol,
@@ -47,16 +48,18 @@ public class EnemyController : MonoBehaviour
         HealthBar.value = HP;
 
 
-        if(!agent.enabled){
-            return;
-        }
+       
         
-        if (HP <= 0)
+        if (HP <= 0 & isDead!=true)
         {
             Die();
             return; // Skip all other updates if dead
         }
 
+         if(!agent.enabled){
+            return;
+        }
+        
         if (currentState == EnemyState.Attack)
         {
             sightCheckTimer -= Time.deltaTime;
@@ -122,6 +125,8 @@ public class EnemyController : MonoBehaviour
 
 private void Die()
 {
+
+
     if (!isDying)
     {
         // Stop the enemy's movement by disabling the NavMeshAgent
@@ -154,6 +159,7 @@ private void Die()
         if (transform.localScale.x <= 0)
         {
             Destroy(gameObject);
+            isDead=true;
             return;
         }
         // Decrease the scale of the enemy until it disappears

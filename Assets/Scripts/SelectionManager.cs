@@ -13,6 +13,7 @@ public class SelectionManager : MonoBehaviour
     
     // Text 
     private TextMeshProUGUI interaction_text;
+    private string state;
     
     // Physics variables
     private Mouse mouse;
@@ -59,6 +60,7 @@ public class SelectionManager : MonoBehaviour
             Transform selectionTransform = hit.transform;
             InteractableObject interactable = selectionTransform.GetComponent<InteractableObject>(); // check if interacted object has an interactable component
             EnemyController enemy = selectionTransform.GetComponent<EnemyController>();
+            Chest chest = selectionTransform.GetComponent<Chest>();
 
             if (interactable != null)
             {
@@ -71,6 +73,19 @@ public class SelectionManager : MonoBehaviour
                 currInteractable =null;
                 interaction_information_ui.SetActive(true);
                 interaction_text.text = enemy.gameObject.name;
+            }
+            else if (chest != null){
+                interaction_information_ui.SetActive(true);
+                interaction_text.text = "Press [E] to open chest";
+                state = chest.getState();
+
+                if (state != ""){
+                    interaction_text.text = state;
+                }
+                else if (Keyboard.current.eKey.wasPressedThisFrame)
+                {
+                    chest.OpenChest();
+                }
             }
             else{
                 currInteractable = null;

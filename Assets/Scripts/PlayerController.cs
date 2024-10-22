@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using UnityEngine.AI;
 public class PlayerController : MonoBehaviour
 {
     // Player's rigidbody reference component
@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float maxStamina = 100f;
     private float currHealth;
     private float currStamina;
-
+    private bool isPaused = false;
     // taking damage
     private float damageCooldown = 1.5f;
     private bool canTakeDamage = true;
@@ -69,7 +69,9 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate() 
     {
-        MovePlayer();
+        if(!isPaused){
+            MovePlayer();
+        }
     }
 
     public float getPlayerHealth()
@@ -87,6 +89,45 @@ public class PlayerController : MonoBehaviour
 
         return false;
     }
+
+      void TogglePause()
+    {
+        isPaused = !isPaused;
+
+        if (isPaused)
+        {
+            playerATH.PauseScreen();
+            PauseGame();
+        }
+        else
+        {
+            playerATH.UnPauseScreen();
+            ResumeGame();
+        }
+    }
+
+    void PauseGame()
+    {
+        
+        // Retrieve and disable all NavMeshAgents to freeze enemies
+        NavMeshAgent[] enemies = FindObjectsOfType<NavMeshAgent>();
+        foreach (NavMeshAgent agent in enemies)
+        {
+            agent.enabled = false;
+        }
+    }
+
+    void ResumeGame()
+    {
+       
+        // Retrieve and enable all NavMeshAgents to resume enemy movement
+        NavMeshAgent[] enemies = FindObjectsOfType<NavMeshAgent>();
+        foreach (NavMeshAgent agent in enemies)
+        {
+            agent.enabled = true;
+        }
+    }
+
 
     private void MovePlayer(){
         Vector3 forward = playerCamera.transform.forward;
@@ -116,9 +157,17 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        HandleJumpInput();
-        SmoothenJump();
-        Run();
+        if (Input.GetKeyDown(KeyCode.P)) // Example pause button
+        {
+            TogglePause();
+        }
+
+        if(!isPaused){
+            HandleJumpInput();
+            SmoothenJump();
+            Run();
+        }
+        
     }
 
     private void Run(){

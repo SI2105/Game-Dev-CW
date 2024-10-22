@@ -69,4 +69,22 @@ public class PlayerATH : MonoBehaviour
             isTakingDamage = false;
         }
     }
+
+    public void PauseScreen(){
+   
+        //set the color of the screen to grey to indicate that the game is paused
+        Color color = redScreen.color;
+        color = new Color(0.5f, 0.5f, 0.5f, 0.5f); // Grey with 50% opacity
+        redScreen.color = color;
+
+}
+
+public void UnPauseScreen(){
+
+        // unpause the screen and return the color to normal
+        Color color = redScreen.color;
+        color.a = 0f;
+        redScreen.color = color;
+}
+
 }

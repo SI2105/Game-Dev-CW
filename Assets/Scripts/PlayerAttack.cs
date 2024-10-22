@@ -8,6 +8,7 @@ public class PlayerAttack : MonoBehaviour{
     [SerializeField] private float attackCoolDown = 1f;
     private bool canAttack = true;
 
+
     [SerializeField] private Camera playerCamera;
     private Mouse mouse;
 
@@ -15,31 +16,44 @@ public class PlayerAttack : MonoBehaviour{
         mouse = Mouse.current;
     }
 
-    void Update(){
-        if (Input.GetMouseButtonDown(0) && canAttack){
-            PerformAttack();
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0) && canAttack)
+        {
+            PerformAttack(); 
         }
     }
 
-    private void PerformAttack(){
-        Vector2 mousePosition = mouse.position.ReadValue();
-        Ray ray = playerCamera.ScreenPointToRay(mousePosition);
+    /// <summary>
+    /// Executes the attack by detecting and damaging an enemy within range.
+    /// </summary>
+    private void PerformAttack()
+    {
+        Vector2 mousePosition = mouse.position.ReadValue(); // Get current mouse position
+        Ray ray = playerCamera.ScreenPointToRay(mousePosition); // Create a ray from the camera through the mouse position
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, attackRange)){
-            EnemyController enemy = hit.collider.GetComponent<EnemyController>();
+        // Perform the raycast to detect enemies within attack range
+        if (Physics.Raycast(ray, out hit, attackRange))
+        {
+            EnemyController enemy = hit.collider.GetComponent<EnemyController>(); // Attempt to get the EnemyController component
 
-            if (enemy != null){
-                enemy.TakeDamage(attackDamage);
+            if (enemy != null)
+            {
+                enemy.TakeDamage(attackDamage); // Inflict damage on the enemy
             }
         }
 
-        StartCoroutine(AttackCoolDown());
+        StartCoroutine(AttackCoolDown()); // Start the attack cooldown coroutine
     }
 
-    private IEnumerator AttackCoolDown(){
-        canAttack = false;
-        yield return new WaitForSeconds(attackCoolDown);
-        canAttack = true;
+    /// <summary>
+    /// Manages the cooldown period between attacks.
+    /// </summary>
+    private IEnumerator AttackCoolDown()
+    {
+        canAttack = false; // Disable attacking
+        yield return new WaitForSeconds(attackCoolDown); // Wait for the cooldown duration
+        canAttack = true; // Re-enable attacking
     }
 }

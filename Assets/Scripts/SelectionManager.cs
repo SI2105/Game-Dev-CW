@@ -8,57 +8,72 @@ using TMPro;
 public class SelectionManager : MonoBehaviour
 {
     // Public References
-    [SerializeField] private Camera mainCamera;
-    [SerializeField] private GameObject interaction_information_ui;
+    [SerializeField] private Camera mainCamera; // Main camera for raycasting
+    [SerializeField] private GameObject interaction_information_ui; // UI element for interaction prompts
     
-    // Text 
-    private TextMeshProUGUI interaction_text;
-    private string state;
+    // Text
+    private TextMeshProUGUI interaction_text; // Text component to display interaction messages
+    private string state; // Current state of interactable objects
     
     // Physics variables
-    private Mouse mouse;
-    private float raycastDistance = 10f;
-    private InteractableObject currInteractable;
+    private Mouse mouse; // Reference to the mouse input
+    private float raycastDistance = 10f; // Maximum distance for raycasting
+    private InteractableObject currInteractable; // Currently selected interactable object
 
     // Inventory of interactable items
     private List<InteractableObject> collectedItems = new List<InteractableObject>();
 
+    public PlayerATH playerATH; // Reference to the player's ATH (Attribute HUD)
+
+    /// <summary>
+    /// Initializes references and checks for necessary components.
+    /// </summary>
     private void Start()
     {
-        mouse = Mouse.current;
-        interaction_text = interaction_information_ui.GetComponent<TextMeshProUGUI>();
+        mouse = Mouse.current; // Get the current mouse
+        interaction_text = interaction_information_ui.GetComponent<TextMeshProUGUI>(); // Get the TextMeshProUGUI component
+
         if (interaction_text == null)
         {
-            Debug.LogError("TextMeshProUGUI component not found in interaction_information_ui");
+            Debug.LogError("TextMeshProUGUI component not found");
+        }
+
+        if (playerATH == null)
+        {
+            Debug.Log("PlayerATH is not set");
         }
     }
 
+    /// <summary>
+    /// Handles input and object detection every frame.
+    /// </summary>
     void Update()
     {
-        if (mouse == null)
+        if (mouse == null || mainCamera == null)
             return;
-        
-        if (mainCamera == null)
-            return;
-        
-        DetectObject(); // Keeps track of the item the raycast hits and assigns it to currInteractable
-        if (Keyboard.current.eKey.wasPressedThisFrame && currInteractable){
-            CollectObject(currInteractable); // Collects the item if the raycast hits the object and user presses e at the same time
+
+        DetectObject(); // Detects objects under the mouse cursor
+
+        // Check for interaction input
+        if (Keyboard.current.eKey.wasPressedThisFrame && currInteractable)
+        {
+            CollectObject(currInteractable); // Collect the interactable object
         }
     }
 
+    /// <summary>
+    /// Detects objects under the mouse cursor using raycasting.
+    /// </summary>
     void DetectObject()
     {
-        
-        Vector2 mousePosition = mouse.position.ReadValue();
-
-        Ray ray = mainCamera.ScreenPointToRay(mousePosition); // ray follows mouse position
+        Vector2 mousePosition = mouse.position.ReadValue(); // Get current mouse position
+        Ray ray = mainCamera.ScreenPointToRay(mousePosition); // Create a ray from the camera through the mouse position
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, raycastDistance)){ // checks if the ray hits an object within 100f distance
-            // Debug.Log("hit object: " + hit.transform.name);
+        if (Physics.Raycast(ray, out hit, raycastDistance))
+        {
             Transform selectionTransform = hit.transform;
-            InteractableObject interactable = selectionTransform.GetComponent<InteractableObject>(); // check if interacted object has an interactable component
+            InteractableObject interactable = selectionTransform.GetComponent<InteractableObject>();
             EnemyController enemy = selectionTransform.GetComponent<EnemyController>();
             Chest chest = selectionTransform.GetComponent<Chest>();
 
@@ -66,45 +81,51 @@ public class SelectionManager : MonoBehaviour
             {
                 currInteractable = interactable;
                 interaction_information_ui.SetActive(true);
-                interaction_text.text = "Press [E] to collect " + interactable.gameObject.name; // set ui text
-                // Debug.Log("Interactable Object found, displaying UI.");
+                interaction_text.text = "Press [E] to collect " + interactable.gameObject.name; // Prompt to collect item
             }
-            else if (enemy != null){
-                currInteractable =null;
+            else if (enemy != null)
+            {
+                currInteractable = null;
                 interaction_information_ui.SetActive(true);
-                interaction_text.text = enemy.gameObject.name;
+                interaction_text.text = enemy.gameObject.name; // Display enemy name
             }
-            else if (chest != null){
+            else if (chest != null)
+            {
                 interaction_information_ui.SetActive(true);
-                interaction_text.text = "Press [E] to open chest";
+                interaction_text.text = "Press [E] to open chest"; // Prompt to open chest
                 state = chest.getState();
 
-                if (state != ""){
-                    interaction_text.text = state;
+                if (!string.IsNullOrEmpty(state))
+                {
+                    interaction_text.text = state; // Display chest state
                 }
                 else if (Keyboard.current.eKey.wasPressedThisFrame)
                 {
-                    chest.OpenChest();
+                    chest.OpenChest(); // Open the chest on input
                 }
             }
-            else{
+            else
+            {
                 currInteractable = null;
-                interaction_information_ui.SetActive(false);
-                // Debug.Log("Interactable Object not found, displaying UI.");
+                interaction_information_ui.SetActive(false); // Hide UI if no interactable object
             }
         }
-        else{
+        else
+        {
             currInteractable = null;
-            interaction_information_ui.SetActive(false);
+            interaction_information_ui.SetActive(false); // Hide UI if raycast hits nothing
         }
     }
 
+    /// <summary>
+    /// Collects the specified interactable object and updates the inventory.
+    /// </summary>
     void CollectObject(InteractableObject interactable)
     {
-        collectedItems.Add(interactable); // adds item to the inventory
-        Destroy(interactable.gameObject); // destroys the item
+        playerATH.CollectItem(interactable.gameObject.name); // Add item to inventory
+        Destroy(interactable.gameObject); // Remove the item from the scene
 
-        // reset
+        // Reset interaction state
         interaction_information_ui.SetActive(false);
         currInteractable = null;
     }

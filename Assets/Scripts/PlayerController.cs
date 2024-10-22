@@ -256,70 +256,91 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         UseStamina(5f);
     }
+   /// <summary>
+    /// Consumes stamina and initiates cooldown if depleted.
+    /// </summary>
+    private void UseStamina(float amount)
+    {
+        currStamina -= amount;
+        currStamina = Mathf.Max(currStamina, 0f); // Ensure stamina doesn't go below zero
 
-    private void UseStamina(float q){
-        currStamina -=q;
-        if (currStamina < 0){
-            currStamina = 0;
-        }
-
-        if (currStamina == 0f && canUseStamina){
-            Debug.Log("starting cooldown");
+        if (currStamina == 0f && canUseStamina)
+        {
+            Debug.Log("Starting stamina cooldown");
             StartCoroutine(RecoverStaminaCooldown());
         }
-        playerATH.UpdateStaminaBar(currStamina, maxStamina);
+        playerATH.UpdateStaminaBar(currStamina, maxStamina); // Update UI
     }
 
-    private void RecoverStamina(float q){
-
-        if (currStamina < maxStamina && canUseStamina){
-            currStamina += q;
-            if (currStamina > maxStamina){
-                currStamina = maxStamina;
-            }
+    /// <summary>
+    /// Recovers stamina over time.
+    /// </summary>
+    private void RecoverStamina(float amount)
+    {
+        if (currStamina < maxStamina && canUseStamina)
+        {
+            currStamina += amount;
+            currStamina = Mathf.Min(currStamina, maxStamina); // Ensure stamina doesn't exceed max
         }
-        if (!canUseStamina){
+
+        if (!canUseStamina)
+        {
             StartCoroutine(RecoverStaminaCooldown());
         }
         
-        playerATH.UpdateStaminaBar(currStamina, maxStamina);
+        playerATH.UpdateStaminaBar(currStamina, maxStamina); // Update UI
     }
 
-    private void TakeDamage(float q){
-        currHealth -= q;
-        if (currHealth < 0){
-            currHealth = 0;
-        }
-        playerATH.UpdateHealthBar(currHealth, maxHealth);
+    /// <summary>
+    /// Applies damage to the player and handles knockback.
+    /// </summary>
+    private void TakeDamage(float amount)
+    {
+        currHealth -= amount;
+        currHealth = Mathf.Max(currHealth, 0f); // Ensure health doesn't go below zero
+        playerATH.UpdateHealthBar(currHealth, maxHealth); // Update UI
 
-        rb.AddForce((Vector3.up + Vector3.right + Vector3.left) * 1f, ForceMode.Impulse); // push back when damage taken
-        playerATH.StartDamageEffect();
-        StartCoroutine(DamageCooldown());
+        // Apply knockback force
+        rb.AddForce((Vector3.up + Vector3.right + Vector3.left) * 1f, ForceMode.Impulse);
+        playerATH.StartDamageEffect(); // Trigger UI damage effect
+        StartCoroutine(DamageCooldown()); // Start damage cooldown
     }
 
-    private IEnumerator DamageCooldown(){
+    /// <summary>
+    /// Handles the cooldown period after taking damage.
+    /// </summary>
+    private IEnumerator DamageCooldown()
+    {
         canTakeDamage = false;
         yield return new WaitForSeconds(damageCooldown);
         canTakeDamage = true;
     }
 
-    private IEnumerator RecoverStaminaCooldown(){
+    /// <summary>
+    /// Manages the cooldown period for stamina recovery.
+    /// </summary>
+    private IEnumerator RecoverStaminaCooldown()
+    {
         canUseStamina = false;
         yield return new WaitForSeconds(staminaCooldown);
         canUseStamina = true;
     }
 
-    private void GainHealth(float q){
-        currHealth += q;
-        if (currHealth > 100){
-            currHealth = 100;
-        }
-        playerATH.UpdateHealthBar(currHealth, maxHealth);
-        
+    /// <summary>
+    /// Increases the player's health, ensuring it doesn't exceed the maximum.
+    /// </summary>
+    private void GainHealth(float amount)
+    {
+        currHealth += amount;
+        currHealth = Mathf.Min(currHealth, maxHealth); // Ensure health doesn't exceed max
+        playerATH.UpdateHealthBar(currHealth, maxHealth); // Update UI
     }
 
+    /// <summary>
+    /// Toggles the cursor lock state and visibility.
+    /// </summary>
     public void ToggleCursorLock()
-        {
+    {
         if (Cursor.lockState == CursorLockMode.Locked)
         {
             Cursor.lockState = CursorLockMode.None;
@@ -330,7 +351,7 @@ public class PlayerController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-        }
+    }
     }
 
 

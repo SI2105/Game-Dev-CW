@@ -253,7 +253,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""c4e7ac58-090d-46f8-8187-cd95b3c800c3"",
-                    ""path"": ""<Keyboard>/Left Shift"",
+                    ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",

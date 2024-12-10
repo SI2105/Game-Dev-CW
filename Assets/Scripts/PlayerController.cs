@@ -47,6 +47,7 @@ public class PlayerController : MonoBehaviour
 
     private InputAction pauseAction;
     private GameDevCW inputActions;
+    private bool iss;
 
     void Awake()
     {
@@ -55,9 +56,14 @@ public class PlayerController : MonoBehaviour
 
         pauseAction = inputActions.Player.Pause; // Fixed typo: inputactions -> inputActions
         inputActions.Player.Jump.performed += OnJumpPerformed;
-        pauseAction.performed += context => TogglePause(); // Completed the assignment
+        inputActions.Player.Sprint.started += OnSprintStarted;
+        inputActions.Player.Sprint.canceled += OnSprintCanceled;
+        pauseAction.performed += context => TogglePause();
     }
-
+    private void Update()
+    {
+        Debug.Log(iss);
+    }
     private void OnJumpPerformed(InputAction.CallbackContext context)
     {
         if (isGrounded && canUseStamina)
@@ -66,13 +72,25 @@ public class PlayerController : MonoBehaviour
             Jump();
         }
     }
+
+    private void OnSprintStarted(InputAction.CallbackContext context)
+    {
+        Debug.Log("sprint started");
+        iss = context.started || context.performed;
+        StartSprint();
+    }
+
+    private void OnSprintCanceled(InputAction.CallbackContext context)
+    {
+        Debug.Log("sprint stopped");
+        StopSprint();
+    }
     
     void OnEnable()
     {
         inputActions.Enable();
         inputActions.Player.Pause.performed += OnPausePerformed; // Ensure Pause exists in the Input System action map
     }
-
 
     void Start()
     {
@@ -115,8 +133,16 @@ public class PlayerController : MonoBehaviour
         if(!isPaused){
             MovePlayer();
         }
-        
+        UpdateStamina();
     }
+
+    private void UpdateStamina()
+{
+    if (!isSprinting && canUseStamina && currStamina < maxStamina)
+    {
+        RecoverStamina(5f * Time.deltaTime); // Adjust recovery rate as needed
+    }
+}
 
     public float getPlayerHealth()
     {
@@ -218,21 +244,16 @@ public class PlayerController : MonoBehaviour
     
     private void OnDisable()
     {
-        inputActions.Player.Pause.performed -= OnPausePerformed; // Unsubscribe to avoid memory leaks
-        inputActions.Player.Jump.performed -= OnJumpPerformed; // Unsubscribe to avoid memory leaks
-        inputActions.Disable(); // Disable input actions
+        inputActions.Player.Pause.performed -= OnPausePerformed; 
+        inputActions.Player.Jump.performed -= OnJumpPerformed; 
+        inputActions.Player.Sprint.started -= OnSprintStarted; 
+        inputActions.Player.Sprint.canceled -= OnSprintCanceled; 
+        inputActions.Disable();
     }
 
-    private void Run(){
-        if (Input.GetKey(KeyCode.LeftShift) && canUseStamina && Input.GetKey(KeyCode.W)){
-            Sprint();
-        }
-        else{
-            StopSprint();
-        }
-    }
+    private void StartSprint(){
+        Debug.Log("sprint started");
 
-    private void Sprint(){
         if (canUseStamina){
             isSprinting = true;
             currSpeed = sprintSpeed;
@@ -245,7 +266,6 @@ public class PlayerController : MonoBehaviour
     private void StopSprint(){
         isSprinting = false;
         currSpeed = walkSpeed;
-        RecoverStamina(5f * Time.deltaTime);
     }
 
     private void SmoothenJump()
@@ -313,19 +333,16 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void RecoverStamina(float amount)
     {
-        if (currStamina < maxStamina && canUseStamina)
+        if (currStamina < maxStamina)
         {
             currStamina += amount;
-            currStamina = Mathf.Min(currStamina, maxStamina); // Ensure stamina doesn't exceed max
+            currStamina = Mathf.Min(currStamina, maxStamina);
+            Debug.Log($"Stamina recovering: {currStamina}/{maxStamina}");
         }
 
-        if (!canUseStamina)
-        {
-            StartCoroutine(RecoverStaminaCooldown());
-        }
-        
-        playerATH.UpdateStaminaBar(currStamina, maxStamina); // Update UI
+        playerATH.UpdateStaminaBar(currStamina, maxStamina);
     }
+
 
     /// <summary>
     /// Applies damage to the player and handles knockback.
@@ -361,6 +378,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(staminaCooldown);
         canUseStamina = true;
     }
+
 
     /// <summary>
     /// Increases the player's health, ensuring it doesn't exceed the maximum.

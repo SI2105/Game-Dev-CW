@@ -45,6 +45,35 @@ public class PlayerController : MonoBehaviour
     // Player Attack
     private PlayerAttack playerAttack;
 
+    private InputAction pauseAction;
+    private GameDevCW inputActions;
+
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody>();    
+        inputActions = new GameDevCW();
+
+        pauseAction = inputActions.Player.Pause; // Fixed typo: inputactions -> inputActions
+        inputActions.Player.Jump.performed += OnJumpPerformed;
+        pauseAction.performed += context => TogglePause(); // Completed the assignment
+    }
+
+    private void OnJumpPerformed(InputAction.CallbackContext context)
+    {
+        if (isGrounded && canUseStamina)
+        {
+            Debug.Log("Jump input detected");
+            Jump();
+        }
+    }
+    
+    void OnEnable()
+    {
+        inputActions.Enable();
+        inputActions.Player.Pause.performed += OnPausePerformed; // Ensure Pause exists in the Input System action map
+    }
+
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -61,7 +90,6 @@ public class PlayerController : MonoBehaviour
 
     void OnMove(InputValue movementValue)
     {
-
         if(!isPaused){
             // Gets the movement input from the player --> A/D and W/S
             Vector2 movementVector = movementValue.Get<Vector2>();
@@ -75,6 +103,12 @@ public class PlayerController : MonoBehaviour
             movementY = 0;
         }
     }
+
+    private void OnPausePerformed(InputAction.CallbackContext context)
+    {
+        TogglePause();
+    }
+
 
     private void FixedUpdate() 
     {
@@ -90,9 +124,12 @@ public class PlayerController : MonoBehaviour
     }
 
     //if the player has exited the maze, return true, otherwise return false
+
     public bool hasWon()
     {
-        if (playerCamera.transform.position.x<80 & playerCamera.transform.position.x >72 & playerCamera.transform.position.z <20)
+        if (playerCamera.transform.position.x < 80 && 
+            playerCamera.transform.position.x > 72 && 
+            playerCamera.transform.position.z < 20) // Fixed & -> &&
         {
             return true;
         }
@@ -103,11 +140,13 @@ public class PlayerController : MonoBehaviour
     //toggles the pause state of the game
       void TogglePause()
     {
+        Debug.Log("pausing");
         //toggle the pause state of the game
         isPaused = !isPaused;
 
         if (isPaused)
         {
+            Debug.Log("paused");
             //set the paused screen which is gray
             playerATH.PauseScreen();
             PauseGame();
@@ -131,6 +170,9 @@ public class PlayerController : MonoBehaviour
         {
             agent.enabled = false;
         }
+        Time.timeScale = 0; // Freeze time
+        Cursor.lockState = CursorLockMode.None; // Unlock the cursor
+        Cursor.visible = true;
     }
 
     void ResumeGame()
@@ -142,6 +184,9 @@ public class PlayerController : MonoBehaviour
         {
             agent.enabled = true;
         }
+        Time.timeScale = 1; // Resume time
+        Cursor.lockState = CursorLockMode.Locked; // Lock the cursor
+        Cursor.visible = false;
     }
 
 
@@ -170,20 +215,12 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector3(0, rb.velocity.y, 0); 
         }
     }
-
-    void Update()
+    
+    private void OnDisable()
     {
-        if (Input.GetKeyDown(KeyCode.P)) // Example pause button
-        {
-            TogglePause();
-        }
-
-        if(!isPaused){
-            HandleJumpInput();
-            SmoothenJump();
-            Run();
-        }
-        
+        inputActions.Player.Pause.performed -= OnPausePerformed; // Unsubscribe to avoid memory leaks
+        inputActions.Player.Jump.performed -= OnJumpPerformed; // Unsubscribe to avoid memory leaks
+        inputActions.Disable(); // Disable input actions
     }
 
     private void Run(){
@@ -209,11 +246,6 @@ public class PlayerController : MonoBehaviour
         isSprinting = false;
         currSpeed = walkSpeed;
         RecoverStamina(5f * Time.deltaTime);
-    }
-
-    private void HandleJumpInput(){
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && isGrounded && canUseStamina)
-            Jump();
     }
 
     private void SmoothenJump()

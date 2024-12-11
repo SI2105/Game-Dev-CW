@@ -287,13 +287,15 @@ public class PlayerController : MonoBehaviour
         {
             GameObject otherObject = collision.collider.gameObject;
 
+            // Check if the collision object has an EnemyController component
             EnemyController enemy = otherObject.GetComponent<EnemyController>();
 
             if (enemy != null && canTakeDamage){
                 TakeDamage(10f);
             }
 
-            if (contact.point.y <= transform.position.y){
+            // Check if the collision point is below the player and the surface is flat enough to be considered as a ground
+            if (contact.point.y <= transform.position.y && contact.normal.y > 0.5f){
                 isGrounded = true;
                 return;
             }

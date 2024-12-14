@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
+
 public class PlayerController : MonoBehaviour
 {
     // Player's rigidbody reference component

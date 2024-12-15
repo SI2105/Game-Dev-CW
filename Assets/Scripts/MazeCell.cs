@@ -23,6 +23,23 @@ public class MazeCell : MonoBehaviour
 
     public int GridX { get; set; } // Store the grid X index
     public int GridZ { get; set; } // Store the grid Z index
+    
+    public bool IsRoom { get; private set; }
+
+    public void MarkAsRoom()
+    {
+        IsRoom = true;
+        ClearAllWalls(); // Open the room completely
+    }
+
+    public void ClearAllWalls()
+    {
+        ClearFrontWall();
+        ClearBackWall();
+        ClearLeftWall();
+        ClearRightWall();
+    }
+
 
     public void Visit()
     {

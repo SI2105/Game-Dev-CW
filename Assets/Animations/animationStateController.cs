@@ -6,11 +6,14 @@ using UnityEngine.InputSystem;
 public class AnimationStateController : MonoBehaviour
 {
     private Animator animator;
-    private int isWalkingHash;
-    private int isRunningHash;
+    private int VelocityHash;
     private Vector2 moveInput; // Stores movement input
     private bool isSprinting; // Tracks sprint state
     private GameDevCW inputActions; // Input Actions asset reference
+
+    float velocity = 0.0f;
+    public float acceleration = 0.1f;
+    public float deceleration = 0.1f;
 
     private void Awake()
     {
@@ -28,8 +31,7 @@ public class AnimationStateController : MonoBehaviour
     private void Start()
     {
         animator = GetComponent<Animator>();
-        isWalkingHash = Animator.StringToHash("isWalking"); // Get the hash ID for the "isWalking" parameter
-        isRunningHash = Animator.StringToHash("isRunning"); // Get the hash ID for the "isRunning" parameter
+        VelocityHash = Animator.StringToHash("Velocity"); // Get the hash ID for the "isRunning" parameter
     }
 
     private void OnEnable()
@@ -51,15 +53,20 @@ public class AnimationStateController : MonoBehaviour
         /// <remarks>
         /// The isWalking parameter is set to true if the player's vertical movement input (moveInput.y) is greater than 0.
         /// </remarks>
-        bool isWalking = moveInput.y > 0;
-        animator.SetBool(isWalkingHash, isWalking);
+        bool forwardPressed = moveInput.y > 0;
+        if (forwardPressed && velocity < 1.0f){
+            velocity += Time.deltaTime * acceleration;
+        }
 
-        // Set the animator's isRunning parameter if sprinting and moving forward
-        /// <remarks>
-        /// The isRunning parameter is set to true if the player is walking (isWalking is true) and sprinting (isSprinting is true).
-        /// </remarks>
-        bool isRunning = isWalking && isSprinting;
-        animator.SetBool(isRunningHash, isRunning);
+        if (!forwardPressed && velocity > 0.0f){
+            velocity -= Time.deltaTime * deceleration;
+        }
+
+        if (!forwardPressed && velocity < 0.0f){
+            velocity = 0.0f;
+        }
+
+        animator.SetFloat(VelocityHash, velocity);
     }
 
 

@@ -333,11 +333,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a3398fc388d4be99d9d9b579423043, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridWidth: 50
-  gridHeight: 50
-  roomMinSize: 5
-  roomMaxSize: 15
-  wallPrefab: {fileID: 4331424945802068680, guid: 8a9b2eb97b5d684408e6b98c5e5e8b90, type: 3}
+  _roomCount: 3
+  _minRoomSize: 4
+  _maxRoomSize: 7
+  _mazeCellPrefab: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
+  _mazeWidth: 30
+  _mazeDepth: 30
 --- !u!1 &1750161627
 GameObject:
   m_ObjectHideFlags: 0

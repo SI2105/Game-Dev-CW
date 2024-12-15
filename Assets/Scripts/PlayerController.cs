@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
+
 public class PlayerController : MonoBehaviour
 {
     // Player's rigidbody reference component
@@ -45,6 +46,53 @@ public class PlayerController : MonoBehaviour
     // Player Attack
     private PlayerAttack playerAttack;
 
+    private InputAction pauseAction;
+    private GameDevCW inputActions;
+    private bool iss;
+
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody>();    
+        inputActions = new GameDevCW();
+
+        pauseAction = inputActions.Player.Pause; // Fixed typo: inputactions -> inputActions
+        inputActions.Player.Jump.performed += OnJumpPerformed;
+        inputActions.Player.Sprint.started += OnSprintStarted;
+        inputActions.Player.Sprint.canceled += OnSprintCanceled;
+        pauseAction.performed += context => TogglePause();
+    }
+    private void Update()
+    {
+        Debug.Log(iss);
+    }
+    private void OnJumpPerformed(InputAction.CallbackContext context)
+    {
+        if (isGrounded && canUseStamina)
+        {
+            Debug.Log("Jump input detected");
+            Jump();
+        }
+    }
+
+    private void OnSprintStarted(InputAction.CallbackContext context)
+    {
+        Debug.Log("sprint started");
+        iss = context.started || context.performed;
+        StartSprint();
+    }
+
+    private void OnSprintCanceled(InputAction.CallbackContext context)
+    {
+        Debug.Log("sprint stopped");
+        StopSprint();
+    }
+    
+    void OnEnable()
+    {
+        inputActions.Enable();
+        inputActions.Player.Pause.performed += OnPausePerformed; // Ensure Pause exists in the Input System action map
+    }
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -61,7 +109,6 @@ public class PlayerController : MonoBehaviour
 
     void OnMove(InputValue movementValue)
     {
-
         if(!isPaused){
             // Gets the movement input from the player --> A/D and W/S
             Vector2 movementVector = movementValue.Get<Vector2>();
@@ -76,13 +123,27 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnPausePerformed(InputAction.CallbackContext context)
+    {
+        TogglePause();
+    }
+
+
     private void FixedUpdate() 
     {
         if(!isPaused){
             MovePlayer();
         }
-        
+        UpdateStamina();
     }
+
+    private void UpdateStamina()
+{
+    if (!isSprinting && canUseStamina && currStamina < maxStamina)
+    {
+        RecoverStamina(5f * Time.deltaTime); // Adjust recovery rate as needed
+    }
+}
 
     public float getPlayerHealth()
     {
@@ -90,9 +151,12 @@ public class PlayerController : MonoBehaviour
     }
 
     //if the player has exited the maze, return true, otherwise return false
+
     public bool hasWon()
     {
-        if (playerCamera.transform.position.x<80 & playerCamera.transform.position.x >72 & playerCamera.transform.position.z <20)
+        if (playerCamera.transform.position.x < 80 && 
+            playerCamera.transform.position.x > 72 && 
+            playerCamera.transform.position.z < 20) // Fixed & -> &&
         {
             return true;
         }
@@ -103,11 +167,13 @@ public class PlayerController : MonoBehaviour
     //toggles the pause state of the game
       void TogglePause()
     {
+        Debug.Log("pausing");
         //toggle the pause state of the game
         isPaused = !isPaused;
 
         if (isPaused)
         {
+            Debug.Log("paused");
             //set the paused screen which is gray
             playerATH.PauseScreen();
             PauseGame();
@@ -131,6 +197,9 @@ public class PlayerController : MonoBehaviour
         {
             agent.enabled = false;
         }
+        Time.timeScale = 0; // Freeze time
+        Cursor.lockState = CursorLockMode.None; // Unlock the cursor
+        Cursor.visible = true;
     }
 
     void ResumeGame()
@@ -142,6 +211,9 @@ public class PlayerController : MonoBehaviour
         {
             agent.enabled = true;
         }
+        Time.timeScale = 1; // Resume time
+        Cursor.lockState = CursorLockMode.Locked; // Lock the cursor
+        Cursor.visible = false;
     }
 
 
@@ -170,32 +242,19 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector3(0, rb.velocity.y, 0); 
         }
     }
-
-    void Update()
+    
+    private void OnDisable()
     {
-        if (Input.GetKeyDown(KeyCode.P)) // Example pause button
-        {
-            TogglePause();
-        }
-
-        if(!isPaused){
-            HandleJumpInput();
-            SmoothenJump();
-            Run();
-        }
-        
+        inputActions.Player.Pause.performed -= OnPausePerformed; 
+        inputActions.Player.Jump.performed -= OnJumpPerformed; 
+        inputActions.Player.Sprint.started -= OnSprintStarted; 
+        inputActions.Player.Sprint.canceled -= OnSprintCanceled; 
+        inputActions.Disable();
     }
 
-    private void Run(){
-        if (Input.GetKey(KeyCode.LeftShift) && canUseStamina && Input.GetKey(KeyCode.W)){
-            Sprint();
-        }
-        else{
-            StopSprint();
-        }
-    }
+    private void StartSprint(){
+        Debug.Log("sprint started");
 
-    private void Sprint(){
         if (canUseStamina){
             isSprinting = true;
             currSpeed = sprintSpeed;
@@ -208,12 +267,6 @@ public class PlayerController : MonoBehaviour
     private void StopSprint(){
         isSprinting = false;
         currSpeed = walkSpeed;
-        RecoverStamina(5f * Time.deltaTime);
-    }
-
-    private void HandleJumpInput(){
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && isGrounded && canUseStamina)
-            Jump();
     }
 
     private void SmoothenJump()
@@ -235,13 +288,15 @@ public class PlayerController : MonoBehaviour
         {
             GameObject otherObject = collision.collider.gameObject;
 
+            // Check if the collision object has an EnemyController component
             EnemyController enemy = otherObject.GetComponent<EnemyController>();
 
             if (enemy != null && canTakeDamage){
                 TakeDamage(10f);
             }
 
-            if (contact.point.y <= transform.position.y){
+            // Check if the collision point is below the player and the surface is flat enough to be considered as a ground
+            if (contact.point.y <= transform.position.y && contact.normal.y > 0.5f){
                 isGrounded = true;
                 return;
             }
@@ -281,19 +336,16 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void RecoverStamina(float amount)
     {
-        if (currStamina < maxStamina && canUseStamina)
+        if (currStamina < maxStamina)
         {
             currStamina += amount;
-            currStamina = Mathf.Min(currStamina, maxStamina); // Ensure stamina doesn't exceed max
+            currStamina = Mathf.Min(currStamina, maxStamina);
+            Debug.Log($"Stamina recovering: {currStamina}/{maxStamina}");
         }
 
-        if (!canUseStamina)
-        {
-            StartCoroutine(RecoverStaminaCooldown());
-        }
-        
-        playerATH.UpdateStaminaBar(currStamina, maxStamina); // Update UI
+        playerATH.UpdateStaminaBar(currStamina, maxStamina);
     }
+
 
     /// <summary>
     /// Applies damage to the player and handles knockback.
@@ -329,6 +381,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(staminaCooldown);
         canUseStamina = true;
     }
+
 
     /// <summary>
     /// Increases the player's health, ensuring it doesn't exceed the maximum.

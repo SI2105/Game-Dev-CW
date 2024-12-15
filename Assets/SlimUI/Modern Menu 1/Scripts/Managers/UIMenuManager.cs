@@ -261,30 +261,79 @@ namespace SlimUI.ModernMenu{
 			#endif
 		}
 
-		// Load Bar synching animation
-		IEnumerator LoadAsynchronously(string sceneName){ // scene name is just the name of the current scene being loaded
-			AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
-			operation.allowSceneActivation = false;
-			mainCanvas.SetActive(false);
-			loadingMenu.SetActive(true);
+        // Load Bar synching animation
+        //IEnumerator LoadAsynchronously(string sceneName){ // scene name is just the name of the current scene being loaded
+        //	AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+        //	operation.allowSceneActivation = false;
+        //	mainCanvas.SetActive(false);
+        //	loadingMenu.SetActive(true);
 
-			while (!operation.isDone){
-				float progress = Mathf.Clamp01(operation.progress / .95f);
-				loadingBar.value = progress;
+        //	while (!operation.isDone){
+        //		float progress = Mathf.Clamp01(operation.progress / .95f);
+        //		loadingBar.value = progress;
 
-				if (operation.progress >= 0.9f && waitForInput){
-					loadPromptText.text = "Press " + userPromptKey.ToString().ToUpper() + " to continue";
-					loadingBar.value = 1;
+        //		if (operation.progress >= 0.9f && waitForInput){
+        //			loadPromptText.text = "Press " + userPromptKey.ToString().ToUpper() + " to continue";
+        //			loadingBar.value = 1;
 
-					if (Input.GetKeyDown(userPromptKey)){
-						operation.allowSceneActivation = true;
-					}
-                }else if(operation.progress >= 0.9f && !waitForInput){
-					operation.allowSceneActivation = true;
-				}
+        //			if (Input.GetKeyDown(userPromptKey)){
+        //				operation.allowSceneActivation = true;
+        //			}
+        //              }else if(operation.progress >= 0.9f && !waitForInput){
+        //			operation.allowSceneActivation = true;
+        //		}
 
-				yield return null;
-			}
-		}
-	}
+        //		yield return null;
+        //	}
+        //}
+        private IEnumerator LoadAsynchronously(string sceneName)
+        {
+            if (!Application.CanStreamedLevelBeLoaded(sceneName))
+            {
+                Debug.LogError($"Scene '{sceneName}' cannot be loaded. Check Build Settings.");
+                yield break;
+            }
+
+            AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+            operation.allowSceneActivation = false;
+
+            if (mainCanvas != null)
+                mainCanvas.SetActive(false);
+
+            if (loadingMenu != null)
+                loadingMenu.SetActive(true);
+
+            float timeout = 10f; // Adjust timeout if needed
+            float timer = 0f;
+
+            while (!operation.isDone)
+            {
+                float progress = Mathf.Clamp01(operation.progress / 0.9f);
+                if (loadingBar != null)
+                    loadingBar.value = progress;
+
+                if (operation.progress >= 0.9f)
+                {
+                    if (waitForInput && loadPromptText != null)
+                    {
+                        loadPromptText.text = "Press " + userPromptKey.ToString().ToUpper() + " to continue";
+
+                        if (Input.GetKeyDown(userPromptKey))
+                        {
+                            Debug.Log("User input received. Activating scene.");
+                            operation.allowSceneActivation = true;
+                        }
+                    }
+                    else if (!waitForInput || timer > timeout)
+                    {
+                        Debug.Log("Timeout or auto-activation. Activating scene.");
+                        operation.allowSceneActivation = true;
+                    }
+                }
+
+                timer += Time.deltaTime;
+                yield return null;
+            }
+        }
+    }
 }

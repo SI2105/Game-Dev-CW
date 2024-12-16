@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ccc85add18994f0479bf8a3beded1d81
+timeCreated: 1474812042
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 72345
+  packageName: Treasure Set - Free Chest
+  packageVersion: 1.0
+  assetPath: Assets/ChestFree/Materials/gold.mat
+  uploadId: 138793

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ffd3e66d4df2a554fb995d41f7ffe4c2
+timeCreated: 1474812236
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 72345
+  packageName: Treasure Set - Free Chest
+  packageVersion: 1.0
+  assetPath: Assets/ChestFree/chest_close.prefab
+  uploadId: 138793

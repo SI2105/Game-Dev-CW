@@ -50,7 +50,7 @@ public class PCG_Generator : MonoBehaviour
 
     private MazeCell[,] _mazeGrid;
 
-    IEnumerator Start()
+    void Start()
     {
     _mazeGrid = new MazeCell[_mazeWidth, _mazeDepth];
 
@@ -94,7 +94,7 @@ public class PCG_Generator : MonoBehaviour
     ConnectRooms();
 
     // Start generating the maze
-    yield return GenerateMaze(null, _mazeGrid[0, 0]);
+    GenerateMaze(null, _mazeGrid[0, 0]);
     }
 
 
@@ -202,13 +202,13 @@ public class PCG_Generator : MonoBehaviour
 
 
 
-    private IEnumerator GenerateMaze(MazeCell previousCell, MazeCell currentCell)
+    private void GenerateMaze(MazeCell previousCell, MazeCell currentCell)
     {
         if (!(currentCell.IsVisited && currentCell.IsRoom)){
             currentCell.Visit();
             ClearWalls(previousCell, currentCell);
 
-            yield return new WaitForSeconds(0.05f);
+            
 
             MazeCell nextCell;
 
@@ -218,7 +218,7 @@ public class PCG_Generator : MonoBehaviour
 
                 if (nextCell != null)
                 {
-                    yield return GenerateMaze(currentCell, nextCell);
+                    GenerateMaze(currentCell, nextCell);
                 }
             } while (nextCell != null);
         }

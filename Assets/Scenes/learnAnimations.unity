@@ -186,7 +186,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c4b28d49604fb014cb573463a0668313, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -249,7 +249,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bc464daab5e33924ebad7edda81feb7c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bc464daab5e33924ebad7edda81feb7c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -515,7 +515,7 @@ Transform:
   m_GameObject: {fileID: 533165705}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0000000055879354, y: 1.6069999, z: 0.17199998}
+  m_LocalPosition: {x: -0.0000000055879354, y: 1.6069999, z: 0.17199993}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -798,7 +798,7 @@ MonoBehaviour:
   sprintMaxVelocityZ: 2
   sprintMaxVelocityX: 2
   idleTransform: {fileID: 1078997684}
-  cameraTransform: {fileID: 1607257906}
+  cameraTransform: {fileID: 0}
   rotationSpeed: 2
   verticalRotationSpeed: 180
   smoothRotationTime: 0.1
@@ -922,6 +922,8 @@ GameObject:
   - component: {fileID: 1607257906}
   - component: {fileID: 1607257905}
   - component: {fileID: 1607257904}
+  - component: {fileID: 1607257907}
+  - component: {fileID: 1607257908}
   m_Layer: 0
   m_Name: Virtual Camera
   m_TagString: Untagged
@@ -993,13 +995,41 @@ Transform:
   m_GameObject: {fileID: 1607257903}
   serializedVersion: 2
   m_LocalRotation: {x: 0.16868722, y: 0.000022079505, z: -0.0001290145, w: 0.9856697}
-  m_LocalPosition: {x: -0.0000000055879354, y: 1.6069999, z: 0.17199998}
+  m_LocalPosition: {x: -0.0000000055879354, y: 1.6069999, z: 0.17199993}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1944635837}
   m_Father: {fileID: 241034892}
   m_LocalEulerAnglesHint: {x: 19.423, y: 0, z: -0.015}
+--- !u!114 &1607257907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1607257903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43b25b0198d128a478667582fd741d9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  virtualCamera: {fileID: 1607257905}
+--- !u!114 &1607257908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1607257903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44d70cc20219cd84593f67d248eafe36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Offset: {x: 0, y: 0, z: 0}
+  m_ApplyAfter: 1
+  m_PreserveComposition: 0
 --- !u!1 &1944635836
 GameObject:
   m_ObjectHideFlags: 3
@@ -1012,6 +1042,7 @@ GameObject:
   - component: {fileID: 1944635840}
   - component: {fileID: 1944635839}
   - component: {fileID: 1944635838}
+  - component: {fileID: 1944635841}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -1087,7 +1118,7 @@ MonoBehaviour:
   m_HorizontalAxis:
     Value: 0
     m_SpeedMode: 0
-    m_MaxSpeed: 100
+    m_MaxSpeed: 180
     m_AccelTime: 0
     m_DecelTime: 0
     m_InputAxisName: Mouse X
@@ -1121,6 +1152,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1944635841
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1944635836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NoiseProfile: {fileID: 0}
+  m_PivotOffset: {x: 0, y: 0, z: 0}
+  m_AmplitudeGain: 1
+  m_FrequencyGain: 1
+  mNoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &1950505838
 GameObject:
   m_ObjectHideFlags: 0
@@ -1172,8 +1220,8 @@ SceneRoots:
   m_Roots:
   - {fileID: 417054506}
   - {fileID: 1327991265}
+  - {fileID: 241034890}
   - {fileID: 1392100993}
   - {fileID: 827096353}
   - {fileID: 1950505840}
   - {fileID: 185840165}
-  - {fileID: 241034890}

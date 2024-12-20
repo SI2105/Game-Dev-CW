@@ -63,27 +63,27 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        Debug.Log(iss);
+        
     }
     private void OnJumpPerformed(InputAction.CallbackContext context)
     {
         if (isGrounded && canUseStamina)
         {
-            Debug.Log("Jump input detected");
+           
             Jump();
         }
     }
 
     private void OnSprintStarted(InputAction.CallbackContext context)
     {
-        Debug.Log("sprint started");
+       
         iss = context.started || context.performed;
         StartSprint();
     }
 
     private void OnSprintCanceled(InputAction.CallbackContext context)
     {
-        Debug.Log("sprint stopped");
+       
         StopSprint();
     }
     
@@ -167,13 +167,13 @@ public class PlayerController : MonoBehaviour
     //toggles the pause state of the game
       void TogglePause()
     {
-        Debug.Log("pausing");
+        
         //toggle the pause state of the game
         isPaused = !isPaused;
 
         if (isPaused)
         {
-            Debug.Log("paused");
+            
             //set the paused screen which is gray
             playerATH.PauseScreen();
             PauseGame();
@@ -231,8 +231,7 @@ public class PlayerController : MonoBehaviour
 
         // Creates the movement vector
         Vector3 movement = (right * movementX + forward * movementY) * currSpeed;
-        Debug.Log("current speed" + currSpeed);
-
+       
         // if a movement is currently happening it updates the velocity with current values
         if (movement.magnitude > 0){
             rb.velocity = new Vector3(movement.x, rb.velocity.y, movement.z);
@@ -253,7 +252,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void StartSprint(){
-        Debug.Log("sprint started");
+        
 
         if (canUseStamina){
             isSprinting = true;
@@ -325,7 +324,7 @@ public class PlayerController : MonoBehaviour
 
         if (currStamina == 0f && canUseStamina)
         {
-            Debug.Log("Starting stamina cooldown");
+          
             StartCoroutine(RecoverStaminaCooldown());
         }
         playerATH.UpdateStaminaBar(currStamina, maxStamina); // Update UI
@@ -340,7 +339,7 @@ public class PlayerController : MonoBehaviour
         {
             currStamina += amount;
             currStamina = Mathf.Min(currStamina, maxStamina);
-            Debug.Log($"Stamina recovering: {currStamina}/{maxStamina}");
+           
         }
 
         playerATH.UpdateStaminaBar(currStamina, maxStamina);

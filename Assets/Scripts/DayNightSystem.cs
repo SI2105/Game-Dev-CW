@@ -9,6 +9,8 @@ public class DayNightSystem : MonoBehaviour
 
     private float blended_value = 0.0f;
 
+    public WeatherSystem weatherSystem;
+
     // Update is called once per frame
     void Update()
     {
@@ -19,8 +21,11 @@ public class DayNightSystem : MonoBehaviour
         // Change the direction of the light based on the current time of day
         directionalLight.transform.rotation = Quaternion.Euler(new Vector3((currentTimeOfDay / TimeManager.Instance.DayDurationInSeconds * 360) - 90, 170, 0));
 
-        // Change the material of the sky based on the current hour
-        ChangeSkyMaterial(currentHour);
+
+        if(weatherSystem.isSpecialWeather ==false){
+            // Change the material of the sky based on the current hour
+            ChangeSkyMaterial(currentHour);
+        }
     }
 
     private void ChangeSkyMaterial(int currentHour)

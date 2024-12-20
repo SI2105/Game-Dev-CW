@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,20 @@ public class TimeManager : MonoBehaviour
 {
     public static TimeManager Instance { get; set; }
 
+    public enum SeasonOfYear{
+        Spring,
+        Summer,
+        Fall,
+        Winter
+    }
+
+    public SeasonOfYear currentSeasonOfYear = SeasonOfYear.Spring;
+
+    public event Action OnDayPass;
+
+    public int numberOfDaysPerSeasonOfYear = 30;
+
+    public int currentSeasonOfYearDay = 1;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -56,8 +71,19 @@ public class TimeManager : MonoBehaviour
     public void TransitionNextDay()
     {
         Day += 1;
+        currentSeasonOfYearDay+=1;
+
+        //transition to the next season of year
+        if (currentSeasonOfYearDay> numberOfDaysPerSeasonOfYear){
+            int seasonIndex = (int)currentSeasonOfYear;
+            int nextSeasonIndex = (seasonIndex + 1)%4;
+            currentSeasonOfYear = (SeasonOfYear)nextSeasonIndex;
+            currentSeasonOfYearDay=0;
+        }
         CurrentTimeOfDay = 0.0f;
         CurrentHour = 0;
+
+        OnDayPass?.Invoke();
         Debug.Log("Transitioned to Day " + Day);
     }
 

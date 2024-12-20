@@ -24,7 +24,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _AtmosphereTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 8900000, guid: 3fae50b43e995464ea117752bb101d03, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -64,7 +64,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpaceTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 8900000, guid: 8b5838ec1654b4c1e8797419cb94bbcd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -83,7 +83,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _TransitionFactor: 0
+    - _TransitionFactor: 0.96021205
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:

@@ -204,22 +204,24 @@ public class PCG_Generator : MonoBehaviour
 
     private void GenerateMaze(MazeCell previousCell, MazeCell currentCell)
     {
-        if (currentCell.IsVisited || currentCell.IsRoom) return; // Skip already visited or room cells
+        if (!(currentCell.IsVisited && currentCell.IsRoom)){
+            currentCell.Visit();
+            ClearWalls(previousCell, currentCell);
 
-        currentCell.Visit();
-        ClearWalls(previousCell, currentCell);
+            
 
-        MazeCell nextCell;
+            MazeCell nextCell;
 
-        do
-        {
-            nextCell = GetNextUnvisitedCell(currentCell);
-
-            if (nextCell != null)
+            do
             {
-                GenerateMaze(currentCell, nextCell);
-            }
-        } while (nextCell != null);
+                nextCell = GetNextUnvisitedCell(currentCell);
+
+                if (nextCell != null)
+                {
+                    GenerateMaze(currentCell, nextCell);
+                }
+            } while (nextCell != null);
+        }
     }
 
 

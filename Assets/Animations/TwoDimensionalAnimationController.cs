@@ -5,43 +5,80 @@ using UnityEngine.InputSystem;
 
 public class TwoDimensionalAnimationController : MonoBehaviour
 {
+   #region Animator Variables
     private Animator animator;
-    private Vector2 moveInput; // Stores movement input
+    private Vector2 moveInput;
     private int VelocityZHash;
     private int VelocityXHash;
-    private bool isSprinting; // Tracks sprint state
-    private GameDevCW inputActions; // Input Actions asset reference
+    private int isJumpingHash;
+    private int isRunningHash;
+    private int isWalkingHash;
+    private int isIdleHash;
+    #endregion
+
+    #region Player State Variables
+    private bool isSprinting;
+    private bool isWalking;
+    private bool isIdle;
+    private bool isJumping;
+    private bool isRunning;
+
+    #endregion
+
+    #region Physics and Ground Detection
+    public Transform groundCheck;
+    public LayerMask groundLayer;
+    private bool isGrounded;
+    private bool wasGrounded;
+    private Vector2 jumpMovement;
+    #endregion
+
+    #region Input Actions
+    private GameDevCW inputActions;
+    bool forwardPressed = false;
+    bool backwardPressed = false;
+    bool leftPressed = false;
+    bool rightPressed = false;
+    #endregion
+
+    #region Velocity Variables
     float velocityZ = 0.0f;
     float velocityX = 0.0f;
-    
+    #endregion
+
+    #region Look Input and Rotation Variables
     private Vector2 lookInput;
     private float verticalRotation = 10f;
-    public float acceleration = 2f;
-    public float deceleration = 2f;
-
-    // Define maximum velocities
-    public float maxVelocityZ = 1.0f;
-    public float maxVelocityX = 1.0f;
-    public float sprintMaxVelocityZ = 2.0f;
-    public float sprintMaxVelocityX = 2.0f;
-
-    // Camera movement
-    [Header("References")]
-    [SerializeField] private Transform idleTransform;
-    [SerializeField] private Transform cameraTransform;
-    
-    [Header("Rotation Settings")]
-    [SerializeField] private float rotationSpeed = 10f;         // Significantly increased
-    [SerializeField] private float verticalRotationSpeed = 180f; // Separate speed for vertical
-    [SerializeField] private float smoothRotationTime = 0.05f;   // Reduced for responsiveness
-    [SerializeField] private float inputSmoothTime = 0.02f;      // Reduced for faster input
-    [SerializeField] private float mouseSensitivity = 2.0f;      // Added sensitivity multiplier // Added to control acceleration
-    
     private Vector2 smoothedLookInput;
     private Vector2 lookInputVelocity;
     private float currentRotationVelocity;
     private float targetRotation;
     private float lastTargetRotation;
+    #endregion
+
+    #region Movement Settings
+    public float acceleration = 2f;
+    public float deceleration = 2f;
+
+    public float maxVelocityZ = 1.0f;
+    public float maxVelocityX = 1.0f;
+    public float sprintMaxVelocityZ = 2.0f;
+    public float sprintMaxVelocityX = 2.0f;
+    #endregion
+
+    #region Camera Settings
+    [Header("References")]
+    [SerializeField] private Transform idleTransform;
+    [SerializeField] private Transform cameraTransform;
+
+    [Header("Rotation Settings")]
+    [SerializeField] private float rotationSpeed = 10f;
+    [SerializeField] private float verticalRotationSpeed = 180f;
+    [SerializeField] private float smoothRotationTime = 0.05f;
+    [SerializeField] private float inputSmoothTime = 0.02f;
+    [SerializeField] private float mouseSensitivity = 2.0f;
+    #endregion
+
 
     private void Awake()
     {
@@ -54,6 +91,9 @@ public class TwoDimensionalAnimationController : MonoBehaviour
         inputActions.Player.Look.performed += HandleLook;
         inputActions.Player.Look.canceled += HandleLook;
 
+        inputActions.Player.Jump.performed += HandleJump;
+        inputActions.Player.Jump.canceled += HandleJump;
+
         // Subscribe to the Sprint action's performed and canceled events
         inputActions.Player.Sprint.performed += ctx => isSprinting = true;
         inputActions.Player.Sprint.canceled += ctx => isSprinting = false;
@@ -64,13 +104,89 @@ public class TwoDimensionalAnimationController : MonoBehaviour
         animator = GetComponent<Animator>();
         VelocityZHash = Animator.StringToHash("VelocityZ");
         VelocityXHash = Animator.StringToHash("VelocityX");
+        isWalkingHash = Animator.StringToHash("isWalking");
+        isIdleHash = Animator.StringToHash("isIdle");
+        isRunningHash = Animator.StringToHash("isRunning");
+        isJumpingHash = Animator.StringToHash("isJumping");
+
         if (idleTransform == null)
             idleTransform = transform;
                     
         if (cameraTransform == null && Camera.main != null)
             cameraTransform = Camera.main.transform;
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    private void Update()
+    {
+        HandleRotation();
+        Movement(); // Update movement based on input and sprint state
+        // UpdateAnimatorParameters();
+        float speed = Mathf.Abs(rb.velocity.x);
+        forwardPressed = moveInput.y > 0;
+        leftPressed = moveInput.x < 0;
+        rightPressed = moveInput.x > 0;
+        backwardPressed = moveInput.y < 0;
+
+        isWalking = forwardPressed || leftPressed || rightPressed || backwardPressed;
+        isRunning = isGrounded && isSprinting;
+        isIdle = !forwardPressed && !leftPressed && !rightPressed && !backwardPressed;
+
+        Debug.Log($"walking {isWalking}");
+        animator.SetBool(isIdleHash, isIdle);
+        animator.SetBool(isWalkingHash, isWalking);
+        animator.SetBool(isRunningHash, isRunning);
+        animator.SetBool(isIdleHash, isIdle);
+
+        if (isGrounded && !wasGrounded)
+        {
+            OnLand();
+            Debug.Log("Player landed. Setting isJumping to false.");
+        }
+        else if (!isGrounded && wasGrounded)
+        {
+            Debug.Log("Player is now airborne.");
+        }
+        wasGrounded = isGrounded;
+    }
+
+    private void HandleJump(InputAction.CallbackContext context)
+    {
+        if (context.performed && isGrounded)
+        {
+            Debug.Log("Jump input detected");
+            isJumping = true;
+            Jump();
+            animator.SetBool(isJumpingHash, isJumping);
+        }
+        else if (context.canceled)
+        {
+            // Don't set isJumping to false here - let OnLand handle that
+            animator.SetBool(isJumpingHash, false);
+            Debug.Log("Jump button released");
+        }
+    }
+
+    private void Jump()
+    {
+        // Apply upward force to Rigidbody
+        rb.AddForce(new Vector3(0, jumpMovement.y), ForceMode.Impulse);
+
+        // Set isJumping to true
+        Debug.Log($"Player jumped. Setting isJumping to {isJumping}");
+    }
+
+    private void OnLand()
+    {
+        if (!isGrounded)
+            return;
+
+        // Reset jumping state
+        isJumping = false;
+        Debug.Log($"Player landed. Setting isJumping to {isJumping}");
+        animator.SetBool(isJumpingHash, false);
     }
 
     private void OnEnable()
@@ -86,6 +202,52 @@ public class TwoDimensionalAnimationController : MonoBehaviour
     /// <summary>
     /// Updates the animation state based on player input and sprint state.
     /// </summary>
+
+    private void UpdateAnimatorParameters(){
+        
+    }
+
+    private int groundContacts = 0;
+
+    private void OnCollisionStay(Collision collision)
+    {
+        bool foundValidGround = false;
+        // Check if the collided object is on the ground layer
+        foreach (ContactPoint contact in collision.contacts)
+        {
+            Debug.Log($"Contact Point: {contact.point}, Normal: {contact.normal}, Player Y: {transform.position.y}");
+            if (contact.normal.y > 0.1f)  // Reduced threshold to be more forgiving
+            {
+                foundValidGround = true;
+                groundContacts++;
+                Debug.Log($"Ground detected! Contact count: {groundContacts}");
+                break;  // Exit loop once we find valid ground
+            }
+        }
+        
+        if (foundValidGround)
+        {
+            isGrounded = true;
+        }
+        else
+        {
+            Debug.Log("No valid ground contact found.");
+            groundContacts = 0;
+            isGrounded = false;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        groundContacts = Mathf.Max(groundContacts - 1, 0);
+        Debug.Log($"Collision exit - Remaining contacts: {groundContacts}");
+        if (groundContacts == 0)
+        {
+            isGrounded = false;
+            Debug.Log("No more ground contacts - Player is airborne");
+        }
+    }
+
 
     private void HandleRotation()
     {
@@ -129,22 +291,7 @@ public class TwoDimensionalAnimationController : MonoBehaviour
         idleTransform.rotation = Quaternion.Euler(0f, currentRotationY, 0f);
     }
 
-
-    // public void OnLook(Vector2 input)
-    // {
-    //     lookInput = value.Get<Vector2>();
-    // }   
-
-    private void Update()
-    {
-        // Detect input directions
-        bool forwardPressed = moveInput.y > 0;
-        bool leftPressed = moveInput.x < 0;
-        bool rightPressed = moveInput.x > 0;
-        bool backwardPressed = moveInput.y < 0;
-        bool isRunning = isSprinting;
-
-        HandleRotation();
+    private void Movement(){
         // Determine current maximum velocities based on sprinting
         float currentMaxVelocityZ = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
         float currentMaxVelocityX = isRunning ? sprintMaxVelocityX : maxVelocityX;
@@ -230,6 +377,13 @@ public class TwoDimensionalAnimationController : MonoBehaviour
         animator.SetFloat(VelocityXHash, velocityX);
     }
 
+    // public void OnLook(Vector2 input)
+    // {
+    //     lookInput = value.Get<Vector2>();
+    // }   
+
+
+
     [SerializeField] private Rigidbody rb; // Rigidbody reference
 
     private void LateUpdate()
@@ -264,8 +418,8 @@ public class TwoDimensionalAnimationController : MonoBehaviour
         Debug.Log($"Move Direction: {moveDirection}, VelocityX: {velocityX}, VelocityZ: {velocityZ}");
 
         // Update the animator with the current velocities
-        animator.SetFloat(VelocityZHash, velocityZ);
-        animator.SetFloat(VelocityXHash, velocityX);
+        //animator.SetFloat(VelocityZHash, velocityZ);
+        //animator.SetFloat(VelocityXHash, velocityX);
     }
 
 

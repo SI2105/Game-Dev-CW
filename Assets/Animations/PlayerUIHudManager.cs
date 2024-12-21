@@ -7,8 +7,8 @@ namespace SG
     {
         [Header("Stamina UI")]
         public Slider staminaBar;
-        public Text staminaText;
 
+        [Header("Player Reference")]
         private PlayerAttributesManager attributesManager;
 
         private void Awake()
@@ -16,18 +16,25 @@ namespace SG
             attributesManager = GetComponentInParent<PlayerAttributesManager>();
         }
 
-        private void Update()
-        {
-            UpdateStaminaUI();
-        }
-
-        private void UpdateStaminaUI()
+        private void OnEnable()
         {
             if (attributesManager != null)
             {
-                staminaBar.value = attributesManager.CurrentStamina / attributesManager.MaxStamina;
-                staminaText.text = $"{Mathf.RoundToInt(attributesManager.CurrentStamina)} / {Mathf.RoundToInt(attributesManager.MaxStamina)}";
+                attributesManager.OnStaminaChanged += UpdateStaminaUI;
             }
+        }
+
+        private void OnDisable()
+        {
+            if (attributesManager != null)
+            {
+                attributesManager.OnStaminaChanged -= UpdateStaminaUI;
+            }
+        }
+
+        private void UpdateStaminaUI(float currentStamina, float maxStamina)
+        {
+            staminaBar.value = currentStamina;
         }
     }
 }

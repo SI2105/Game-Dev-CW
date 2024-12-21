@@ -1,16 +1,15 @@
 using System.Collections;
 using UnityEngine;
-
+using System;
 namespace SG
 {
     public class PlayerAttributesManager : MonoBehaviour
     {
-        #region Core Attributes
         public float MaxHealth { get; set; } = 100f;
-        public float CurrentHealth { get; set; } = 100f;
         public float HealthRegenRate { get; set; } = 10f;
         public float MaxStamina { get; set; } = 100f;
         public float StaminaCostPerSecond { get; set; } = 25f;
+        public float StaminaRegenRate { get; set; } = 15f;
         private float currentStamina;
         public float CurrentStamina
         {
@@ -22,25 +21,100 @@ namespace SG
             }
         }
 
-        public float StaminaRegenRate { get; set; } = 15f;
-        #endregion
+        private float currentHealth;
+        public float CurrentHealth
+        {
+            get => currentHealth;
+            set
+            {
+                currentHealth = Mathf.Clamp(value, 0, MaxHealth);
+                OnHealthChanged?.Invoke(currentHealth, MaxHealth);
+            }
+        }
 
-        #region Methods for Stamina
         public delegate void StaminaChangedHandler(float currentStamina, float maxStamina);
         public event StaminaChangedHandler OnStaminaChanged;
 
-        private bool isRecoveringStamina = true;
-        private Coroutine staminaRecoveryCoroutine;
+        public delegate void HealthChangedHandler(float currentHealth, float maxHealth);
+        public event HealthChangedHandler OnHealthChanged;
+
+        private Coroutine recoveryCoroutine;
+
+        private void Awake()
+        {
+            currentStamina = MaxStamina;
+            currentHealth = MaxHealth;
+        }
+
+        public void ModifyResource(
+            Func<float> getCurrentResource,
+            Action<float> setCurrentResource,
+            float maxResource,
+            float changeAmount,
+            float regenRate,
+            float delay,
+            System.Action onStopRecovery = null,
+            System.Action onStartRecovery = null)
+        {
+            // Adjust resource value
+            float newValue = Mathf.Clamp(getCurrentResource() + changeAmount, 0, maxResource);
+            setCurrentResource(newValue);
+
+            // Stop any ongoing recovery
+            if (recoveryCoroutine != null)
+            {
+                StopCoroutine(recoveryCoroutine);
+                recoveryCoroutine = null;
+            }
+
+            onStopRecovery?.Invoke();
+
+            // Start recovery after delay
+            if (changeAmount < 0 && regenRate > 0)
+            {
+                recoveryCoroutine = StartCoroutine(RecoveryCoroutine(getCurrentResource, setCurrentResource, maxResource, regenRate, delay, onStartRecovery));
+            }
+        }
+
+        private IEnumerator RecoveryCoroutine(System.Func<float> getResource, System.Action<float> setResource, float maxResource, float regenRate, float delay, System.Action onStartRecovery)
+        {
+            // Wait for the delay
+            yield return new WaitForSeconds(delay);
+
+            onStartRecovery?.Invoke();
+
+            // Gradually recover the resource
+            while (getResource() < maxResource)
+            {
+                setResource(Mathf.Min(getResource() + regenRate * Time.deltaTime, maxResource));
+                yield return null;
+            }
+
+            recoveryCoroutine = null;
+        }
+
         public bool UseStamina(float amount)
         {
             if (CurrentStamina >= amount)
             {
+                // Stop any existing recovery
+                if (recoveryCoroutine != null)
+                {
+                    StopCoroutine(recoveryCoroutine);
+                    recoveryCoroutine = null;
+                }
+
                 // Deduct stamina
-                CurrentStamina -= amount;
-                // Stop recovery temporarily
-                StopStaminaRecovery();
-                // Delay recovery by 2 seconds
-                StartStaminaRecoveryWithDelay(2f);
+                ModifyResource(
+                    () => currentStamina,
+                    value => CurrentStamina = value,
+                    MaxStamina,
+                    -amount,
+                    StaminaRegenRate,
+                    2f,
+                    () => {},
+                    null  // Don't start a new coroutine in the callback
+                );
 
                 return true;
             }
@@ -48,64 +122,67 @@ namespace SG
             return false;
         }
 
-        private void Awake()
+        public bool TakeDamage(float damage)
         {
-            currentStamina = MaxStamina;  // Make sure it starts at max
-        }
-        private void StartStaminaRecoveryWithDelay(float delay)
-        {
-            if (staminaRecoveryCoroutine != null)
+            if (currentHealth > 0)
             {
-                StopCoroutine(staminaRecoveryCoroutine);
-            }
-            staminaRecoveryCoroutine = StartCoroutine(StaminaRecoveryCoroutine(delay));
-        }
+                // Deduct health
+                ModifyResource(
+                    () => currentHealth,
+                    value => CurrentHealth = value,
+                    MaxHealth,
+                    -damage,
+                    0f, // No health regeneration rate here (set to 0 if you don’t want auto-regen)
+                    0f, // No delay for health regen (set a delay if regen is required)
+                    null, // No recovery stop callback for health damage
+                    null  // No recovery start callback for health damage
+                );
 
-        public void StartStaminaRecovery()
-        {
-            StartStaminaRecoveryWithDelay(0f);
-        }
-
-
-       private IEnumerator StaminaRecoveryCoroutine(float delay)
-       {
-            // Wait for the delay before starting recovery
-            yield return new WaitForSeconds(delay);
-
-            // Recover stamina over time
-            while (CurrentStamina < MaxStamina)
-            {
-                CurrentStamina += StaminaRegenRate * Time.deltaTime;
-
-                // Debug log for tracking recovery
-
-                yield return null; // Wait for the next frame
+                // Return true to indicate damage was successfully taken
+                return true;
             }
 
-            staminaRecoveryCoroutine = null; // Recovery is complete
+            // Return false if the player is already at 0 health
+            return false;
         }
 
         private void StopStaminaRecovery()
         {
-            if (staminaRecoveryCoroutine != null)
+            if (recoveryCoroutine != null)
             {
-                StopCoroutine(staminaRecoveryCoroutine);
-                staminaRecoveryCoroutine = null;
+                StopCoroutine(recoveryCoroutine);
+                recoveryCoroutine = null;
             }
+            Debug.Log("Stamina recovery manually interrupted. Ongoing recovery halted.");
         }
 
-        public void SetMaxStaminaBasedOnEndurance()
+        private void StartStaminaRecovery()
         {
-            MaxStamina = CalculateStaminaBasedOnEnduranceLevel(Endurance);
-            CurrentStamina = Mathf.Min(CurrentStamina, MaxStamina);
+            if (currentStamina < MaxStamina)
+            {
+                recoveryCoroutine = StartCoroutine(RecoveryCoroutine(() => currentStamina, v => CurrentStamina = v, MaxStamina, StaminaRegenRate, 0f, null));
+            }
+            Debug.Log("Starting stamina recovery process now.");
         }
 
-        public float CalculateStaminaBasedOnEnduranceLevel(float endurance)
+        private void StopHealthRecovery()
         {
-            return endurance * 10f; // Example: Each point of Endurance gives 10 stamina
+            if (recoveryCoroutine != null)
+            {
+                StopCoroutine(recoveryCoroutine);
+                recoveryCoroutine = null;
+            }
+            Debug.Log("Health recovery manually interrupted. Ongoing recovery halted.");
         }
-        #endregion
 
+        private void StartHealthRecovery()
+        {
+            if (currentHealth < MaxHealth)
+            {
+                recoveryCoroutine = StartCoroutine(RecoveryCoroutine(() => currentHealth, v => CurrentHealth = v, MaxHealth, HealthRegenRate, 0f, null));
+            }
+            Debug.Log("Starting health recovery process now.");
+        }
         #region Exploration and Survival Attributes
         public float TorchFuel { get; set; } = 100f;
         public float MaxTorchFuel { get; set; } = 100f;

@@ -7,6 +7,7 @@ namespace SG
     {
         [Header("Stamina UI")]
         public Slider staminaBar;
+        public Slider healthBar;
 
         [Header("Player Reference")]
         private PlayerAttributesManager attributesManager;
@@ -21,6 +22,7 @@ namespace SG
             if (attributesManager != null)
             {
                 attributesManager.OnStaminaChanged += UpdateStaminaUI;
+                attributesManager.OnHealthChanged += UpdateHealthUI;
             }
         }
 
@@ -29,12 +31,18 @@ namespace SG
             if (attributesManager != null)
             {
                 attributesManager.OnStaminaChanged -= UpdateStaminaUI;
+                attributesManager.OnHealthChanged -= UpdateHealthUI;
             }
         }
 
         private void UpdateStaminaUI(float currentStamina, float maxStamina)
         {
             staminaBar.value = currentStamina;
+        }
+
+        private void UpdateHealthUI(float currentHealth, float maxHealth)
+        {
+            healthBar.value = currentHealth;
         }
     }
 }

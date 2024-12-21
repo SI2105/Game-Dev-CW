@@ -221,6 +221,7 @@ namespace SG{
 
         private void OnCollisionStay(Collision collision)
         {
+
             bool foundValidGround = false;
             // Check if the collided object is on the ground layer
             foreach (ContactPoint contact in collision.contacts)

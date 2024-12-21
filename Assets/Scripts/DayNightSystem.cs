@@ -6,34 +6,44 @@ public class DayNightSystem : MonoBehaviour
 {
     public enum TimeOfDay
     {
-            Sunrise,
-            Day,
-            Sunset,
-            Night
+        Sunrise,
+        Day,
+        Sunset,
+        Night
     }
-
-
 
     public Light directionalLight;
     public List<SkyboxMapping> timeMapping;
+
+    public SkyboxTransitionManager skyboxTransitionManager;
 
     private float blended_value = 0.0f;
 
     public WeatherSystem weatherSystem;
 
-     // Backing field for currentTimeOfDay
     [SerializeField]
     private TimeOfDay _currentTimeOfDay;
 
-    // Current TimeOfDay with property access
+    private TimeOfDay previousTimeOfDay; // Keep track of the previous time of day
+
     public TimeOfDay currentTimeOfDay
     {
         get => _currentTimeOfDay;
         set => _currentTimeOfDay = value;
     }
 
-
     public int currentHour;
+
+    void Start()
+    {
+        // Initialize the previousTimeOfDay to Night
+        previousTimeOfDay = TimeOfDay.Night;
+        currentTimeOfDay = TimeOfDay.Night;
+
+        // Set the initial skybox material to the night material
+        SetInitialNightSkybox();
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -41,31 +51,38 @@ public class DayNightSystem : MonoBehaviour
         float currentTimeOfDay = TimeManager.Instance.CurrentTimeOfDay;
         currentHour = TimeManager.Instance.CurrentHour;
 
-          // Update the TimeOfDay enum based on the hour
+        // Update the TimeOfDay enum based on the hour
         UpdateTimeOfDay(currentHour);
 
         // Change the direction of the light based on the current time of day
         directionalLight.transform.rotation = Quaternion.Euler(new Vector3((currentTimeOfDay / TimeManager.Instance.DayDurationInSeconds * 360) - 90, 170, 0));
 
+        if (!weatherSystem.isSpecialWeather)
+        {
+            // Check if the time of day has changed
+            if (previousTimeOfDay != this.currentTimeOfDay)
+            {
+                // Trigger a skybox material change
+                ChangeSkyMaterial(currentHour);
 
-        if(weatherSystem.isSpecialWeather ==false){
-            // Change the material of the sky based on the current hour
-            ChangeSkyMaterial(currentHour);
+                // Update the previousTimeOfDay to the current value
+                previousTimeOfDay = this.currentTimeOfDay;
+            }
         }
     }
 
     private void UpdateTimeOfDay(int currentHour)
     {
         // Determine the current time of day based on the hour
-        if (currentHour >=7 && currentHour <= 11)
+        if (currentHour >= 6 && currentHour < 11)
         {
             currentTimeOfDay = TimeOfDay.Sunrise;
         }
-        else if (currentHour >= 11 && currentHour <= 18)
+        else if (currentHour >= 11 && currentHour < 18)
         {
             currentTimeOfDay = TimeOfDay.Day;
         }
-        else if (currentHour >= 18 && currentHour <= 22)
+        else if (currentHour >= 18 && currentHour < 22)
         {
             currentTimeOfDay = TimeOfDay.Sunset;
         }
@@ -78,45 +95,65 @@ public class DayNightSystem : MonoBehaviour
     private void ChangeSkyMaterial(int currentHour)
     {
         // Retrieve the correct material for the current hour
-        Material currentSkybox = null;
+        Material newSkybox = null;
 
         foreach (SkyboxMapping mapping in timeMapping)
         {
-            // If the current hour matches the mapping hour, set the current skybox to the mapping skybox
+            // If the current hour matches the mapping hour, set the new skybox material
             if (currentHour == mapping.hour)
             {
-                currentSkybox = mapping.skyboxMaterial;
-
-                if (currentSkybox.shader != null)
-                {
-                    if (currentSkybox.shader.name == "Custom/SkyboxTransition")
-                    {
-                        blended_value += Time.deltaTime;
-                        blended_value = Mathf.Clamp01(blended_value);
-
-                        currentSkybox.SetFloat("_TransitionFactor", blended_value);
-                    }
-                    else
-                    {
-                        blended_value = 0.0f;
-                    }
-                }
-
+                newSkybox = mapping.skyboxMaterial;
                 break;
             }
         }
 
-        if (currentSkybox != null)
+        if (newSkybox != null)
         {
-            // Set the skybox material to the correct material
-            RenderSettings.skybox = currentSkybox;
+            // Get the current skybox material
+            Material currentSkybox = RenderSettings.skybox;
+
+            // Use the SkyboxTransitionManager for the transition
+            if (skyboxTransitionManager != null)
+            {
+                skyboxTransitionManager.StartTransition(currentSkybox, newSkybox, 5f); // Example duration: 5 seconds
+            }
+            else
+            {
+                Debug.LogError("SkyboxTransitionManager is not assigned in the Inspector!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"No skybox material found for hour {currentHour}");
+        }
+    }
+
+    private void SetInitialNightSkybox()
+    {
+        Material nightSkybox = null;
+
+        foreach (SkyboxMapping mapping in timeMapping)
+        {
+            if (mapping.phaseName == "Night")
+            {
+                nightSkybox = mapping.skyboxMaterial;
+                break;
+            }
+        }
+
+        if (nightSkybox != null)
+        {
+            RenderSettings.skybox = nightSkybox;
+        }
+        else
+        {
+            Debug.LogError("No skybox material found for the 'Night' phase!");
         }
     }
 }
 
 
 [System.Serializable]
-// Mapping class to map hour of day to skybox material
 public class SkyboxMapping
 {
     public string phaseName;

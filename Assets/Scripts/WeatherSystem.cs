@@ -32,6 +32,11 @@ public class WeatherSystem : MonoBehaviour
 
     public List<WeatherSystemMapping> weatherMappings;
 
+    // Reference to the AudioSource component
+    public AudioSource audioSource;
+
+    public SkyboxTransitionManager skyboxTransitionManager;
+
     public DayNightSystem dayNightSystem;
 
     private GameObject currentWeatherEffect=null;
@@ -88,7 +93,6 @@ public class WeatherSystem : MonoBehaviour
         // Store the original alpha value
         var main = particleSystem.main;
         float originalAlpha = main.startColor.color.a;
-      
 
         // Set initial alpha to 30 (normalized)
         float initialAlpha = 30f / 255f; // Convert to normalized range
@@ -100,6 +104,9 @@ public class WeatherSystem : MonoBehaviour
         color.a = initialAlpha;
         startColor.color = color;
         main.startColor = startColor;
+
+        // Store the initial audio volume
+        float initialVolume = audioSource != null ? audioSource.volume : 1f;
 
         float elapsedTime = 0f;
 
@@ -116,14 +123,27 @@ public class WeatherSystem : MonoBehaviour
             startColor.color = color;
             main.startColor = startColor;
 
-            Debug.LogError($"Alpha: {newAlpha * 255f}"); // Log in 0-255 range
+            // Gradually decrease audio volume
+            if (audioSource != null)
+            {
+                float volumeDecrementPerSecond = initialVolume / fadeDuration;
+                float newVolume = Mathf.Max(initialVolume - (volumeDecrementPerSecond * elapsedTime), 0f);
+                audioSource.volume = newVolume;
+
+                // Stop the audio clip if volume reaches 0
+                if (newVolume <= 0f && audioSource.isPlaying)
+                {
+                    audioSource.Stop();
+                }
+            }
 
             yield return null; // Wait for the next frame
         }
 
         // Deactivate the weather effect
         weatherEffect.SetActive(false);
-        
+        isSpecialWeather = false;
+        currentWeatherEffect = null;
 
         // Restore original alpha (if needed)
         var resetColor = main.startColor;
@@ -131,7 +151,14 @@ public class WeatherSystem : MonoBehaviour
         resetColorValue.a = originalAlpha;
         resetColor.color = resetColorValue;
         main.startColor = resetColor;
+
+        // Reset audio volume for future use
+        if (audioSource != null)
+        {
+            audioSource.volume = initialVolume;
+        }
     }
+
 
 
      private void HandleTimeOfDayChange()
@@ -162,27 +189,7 @@ public class WeatherSystem : MonoBehaviour
         }
     }
 
-     private void UpdateSkyboxMaterial()
-    {
-        
-
-        var selectedMapping = weatherMappings.Find(mapping => mapping.condition == currentCondition);
-       
-
-        DayNightSystem.TimeOfDay currentTimeOfDay = TimeManager.Instance.currentTimeOfDayEnum;
-        foreach (var timeOfDayMaterial in selectedMapping.skyboxMaterialList)
-        {
-            if (timeOfDayMaterial.timeOfDay == currentTimeOfDay)
-            {
-                RenderSettings.skybox = timeOfDayMaterial.material;
-                Debug.LogError(currentCondition);
-                Debug.LogError(currentTimeOfDay);
-                return;
-            }
-        }
-    }
-
-
+    
 
     private void GenerateRandomWeather()
     {
@@ -198,7 +205,7 @@ public class WeatherSystem : MonoBehaviour
 
             isSpecialWeather=true;
             WeatherSystemMapping selectedMapping = null;
-            remainingWeatherTimeOfDayChanges = Random.Range(4, 7); // Random duration in hours (4-6 inclusive)
+            remainingWeatherTimeOfDayChanges = Random.Range(3, 4); // Random duration in hours (4-6 inclusive)
 
             switch (currentCondition)
             {
@@ -251,7 +258,7 @@ public class WeatherSystem : MonoBehaviour
     }
 
 
-   private IEnumerator startEffect(WeatherSystemMapping selectedMapping)
+    private IEnumerator startEffect(WeatherSystemMapping selectedMapping)
     {
         // Wait for 1 second before proceeding
         yield return new WaitForSeconds(1f);
@@ -266,33 +273,53 @@ public class WeatherSystem : MonoBehaviour
         DayNightSystem.TimeOfDay currentTimeOfDay = dayNightSystem.currentTimeOfDay;
 
         // Apply the selected mapping (e.g., activate effects and set skybox)
-        Material skyboxMaterial = null;
+        Material newSkyboxMaterial = null;
 
         // Search for the matching TimeOfDayMaterial in the skyboxMaterialList
         foreach (var timeOfDayMaterial in selectedMapping.skyboxMaterialList)
         {
             if (timeOfDayMaterial.timeOfDay == currentTimeOfDay)
             {
-                skyboxMaterial = timeOfDayMaterial.material;
+                newSkyboxMaterial = timeOfDayMaterial.material;
                 break;
             }
         }
-        if (skyboxMaterial != null)
+
+        if (newSkyboxMaterial != null)
         {
-            RenderSettings.skybox = skyboxMaterial;
+            // Use SkyboxTransitionManager to transition to the new material
+            var currentSkyboxMaterial = RenderSettings.skybox;
+
+            if (skyboxTransitionManager != null)
+            {
+                skyboxTransitionManager.StartTransition(currentSkyboxMaterial, newSkyboxMaterial, 5f); // Example duration: 5 seconds
+            }
+            else
+            {
+                Debug.LogWarning("SkyboxTransitionManager is not set in the Inspector!");
+            }
         }
         else
         {
             Debug.LogWarning($"No skybox material found for TimeOfDay: {currentTimeOfDay}");
         }
 
-        // If the selected weather effect is not null, stop, clear and play it
+        // If the selected weather effect is not null, activate it
         if (selectedMapping.weatherEffect != null)
-        {
+        {   
+
+             // Wait for 1 second before proceeding
+            yield return new WaitForSeconds(6f);
             // Play the new weather effect
             selectedMapping.weatherEffect.SetActive(true);
 
-            // Optionally, you can assign this new effect to currentWeatherEffect if you need to manage it later
+             // Play the weather sound if available
+            if (selectedMapping.weatherSound != null && audioSource != null)
+            {
+                audioSource.clip = selectedMapping.weatherSound;
+                audioSource.Play();
+            }
+            // Optionally, assign this new effect to currentWeatherEffect
             currentWeatherEffect = selectedMapping.weatherEffect;
 
             Debug.Log("Selected weather effect is played");
@@ -303,6 +330,51 @@ public class WeatherSystem : MonoBehaviour
         }
     }
 
+    private void UpdateSkyboxMaterial()
+    {
+        // Find the selected mapping based on the current weather condition
+        var selectedMapping = weatherMappings.Find(mapping => mapping.condition == currentCondition);
+
+        if (selectedMapping == null)
+        {
+            Debug.LogWarning("No weather mapping found for the current condition.");
+            return;
+        }
+
+        // Get the current TimeOfDay
+        DayNightSystem.TimeOfDay currentTimeOfDay = TimeManager.Instance.currentTimeOfDayEnum;
+
+        Material newSkyboxMaterial = null;
+
+        // Find the skybox material for the current time of day
+        foreach (var timeOfDayMaterial in selectedMapping.skyboxMaterialList)
+        {
+            if (timeOfDayMaterial.timeOfDay == currentTimeOfDay)
+            {
+                newSkyboxMaterial = timeOfDayMaterial.material;
+                break;
+            }
+        }
+
+        if (newSkyboxMaterial != null)
+        {
+            // Use SkyboxTransitionManager to transition to the new material
+            var currentSkyboxMaterial = RenderSettings.skybox;
+
+            if (skyboxTransitionManager != null)
+            {
+                skyboxTransitionManager.StartTransition(currentSkyboxMaterial, newSkyboxMaterial, 5f); // Example duration: 5 seconds
+            }
+            else
+            {
+                Debug.LogWarning("SkyboxTransitionManager is not set in the Inspector!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"No skybox material found for TimeOfDay: {currentTimeOfDay}");
+        }
+    }
 
 
 
@@ -386,6 +458,7 @@ public class WeatherSystemMapping
     public WeatherSystem.WeatherCondition condition; // The weather condition (e.g., Rain, Sunny)
     public GameObject weatherEffect; // The visual effect for this condition
     public List<TimeOfDayMaterial> skyboxMaterialList; // List mapping TimeOfDay to skybox material
+    public AudioClip weatherSound; // The sound clip for this weather condition
 }
 
 [System.Serializable]

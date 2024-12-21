@@ -228,7 +228,7 @@ public class PCG_Generator : MonoBehaviour
     private MazeCell GetNextUnvisitedCell(MazeCell currentCell)
     {
         var unvisitedCells = GetUnvisitedCells(currentCell).ToList();
-        Debug.Log(unvisitedCells);
+        
 
         if (unvisitedCells.Count == 0)
             return null;

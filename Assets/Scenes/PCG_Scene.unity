@@ -180,7 +180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33092a7e27b224d77bb11276744368ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  probabilityOfRainSpring: 0.1
+  probabilityOfRainSpring: 1
   probabilityOfRainSummer: 0.1
   probabilityOfRainFall: 0.6
   probabilityOfRainWinter: 0.8
@@ -188,33 +188,33 @@ MonoBehaviour:
   probabilityOfSnowSummer: 0
   probabilityOfSnowFall: 0.5
   probabilityOfSnowWinter: 0.8
-  probabilityOfLightningSpring: 0.2
+  probabilityOfLightningSpring: 1
   probabilityOfLightningSummer: 0.1
   probabilityOfLightningFall: 0.6
   probabilityOfLightningWinter: 0.7
-  probabilityOfSandstormSpring: 0.4
+  probabilityOfSandstormSpring: 1
   probabilityOfSandstormSummer: 0.6
   probabilityOfSandstormFall: 0.1
   probabilityOfSandstormWinter: 0
-  probabilityOfFogSpring: 0.3
+  probabilityOfFogSpring: 1
   probabilityOfFogSummer: 0.1
   probabilityOfFogFall: 0.6
   probabilityOfFogWinter: 0.7
   weatherMappings:
   - condition: 1
-    weatherEffect: {fileID: 500661632}
+    weatherEffect: {fileID: 1752417295}
     skyboxMaterial: {fileID: 2100000, guid: b5a27fa4b11bfb24cbc6daff3802c229, type: 2}
   - condition: 2
-    weatherEffect: {fileID: 1373535169}
+    weatherEffect: {fileID: 1752417295}
     skyboxMaterial: {fileID: 2100000, guid: 0e51b3d2f16325549987d8d6070de3a1, type: 2}
   - condition: 4
     weatherEffect: {fileID: 1752417295}
     skyboxMaterial: {fileID: 2100000, guid: de1d750fefeeac642bf9b11a3978ccf5, type: 2}
   - condition: 3
-    weatherEffect: {fileID: 1982711066}
+    weatherEffect: {fileID: 1752417295}
     skyboxMaterial: {fileID: 2100000, guid: 8426cf3d3939a7d419671f3d5c269c0b, type: 2}
   - condition: 5
-    weatherEffect: {fileID: 333969275}
+    weatherEffect: {fileID: 1752417295}
     skyboxMaterial: {fileID: 2100000, guid: e0a21ebc98cee4e46bbae873ec0be703, type: 2}
   isSpecialWeather: 0
   currentCondition: 0
@@ -6373,7 +6373,7 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxes: 0
   RotationModule:
-    enabled: 1
+    enabled: 0
     x:
       serializedVersion: 2
       minMaxState: 0
@@ -10100,7 +10100,7 @@ MonoBehaviour:
   numberOfDaysPerSeasonOfYear: 30
   currentSeasonOfYearDay: 1
   day: 1
-  dayDurationInSeconds: 24
+  dayDurationInSeconds: 144
   currentHour: 0
   currentTimeOfDay: 0
 --- !u!4 &663476322
@@ -25988,7 +25988,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 20000
+    maxNumParticles: 10000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -26254,7 +26254,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 20000
+      scalar: 10000
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -26684,7 +26684,7 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxes: 0
   ColorModule:
-    enabled: 1
+    enabled: 0
     gradient:
       serializedVersion: 2
       minMaxState: 1

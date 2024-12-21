@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class WeatherSystem : MonoBehaviour
 {
 
@@ -33,9 +32,14 @@ public class WeatherSystem : MonoBehaviour
 
     public List<WeatherSystemMapping> weatherMappings;
 
+    public DayNightSystem dayNightSystem;
+
     private GameObject currentWeatherEffect=null;
 
     public bool isSpecialWeather = false;
+
+    private Dictionary<ParticleSystem, float> originalEmissionRates = new Dictionary<ParticleSystem, float>();
+
 
     public enum WeatherCondition
     {
@@ -48,12 +52,137 @@ public class WeatherSystem : MonoBehaviour
     }
 
     public WeatherCondition currentCondition = WeatherCondition.Sunny;
+    private int remainingWeatherTimeOfDayChanges = 0; // Tracks how many TimeOfDay changes are left for the current weather
+    private int bufferTimeOfDayChanges = 0; // Tracks how many TimeOfDay changes are left for the buffer period
+
 
     void Start()
     {
-        //subscribe to the event
-        TimeManager.Instance.OnDayPass += GenerateRandomWeather;
+        // Subscribe to the event
+        TimeManager.Instance.OnTimeOfDayChange += HandleTimeOfDayChange;
+
+        // Start with an initial buffer period using the existing StartBufferPeriod method
+        StartBufferPeriod();
     }
+
+
+    private void StartBufferPeriod()
+    {
+        // Set a random buffer duration between 5 to 8 TimeOfDay changes
+        bufferTimeOfDayChanges = Random.Range(2, 4);
+
+        // Gradually fade out the current weather effect
+        if (currentWeatherEffect != null)
+        {
+            StartCoroutine(FadeOutWeatherEffect(currentWeatherEffect));
+        }
+
+        Debug.Log($"Buffer period started for {bufferTimeOfDayChanges} TimeOfDay changes");
+    }
+
+   public IEnumerator FadeOutWeatherEffect(GameObject weatherEffect)
+    {
+        // Get the particle system
+        var particleSystem = weatherEffect.GetComponentInChildren<ParticleSystem>();
+
+        // Store the original alpha value
+        var main = particleSystem.main;
+        float originalAlpha = main.startColor.color.a;
+      
+
+        // Set initial alpha to 30 (normalized)
+        float initialAlpha = 30f / 255f; // Convert to normalized range
+        float fadeDuration = 20f;
+
+        // Set alpha to initial value
+        var startColor = main.startColor;
+        Color color = startColor.color;
+        color.a = initialAlpha;
+        startColor.color = color;
+        main.startColor = startColor;
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+
+            // Decrease alpha over time
+            float alphaDecrementPerSecond = initialAlpha / fadeDuration;
+            float newAlpha = Mathf.Max(initialAlpha - (alphaDecrementPerSecond * elapsedTime), 0f);
+
+            // Adjust alpha transparency
+            color.a = newAlpha;
+            startColor.color = color;
+            main.startColor = startColor;
+
+            Debug.LogError($"Alpha: {newAlpha * 255f}"); // Log in 0-255 range
+
+            yield return null; // Wait for the next frame
+        }
+
+        // Deactivate the weather effect
+        weatherEffect.SetActive(false);
+        
+
+        // Restore original alpha (if needed)
+        var resetColor = main.startColor;
+        Color resetColorValue = resetColor.color;
+        resetColorValue.a = originalAlpha;
+        resetColor.color = resetColorValue;
+        main.startColor = resetColor;
+    }
+
+
+     private void HandleTimeOfDayChange()
+    {
+        if (bufferTimeOfDayChanges > 0)
+        {
+            bufferTimeOfDayChanges--;
+            if (bufferTimeOfDayChanges <= 0)
+            {
+                GenerateRandomWeather();
+            }
+            return; // Wait until the buffer period ends
+        }
+
+        if (remainingWeatherTimeOfDayChanges > 0)
+        {
+            remainingWeatherTimeOfDayChanges--;
+
+            if (remainingWeatherTimeOfDayChanges <= 0)
+            {
+                StartBufferPeriod();
+            }
+        }
+
+        if (currentWeatherEffect != null){
+            // Update skybox material if there's an active weather effect
+            UpdateSkyboxMaterial();
+        }
+    }
+
+     private void UpdateSkyboxMaterial()
+    {
+        
+
+        var selectedMapping = weatherMappings.Find(mapping => mapping.condition == currentCondition);
+       
+
+        DayNightSystem.TimeOfDay currentTimeOfDay = TimeManager.Instance.currentTimeOfDayEnum;
+        foreach (var timeOfDayMaterial in selectedMapping.skyboxMaterialList)
+        {
+            if (timeOfDayMaterial.timeOfDay == currentTimeOfDay)
+            {
+                RenderSettings.skybox = timeOfDayMaterial.material;
+                Debug.LogError(currentCondition);
+                Debug.LogError(currentTimeOfDay);
+                return;
+            }
+        }
+    }
+
+
 
     private void GenerateRandomWeather()
     {
@@ -69,6 +198,7 @@ public class WeatherSystem : MonoBehaviour
 
             isSpecialWeather=true;
             WeatherSystemMapping selectedMapping = null;
+            remainingWeatherTimeOfDayChanges = Random.Range(4, 7); // Random duration in hours (4-6 inclusive)
 
             switch (currentCondition)
             {
@@ -98,7 +228,6 @@ public class WeatherSystem : MonoBehaviour
             if (selectedMapping != null)
             {
 
-            
                 // Start the coroutine to delay the effect start
                 StartCoroutine(startEffect(selectedMapping));
             }
@@ -106,8 +235,15 @@ public class WeatherSystem : MonoBehaviour
         }
 
         else{
+            // Sunny weather doesn't require special handling
             isSpecialWeather = false;
-            currentWeatherEffect.SetActive(false);
+            remainingWeatherTimeOfDayChanges = Random.Range(4, 7); // Random duration in hours (4-6 inclusive)
+
+            if (currentWeatherEffect != null)
+            {
+                currentWeatherEffect.SetActive(false);
+                currentWeatherEffect=null;
+            }
         }
 
     
@@ -126,13 +262,33 @@ public class WeatherSystem : MonoBehaviour
             currentWeatherEffect.SetActive(false);
         }
 
+        // Get the current TimeOfDay from the assigned DayNightSystem
+        DayNightSystem.TimeOfDay currentTimeOfDay = dayNightSystem.currentTimeOfDay;
+
         // Apply the selected mapping (e.g., activate effects and set skybox)
-        RenderSettings.skybox = selectedMapping.skyboxMaterial;
+        Material skyboxMaterial = null;
+
+        // Search for the matching TimeOfDayMaterial in the skyboxMaterialList
+        foreach (var timeOfDayMaterial in selectedMapping.skyboxMaterialList)
+        {
+            if (timeOfDayMaterial.timeOfDay == currentTimeOfDay)
+            {
+                skyboxMaterial = timeOfDayMaterial.material;
+                break;
+            }
+        }
+        if (skyboxMaterial != null)
+        {
+            RenderSettings.skybox = skyboxMaterial;
+        }
+        else
+        {
+            Debug.LogWarning($"No skybox material found for TimeOfDay: {currentTimeOfDay}");
+        }
 
         // If the selected weather effect is not null, stop, clear and play it
         if (selectedMapping.weatherEffect != null)
         {
-            
             // Play the new weather effect
             selectedMapping.weatherEffect.SetActive(true);
 
@@ -224,10 +380,19 @@ public class WeatherSystem : MonoBehaviour
 
 
 [System.Serializable]
-// Mapping class to map hour of day to skybox material
+// Mapping class to map weather condition and time of day to skybox material
 public class WeatherSystemMapping
 {
-    public WeatherSystem.WeatherCondition condition;
-    public GameObject weatherEffect;
-    public Material skyboxMaterial;
+    public WeatherSystem.WeatherCondition condition; // The weather condition (e.g., Rain, Sunny)
+    public GameObject weatherEffect; // The visual effect for this condition
+    public List<TimeOfDayMaterial> skyboxMaterialList; // List mapping TimeOfDay to skybox material
 }
+
+[System.Serializable]
+// Helper class to serialize key-value pairs
+public class TimeOfDayMaterial
+{
+    public DayNightSystem.TimeOfDay timeOfDay; // Key
+    public Material material; // Value
+}
+

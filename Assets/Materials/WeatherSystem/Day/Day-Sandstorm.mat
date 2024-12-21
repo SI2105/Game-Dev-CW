@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Day-Sunset
+  m_Name: Day-Sandstorm
   m_Shader: {fileID: 4800000, guid: e4176ac5a7db74e0285b1d42e74a2dff, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -64,7 +64,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpaceTex:
-        m_Texture: {fileID: 8900000, guid: e959d4c7e52874ba392be7081787e271, type: 3}
+        m_Texture: {fileID: 8900000, guid: 9964b94fb67ef40cd8a317232b2ab30c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []

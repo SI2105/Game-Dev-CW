@@ -89,40 +89,35 @@ public class TwoDimensionalAnimationController : MonoBehaviour
 
     private void HandleRotation()
     {
-        if (idleTransform == null)
+        if (cameraTransform == null)
         {
-            Debug.LogError("idleTransform is not assigned!");
+            Debug.LogError("Camera transform is not assigned!");
             return;
         }
 
         // Apply sensitivity to input
         Vector2 sensitiveInput = lookInput * mouseSensitivity;
-        
-        // Quick input smoothing
+
+        // Smooth input
         smoothedLookInput = Vector2.Lerp(
             smoothedLookInput,
             sensitiveInput,
             1f - Mathf.Exp(-inputSmoothTime * 60f)
         );
 
-        // Handle vertical camera rotation with increased speed
+        // Vertical rotation (POV camera)
         float mouseY = smoothedLookInput.y * verticalRotationSpeed * Time.deltaTime;
         verticalRotation -= mouseY;
-        verticalRotation = Mathf.Clamp(verticalRotation, -89f, 89f);
-       
-        if (cameraTransform != null)
-        {
-            // Direct camera rotation for vertical movement
-            cameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-        }
 
-        // Handle horizontal character rotation
+        // Clamp vertical rotation to prevent looking too far up or down
+        verticalRotation = Mathf.Clamp(verticalRotation, -30f, 60f); // Adjust values for POV
+
+        // Apply vertical rotation to the camera
+        cameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
+
+        // Horizontal rotation (player rotation)
         float mouseX = smoothedLookInput.x * rotationSpeed * Time.deltaTime;
-        
-        // Update target rotation more directly
-        targetRotation += mouseX * 60f; // Multiplied by 60 to normalize for framerate
-        
-        // Quick smooth interpolation
+        targetRotation += mouseX * 60f; // Normalize for framerate
         float currentRotationY = Mathf.SmoothDampAngle(
             idleTransform.eulerAngles.y,
             targetRotation,
@@ -130,9 +125,10 @@ public class TwoDimensionalAnimationController : MonoBehaviour
             smoothRotationTime
         );
 
-        // Apply the rotation
+        // Apply horizontal rotation to the player
         idleTransform.rotation = Quaternion.Euler(0f, currentRotationY, 0f);
     }
+
 
     // public void OnLook(Vector2 input)
     // {
@@ -229,27 +225,43 @@ public class TwoDimensionalAnimationController : MonoBehaviour
         {
             velocityZ = currentMaxVelocityZ;
         }
+        // Update the animator with the current velocities
+        animator.SetFloat(VelocityZHash, velocityZ);
+        animator.SetFloat(VelocityXHash, velocityX);
+    }
 
-        // **Dynamic Movement Direction Calculation**
-        // Use the camera's forward and right vectors to determine the direction
-        Vector3 cameraForward = cameraTransform.forward; // Forward vector of the camera
-        cameraForward.y = 0f; // Ignore vertical component
-        cameraForward.Normalize(); // Ensure the vector is normalized
+    [SerializeField] private Rigidbody rb; // Rigidbody reference
 
-        Vector3 cameraRight = cameraTransform.right; // Right vector of the camera
-        cameraRight.y = 0f; // Ignore vertical component
-        cameraRight.Normalize(); // Ensure the vector is normalized
+    private void LateUpdate()
+    {
+        HandleRotation(); // Update camera and player rotation
+    }
 
-        // Calculate movement direction based on input and camera orientation
+    private void FixedUpdate()
+    {
+        HandleMovement(); // Apply movement in FixedUpdate for physics consistency
+    }
+
+    private void HandleMovement()
+    {
+        // Ensure camera directions are updated
+        Vector3 cameraForward = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up).normalized;
+        Vector3 cameraRight = Vector3.ProjectOnPlane(cameraTransform.right, Vector3.up).normalized;
+
+        // Calculate movement direction based on updated camera orientation
         Vector3 moveDirection = (cameraForward * velocityZ) + (cameraRight * velocityX);
 
-        // Apply the movement to the character's position
-        transform.position += moveDirection * Time.deltaTime;
+        // Prevent unintended drift due to floating-point errors
+        if (moveDirection.magnitude < 0.01f)
+        {
+            moveDirection = Vector3.zero;
+        }
+
+        // Apply movement to Rigidbody
+        rb.MovePosition(rb.position + moveDirection * Time.fixedDeltaTime);
 
         // Debugging movement direction
         Debug.Log($"Move Direction: {moveDirection}, VelocityX: {velocityX}, VelocityZ: {velocityZ}");
-
-        // Debugging movement
 
         // Update the animator with the current velocities
         animator.SetFloat(VelocityZHash, velocityZ);

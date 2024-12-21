@@ -4,6 +4,16 @@ using UnityEngine;
 
 public class DayNightSystem : MonoBehaviour
 {
+    public enum TimeOfDay
+    {
+            Sunrise,
+            Day,
+            Sunset,
+            Night
+    }
+
+
+
     public Light directionalLight;
     public List<SkyboxMapping> timeMapping;
 
@@ -11,12 +21,28 @@ public class DayNightSystem : MonoBehaviour
 
     public WeatherSystem weatherSystem;
 
+     // Backing field for currentTimeOfDay
+    [SerializeField]
+    private TimeOfDay _currentTimeOfDay;
+
+    // Current TimeOfDay with property access
+    public TimeOfDay currentTimeOfDay
+    {
+        get => _currentTimeOfDay;
+        set => _currentTimeOfDay = value;
+    }
+
+
+    public int currentHour;
     // Update is called once per frame
     void Update()
     {
         // Get the current time of day and hour from TimeManager
         float currentTimeOfDay = TimeManager.Instance.CurrentTimeOfDay;
-        int currentHour = TimeManager.Instance.CurrentHour;
+        currentHour = TimeManager.Instance.CurrentHour;
+
+          // Update the TimeOfDay enum based on the hour
+        UpdateTimeOfDay(currentHour);
 
         // Change the direction of the light based on the current time of day
         directionalLight.transform.rotation = Quaternion.Euler(new Vector3((currentTimeOfDay / TimeManager.Instance.DayDurationInSeconds * 360) - 90, 170, 0));
@@ -25,6 +51,27 @@ public class DayNightSystem : MonoBehaviour
         if(weatherSystem.isSpecialWeather ==false){
             // Change the material of the sky based on the current hour
             ChangeSkyMaterial(currentHour);
+        }
+    }
+
+    private void UpdateTimeOfDay(int currentHour)
+    {
+        // Determine the current time of day based on the hour
+        if (currentHour >=7 && currentHour <= 11)
+        {
+            currentTimeOfDay = TimeOfDay.Sunrise;
+        }
+        else if (currentHour >= 11 && currentHour <= 18)
+        {
+            currentTimeOfDay = TimeOfDay.Day;
+        }
+        else if (currentHour >= 18 && currentHour <= 22)
+        {
+            currentTimeOfDay = TimeOfDay.Sunset;
+        }
+        else
+        {
+            currentTimeOfDay = TimeOfDay.Night;
         }
     }
 

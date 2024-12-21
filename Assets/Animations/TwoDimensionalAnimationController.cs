@@ -22,7 +22,6 @@ public class TwoDimensionalAnimationController : MonoBehaviour
     private bool isIdle;
     private bool isJumping;
     private bool isRunning;
-
     #endregion
 
     #region Physics and Ground Detection
@@ -79,7 +78,6 @@ public class TwoDimensionalAnimationController : MonoBehaviour
     [SerializeField] private float mouseSensitivity = 2.0f;
     #endregion
 
-
     private void Awake()
     {
         inputActions = new GameDevCW();
@@ -97,6 +95,8 @@ public class TwoDimensionalAnimationController : MonoBehaviour
         // Subscribe to the Sprint action's performed and canceled events
         inputActions.Player.Sprint.performed += ctx => isSprinting = true;
         inputActions.Player.Sprint.canceled += ctx => isSprinting = false;
+
+        attributesManager = GetComponent<PlayerAttributesManager>();
     }
 
     private void Start()
@@ -123,33 +123,7 @@ public class TwoDimensionalAnimationController : MonoBehaviour
     {
         HandleRotation();
         Movement(); // Update movement based on input and sprint state
-        // UpdateAnimatorParameters();
-        float speed = Mathf.Abs(rb.velocity.x);
-        forwardPressed = moveInput.y > 0;
-        leftPressed = moveInput.x < 0;
-        rightPressed = moveInput.x > 0;
-        backwardPressed = moveInput.y < 0;
-
-        isWalking = forwardPressed || leftPressed || rightPressed || backwardPressed;
-        isRunning = isGrounded && isSprinting;
-        isIdle = !forwardPressed && !leftPressed && !rightPressed && !backwardPressed;
-
-        Debug.Log($"walking {isWalking}");
-        animator.SetBool(isIdleHash, isIdle);
-        animator.SetBool(isWalkingHash, isWalking);
-        animator.SetBool(isRunningHash, isRunning);
-        animator.SetBool(isIdleHash, isIdle);
-
-        if (isGrounded && !wasGrounded)
-        {
-            OnLand();
-            Debug.Log("Player landed. Setting isJumping to false.");
-        }
-        else if (!isGrounded && wasGrounded)
-        {
-            Debug.Log("Player is now airborne.");
-        }
-        wasGrounded = isGrounded;
+        UpdateAnimatorParameters();
     }
 
     private void HandleJump(InputAction.CallbackContext context)
@@ -204,7 +178,32 @@ public class TwoDimensionalAnimationController : MonoBehaviour
     /// </summary>
 
     private void UpdateAnimatorParameters(){
-        
+        float speed = Mathf.Abs(rb.velocity.x);
+        forwardPressed = moveInput.y > 0;
+        leftPressed = moveInput.x < 0;
+        rightPressed = moveInput.x > 0;
+        backwardPressed = moveInput.y < 0;
+
+        isWalking = forwardPressed || leftPressed || rightPressed || backwardPressed;
+        isRunning = isGrounded && isSprinting;
+        isIdle = !forwardPressed && !leftPressed && !rightPressed && !backwardPressed;
+
+        Debug.Log($"walking {isWalking}");
+        animator.SetBool(isIdleHash, isIdle);
+        animator.SetBool(isWalkingHash, isWalking);
+        animator.SetBool(isRunningHash, isRunning);
+        animator.SetBool(isIdleHash, isIdle);
+
+        if (isGrounded && !wasGrounded)
+        {
+            OnLand();
+            Debug.Log("Player landed. Setting isJumping to false.");
+        }
+        else if (!isGrounded && wasGrounded)
+        {
+            Debug.Log("Player is now airborne.");
+        }
+        wasGrounded = isGrounded;
     }
 
     private int groundContacts = 0;
@@ -290,7 +289,6 @@ public class TwoDimensionalAnimationController : MonoBehaviour
         // Apply horizontal rotation to the player
         idleTransform.rotation = Quaternion.Euler(0f, currentRotationY, 0f);
     }
-
     private void Movement(){
         // Determine current maximum velocities based on sprinting
         float currentMaxVelocityZ = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
@@ -342,6 +340,10 @@ public class TwoDimensionalAnimationController : MonoBehaviour
         {
             velocityZ += Time.deltaTime * deceleration;
             velocityZ = Mathf.Min(velocityZ, 0.0f);
+        }
+
+        if (isRunning){
+            if (attributesManager.UseStamina(attributesManager.StaminaCostPerSecond * Time.deltaTime))
         }
 
         // Clamp small residual velocities to zero

@@ -1400,7 +1400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.1699537, g: 0.25007123, b: 0.41509432, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2410,65 +2410,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7361014297019544139, guid: 8bdcb5871effc8944b8450367c208206, type: 3}
   m_PrefabInstance: {fileID: 1844866816}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &980861745
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 980861746}
-  - component: {fileID: 980861747}
-  m_Layer: 0
-  m_Name: Inventory
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &980861746
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 980861745}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 850.22986, y: 94.762596, z: -91.26046}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &980861747
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 980861745}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35ce2ada111f05d47977871aafda481e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemCursor: {fileID: 497824430}
-  itemToAdd: []
-  itemToRemove: []
-  SlotHolder: {fileID: 511673033}
-  HotBarSlotHolder: {fileID: 559320353}
-  startingItems:
-  - item: {fileID: 11400000, guid: 0d414df23a4e517488ae36f729bcce23, type: 2}
-    quantity: 1
-  - item: {fileID: 11400000, guid: 63ed9801584d81b44a79f549f218911e, type: 2}
-    quantity: 5
-  - item: {fileID: 11400000, guid: ac82d5860a64aba4493a765e9d8d33e1, type: 2}
-    quantity: 1
-  selectedSlotIndex: 0
-  HotbarSelector: {fileID: 489470233}
-  selectedItem: {fileID: 0}
 --- !u!224 &1005516153 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7361014297019544139, guid: 8bdcb5871effc8944b8450367c208206, type: 3}
@@ -5829,4 +5770,3 @@ SceneRoots:
   - {fileID: 1717694809}
   - {fileID: 1559584843}
   - {fileID: 195197162}
-  - {fileID: 980861746}

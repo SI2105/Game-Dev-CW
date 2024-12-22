@@ -40,6 +40,7 @@ namespace SG{
         bool backwardPressed = false;
         bool leftPressed = false;
         bool rightPressed = false;
+        bool InventoryVisible = false;
         #endregion
 
         #region Velocity Variables
@@ -99,7 +100,53 @@ namespace SG{
             inputActions.Player.Sprint.performed += ctx => isSprinting = true;
             inputActions.Player.Sprint.canceled += ctx => isSprinting = false;
 
+            inputActions.Player.Inventory.performed += HandleInventory;
+            inputActions.Player.Inventory.canceled += HandleInventory;
+
             attributesManager = GetComponent<PlayerAttributesManager>();
+
+            if (attributesManager) {
+                Debug.Log("Inventory Manager found");
+                inputActions.UI.Click.performed += attributesManager.InventoryManager.OnClick;
+                inputActions.UI.HotBarSelector.performed += attributesManager.InventoryManager.OnHotBarSelection;
+                inputActions.UI.Click.canceled += attributesManager.InventoryManager.OnClick;
+                inputActions.UI.HotBarSelector.canceled += attributesManager.InventoryManager.OnHotBarSelection;
+            }
+            
+
+        }
+
+            private void HandleInventory(InputAction.CallbackContext context) {
+
+            if (context.performed) {
+
+                ToggleInventory();
+            }
+
+                
+
+
+
+        }
+
+        private void ToggleInventory()
+        {
+            InventoryVisible = !InventoryVisible;
+            if (InventoryVisible)
+            {
+                attributesManager.InventoryManager.InventoryPanel.SetActive(true);
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else {
+                attributesManager.InventoryManager.InventoryPanel.SetActive(false);
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false; 
+
+
+            }
+            
+
         }
 
         private void Start()
@@ -124,6 +171,7 @@ namespace SG{
 
         private void Update()
         {
+            
             HandleRotation();
             Movement();
             UpdateAnimatorParameters();
@@ -257,7 +305,7 @@ namespace SG{
 
         private void HandleRotation()
         {
-            if (cameraTransform == null)
+            if (cameraTransform == null || InventoryVisible)
             {
                 return;
             }
@@ -407,6 +455,14 @@ namespace SG{
 
         private void HandleMovement()
         {
+
+            //Remove Below once we have freeze method
+            if (InventoryVisible)
+            {
+                return;
+            }
+
+
             // Ensure camera directions are updated
             Vector3 cameraForward = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up).normalized;
             Vector3 cameraRight = Vector3.ProjectOnPlane(cameraTransform.right, Vector3.up).normalized;
@@ -428,10 +484,20 @@ namespace SG{
         // Called when the Move action is performed or canceled
         private void HandleMove(InputAction.CallbackContext context)
         {
+            if (InventoryVisible)
+            {
+                return;
+            }
             moveInput = context.ReadValue<Vector2>();
         }
 
         private void HandleLook(InputAction.CallbackContext context){
+
+            if (InventoryVisible)
+            {
+                return;
+            }
+            
             lookInput = context.ReadValue<Vector2>();
         }
     }

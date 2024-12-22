@@ -14,6 +14,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private ItemClass[] itemToRemove;
     //Above are temporary for testing purposes
     [SerializeField] private GameObject SlotHolder;
+    public GameObject InventoryPanel;
     private SlotClass[] Items;
   
     [SerializeField] private GameObject HotBarSlotHolder;
@@ -21,7 +22,7 @@ public class InventoryManager : MonoBehaviour
 
     private GameObject[] slots;
     private GameObject[] HotBarslots;
-    private GameDevCW inputActions;
+    public GameDevCW inputActions;
 
     private SlotClass MovingSlot;
     private SlotClass TempSlot;
@@ -31,12 +32,15 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private int selectedSlotIndex = 0;
     [SerializeField] private GameObject HotbarSelector;
     public ItemClass selectedItem;
+
+ 
     public void Awake()
     {
         inputActions = new GameDevCW();
     }
     public void Start()
     {
+        InventoryPanel.SetActive(false);
         slots = new GameObject[SlotHolder.transform.childCount];
         Items = new SlotClass[slots.Length];
 
@@ -70,22 +74,6 @@ public class InventoryManager : MonoBehaviour
         RefreshInterface();
 
     }
-
-    private void OnEnable()
-    {
-        inputActions.UI.Click.performed += OnClick;
-        inputActions.UI.HotBarSelector.performed += OnHotBarSelection;
-        inputActions.Enable();
-
-    }
-
-    private void OnDisable()
-    {
-        inputActions.UI.Click.performed -= OnClick;
-        inputActions.UI.HotBarSelector.performed -= OnHotBarSelection;
-        inputActions.Disable();
-
-    }
     private void Update()
     {
         itemCursor.SetActive(isMovingItem);
@@ -99,18 +87,27 @@ public class InventoryManager : MonoBehaviour
         
         HotbarSelector.transform.position = HotBarslots[selectedSlotIndex].transform.position;
         selectedItem = Items[selectedSlotIndex].GetItem();
-        print(selectedItem);
+       
     }
 
-    private void OnHotBarSelection(InputAction.CallbackContext context) { 
+    public void OnHotBarSelection(InputAction.CallbackContext context) { 
         if (context.performed)
         {
+            
             float val = context.ReadValue<float>();
             selectedSlotIndex = Mathf.Clamp((int)val - 1, 0, HotBarslots.Length - 1);
         }
     }
-   
-    private void OnClick(InputAction.CallbackContext context)
+
+    public void ToggleInventory() {
+        InventoryPanel.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+    }
+
+
+    public void OnClick(InputAction.CallbackContext context)
     {
        
         if (context.performed) {

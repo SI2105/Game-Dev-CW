@@ -295,6 +295,7 @@ namespace SG{
             // Apply horizontal rotation to the player
             idleTransform.rotation = Quaternion.Euler(0f, currentRotationY, 0f);
         }
+        
         private void Movement(){
             // Determine current maximum velocities based on sprinting
             float currentMaxVelocityZ = isRunning ? sprintMaxVelocityZ : maxVelocityZ;

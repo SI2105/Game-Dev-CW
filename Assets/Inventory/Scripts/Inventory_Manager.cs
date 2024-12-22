@@ -15,15 +15,22 @@ public class InventoryManager : MonoBehaviour
     //Above are temporary for testing purposes
     [SerializeField] private GameObject SlotHolder;
     private SlotClass[] Items;
+  
+    [SerializeField] private GameObject HotBarSlotHolder;
     [SerializeField] private SlotClass[] startingItems;
 
     private GameObject[] slots;
+    private GameObject[] HotBarslots;
     private GameDevCW inputActions;
 
     private SlotClass MovingSlot;
     private SlotClass TempSlot;
     private SlotClass OriginalSlot;
     bool isMovingItem = false;
+
+    [SerializeField] private int selectedSlotIndex = 0;
+    [SerializeField] private GameObject HotbarSelector;
+    public ItemClass selectedItem;
     public void Awake()
     {
         inputActions = new GameDevCW();
@@ -33,6 +40,11 @@ public class InventoryManager : MonoBehaviour
         slots = new GameObject[SlotHolder.transform.childCount];
         Items = new SlotClass[slots.Length];
 
+        HotBarslots = new GameObject[HotBarSlotHolder.transform.childCount];
+
+        for (int i = 0; i < HotBarslots.Length; i++) {
+            HotBarslots[i] = HotBarSlotHolder.transform.GetChild(i).gameObject;
+        }
         for (int i = 0; i < Items.Length; i++)
         {
             Items[i] = new SlotClass();
@@ -62,6 +74,7 @@ public class InventoryManager : MonoBehaviour
     private void OnEnable()
     {
         inputActions.UI.Click.performed += OnClick;
+        inputActions.UI.HotBarSelector.performed += OnHotBarSelection;
         inputActions.Enable();
 
     }
@@ -69,6 +82,7 @@ public class InventoryManager : MonoBehaviour
     private void OnDisable()
     {
         inputActions.UI.Click.performed -= OnClick;
+        inputActions.UI.HotBarSelector.performed -= OnHotBarSelection;
         inputActions.Disable();
 
     }
@@ -81,7 +95,21 @@ public class InventoryManager : MonoBehaviour
 
             itemCursor.GetComponent<Image>().sprite = MovingSlot.GetItem().icon;
         }
+
+        
+        HotbarSelector.transform.position = HotBarslots[selectedSlotIndex].transform.position;
+        selectedItem = Items[selectedSlotIndex].GetItem();
+        print(selectedItem);
     }
+
+    private void OnHotBarSelection(InputAction.CallbackContext context) { 
+        if (context.performed)
+        {
+            float val = context.ReadValue<float>();
+            selectedSlotIndex = Mathf.Clamp((int)val - 1, 0, HotBarslots.Length - 1);
+        }
+    }
+   
     private void OnClick(InputAction.CallbackContext context)
     {
        
@@ -232,10 +260,11 @@ public class InventoryManager : MonoBehaviour
                 {
                     slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = Items[i].GetQuantity().ToString();
                 }
-                else {
+                else
+                {
                     slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
                 }
-                
+
             }
             catch
             {
@@ -247,7 +276,34 @@ public class InventoryManager : MonoBehaviour
 
 
         }
+        RefreshHotBar();
 
+    }
+
+    public void RefreshHotBar()
+    {
+        for (int i = 0; i < HotBarslots.Length; i++)
+        {
+            try
+            {
+                HotBarslots[i].transform.GetChild(0).GetComponent<Image>().enabled = true;
+                HotBarslots[i].transform.GetChild(0).GetComponent<Image>().sprite = Items[i].GetItem().icon;
+                if (Items[i].GetItem().Stackable)
+                {
+                    HotBarslots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = Items[i].GetQuantity().ToString();
+                }
+                else
+                {
+                    HotBarslots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+                }
+            }
+            catch
+            {
+                HotBarslots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
+                HotBarslots[i].transform.GetChild(0).GetComponent<Image>().enabled = false;
+                HotBarslots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+            }
+        }
     }
     public bool Remove(ItemClass item)
     {

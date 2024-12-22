@@ -5,6 +5,15 @@ namespace SG
 {
     public class PlayerAttributesManager : MonoBehaviour
     {
+        #region Inventory
+        //public GameObject Inventory;
+        [SerializeField]private InventoryManager inventoryManager;
+        public InventoryManager InventoryManager {
+            get => inventoryManager;
+            set => inventoryManager = value;
+        }
+        #endregion
+
         public float MaxHealth { get; set; } = 100f;
         public float HealthRegenRate { get; set; } = 10f;
         public float MaxStamina { get; set; } = 100f;
@@ -225,5 +234,7 @@ namespace SG
         public float MaxHunger { get; set; } = 100f;
         public float HungerDrainRate { get; set; } = 1f;
         #endregion
+
+       
     }
 }

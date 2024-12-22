@@ -50,31 +50,43 @@ public class PCG_Generator : MonoBehaviour
 
     private MazeCell[,] _mazeGrid;
 
+    
     void Start()
-    {
+{
     _mazeGrid = new MazeCell[_mazeWidth, _mazeDepth];
 
-    // Get the plane's size
-    Renderer planeRenderer = GetComponent<Renderer>();
-    float planeWidth = planeRenderer.bounds.size.x;
-    float planeDepth = planeRenderer.bounds.size.z;
+    // Get the terrain component and its data
+    Terrain terrain = GetComponent<Terrain>();
+    if (terrain == null)
+    {
+        Debug.LogError("No Terrain component found on this GameObject. Please attach this script to a Terrain.");
+        return;
+    }
 
-    // Calculate the size of each maze cell based on the plane and grid dimensions
-    float cellSizeX = planeWidth / _mazeWidth;
-    float cellSizeZ = planeDepth / _mazeDepth;
+    TerrainData terrainData = terrain.terrainData;
 
+    // Get terrain dimensions
+    float terrainWidth = terrainData.size.x;
+    float terrainDepth = terrainData.size.z;
+    Vector3 terrainPosition = terrain.GetPosition(); // World position of the terrain
+
+    // Calculate the size of each maze cell based on the terrain and grid dimensions
+    float cellSizeX = terrainWidth / _mazeWidth;
+    float cellSizeZ = terrainDepth / _mazeDepth;
+
+    // Generate maze grid
     for (int x = 0; x < _mazeWidth; x++)
     {
         for (int z = 0; z < _mazeDepth; z++)
         {
-            float planeY = transform.position.y;
+            // Calculate cell position relative to terrain
+            float cellX = terrainPosition.x + (x + 0.5f) * cellSizeX;
+            float cellZ = terrainPosition.z + (z + 0.5f) * cellSizeZ;
+            float cellY = terrain.SampleHeight(new Vector3(cellX, 0, cellZ)) + terrainPosition.y; // Adjust for terrain height
 
-            Vector3 cellPosition = new Vector3(
-                transform.position.x - planeWidth / 2 + (x + 0.5f) * cellSizeX,
-                planeY,
-                transform.position.z - planeDepth / 2 + (z + 0.5f) * cellSizeZ
-            );
+            Vector3 cellPosition = new Vector3(cellX, cellY, cellZ);
 
+            // Instantiate the maze cell
             MazeCell cell = Instantiate(_mazeCellPrefab, cellPosition, Quaternion.identity);
 
             // Set grid indices for this cell
@@ -95,9 +107,22 @@ public class PCG_Generator : MonoBehaviour
 
     // Start generating the maze
     GenerateMaze(null, _mazeGrid[0, 0]);
+}
+
+    public MazeCell[,] GetMazeGrid()
+    {
+        return _mazeGrid;
     }
 
+    public int GetMazeWidth()
+    {
+        return _mazeWidth;
+    }
 
+    public int GetMazeDepth()
+    {
+        return _mazeDepth;
+    }
 
     private void ConnectRooms()
     {

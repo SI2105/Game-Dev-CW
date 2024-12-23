@@ -9,12 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2729960f52f1c0a4b8cd6c2142faa950, type: 3}
-  m_Name: Sword
+  m_Script: {fileID: 11500000, guid: 4c4d561ae782e304a8414ce75f7f3597, type: 3}
+  m_Name: Straight Sword
   m_EditorClassIdentifier: 
-  id: 1
-  displayName: Silver Blade
-  icon: {fileID: 434606504, guid: 938b468cd40210441a583a0877cb4045, type: 3}
-  prefab: {fileID: 1884109808244559898, guid: 78b853c25d23ca146a29bba1b9fa26a5, type: 3}
+  id: 
+  displayName: 
+  icon: {fileID: 0}
+  prefab: {fileID: 0}
   Stackable: 0
   weaponType: 0
+  weaponModel: {fileID: 0}
+  physicalDamage: 25
+  baseStaminaCost: 20

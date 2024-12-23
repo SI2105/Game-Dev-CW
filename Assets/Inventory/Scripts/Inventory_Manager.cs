@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Runtime.CompilerServices;
+using UnityEngine.Events;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -19,10 +20,15 @@ public class InventoryManager : MonoBehaviour
     private SlotClass[] Items;
   
     [SerializeField] private GameObject HotBarSlotHolder;
+
     [SerializeField] private SlotClass[] startingItems;
 
     private GameObject[] slots;
     private GameObject[] HotBarslots;
+    public GameObject[] HotBarSlot {
+        get => HotBarslots;
+        set => HotBarslots = value;
+    }
     public GameDevCW inputActions;
 
     private SlotClass MovingSlot;
@@ -30,15 +36,39 @@ public class InventoryManager : MonoBehaviour
     private SlotClass OriginalSlot;
     bool isMovingItem = false;
 
+    public UnityEvent onSelectedItemChanged;
     [SerializeField] private int selectedSlotIndex = 0;
     [SerializeField] private GameObject HotbarSelector;
     public ItemClass selectedItem;
 
- 
+    public ItemClass SelectedItem
+    {
+        get => selectedItem;
+        set
+        {
+            if (selectedItem != value)
+            {
+                selectedItem = value;
+                onSelectedItemChanged?.Invoke(); // Trigger the event when the item changes
+            }
+        }
+    }
+
+    public ItemClass getSelectedItem(){
+        return selectedItem;
+    }
+
+
     public void Awake()
     {
         inputActions = new GameDevCW();
+
+        if (onSelectedItemChanged == null)
+        {
+            onSelectedItemChanged = new UnityEvent();
+        }
     }
+
     public void Start()
     {
         InventoryPanel.SetActive(false);
@@ -88,7 +118,7 @@ public class InventoryManager : MonoBehaviour
 
         
         HotbarSelector.transform.position = HotBarslots[selectedSlotIndex].transform.position;
-        selectedItem = Items[selectedSlotIndex].GetItem();
+        SelectedItem = Items[selectedSlotIndex].GetItem();
        
     }
 

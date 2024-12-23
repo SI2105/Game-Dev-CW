@@ -1,18 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class CombatManager : MonoBehaviour
+namespace SG
 {
-    // Start is called before the first frame update
-    void Start()
+    public class CombatManager : MonoBehaviour
     {
-        
-    }
+        private InventoryManager inventoryManager;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        void Awake()
+        {
+            inventoryManager = GetChildComponent<InventoryManager>();
+
+            if (inventoryManager != null)
+            {
+                inventoryManager.onSelectedItemChanged.AddListener(LoadWeapon);
+            }
+        }
+
+
+        void LoadWeapon()
+        {
+            var currentItem = inventoryManager.SelectedItem;
+
+            if (currentItem != null)
+            {
+                Debug.Log("Loaded Item: " + currentItem.name);
+                
+            }
+            else
+            {
+                Debug.LogWarning("No item selected in the hotbar!");
+            }
+        }
+
+
+        private T GetChildComponent<T>() where T : Component
+        {
+            foreach (Transform child in transform)
+            {
+                var component = child.GetComponent<T>();
+                if (component != null)
+                {
+                    return component;
+                }
+            }
+            return null;
+        }
     }
 }

@@ -2928,6 +2928,8 @@ MonoBehaviour:
     quantity: 6
   - item: {fileID: 11400000, guid: d65ed8d3c869a73469c5848162c04389, type: 2}
     quantity: 1
+  - item: {fileID: 11400000, guid: 595f1a3ad27ce9d47a4f5092d2edad47, type: 2}
+    quantity: 56
   selectedSlotIndex: 0
   HotbarSelector: {fileID: 1651515827}
   selectedItem: {fileID: 0}

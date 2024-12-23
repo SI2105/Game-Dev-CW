@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -57,6 +58,49 @@ namespace SG{
         private float targetRotation;
         private float lastTargetRotation;
         #endregion
+        #region PlayerStats Display
+
+        [SerializeField] private TextMeshProUGUI PlayerStatsText;
+
+        public void UpdatePlayerStats() {
+            if (PlayerStatsText != null) {
+                PlayerStatsText.text = GetPlayerStatsText();
+            }
+
+        }
+
+        public string GetPlayerStatsText() {
+
+            
+            return
+                    $"<align=left>Current Level:<line-height=0>\n<align=right>{attributesManager.CurrentLevel} / {attributesManager.MaxLevel}<line-height=1em>\n" +
+
+                    $"<align=left>Current XP:<line-height=0>\n<align=right>{attributesManager.CurrentXP}<line-height=1em>\n" +
+                    $"<align=left>XP to Next Level:<line-height=0>\n<align=right> \t {attributesManager.XPToNextLevel}<line-height=1em>\n" +
+                    $"<align=left>Strength:<line-height=0>\n<align=right>{attributesManager.Strength}<line-height=1em>\n" +
+                    $"<align=left>Agility:<line-height=0>\n<align=right>{attributesManager.Agility}<line-height=1em>\n" +
+                    $"<align=left>Endurance:<line-height=0>\n<align=right>{attributesManager.Endurance}<line-height=1em>\n" +
+                    $"<align=left>Intelligence:<line-height=0>\n<align=right>{attributesManager.Intelligence}<line-height=1em>\n" +
+                    $"<align=left>Luck:<line-height=0>\n<align=right>{attributesManager.Luck}<line-height=1em>" +
+                    "\n \n" +
+               
+                    $"<align=left>Base Damage:<line-height=0>\n<align=right>{attributesManager.BaseDamage}<line-height=1em>\n" +
+                    $"<align=left>Critical Hit Chance:<line-height=0>\n<align=right>{attributesManager.CriticalHitChance}<line-height=1em>\n" +
+                    $"<align=left>Critical Hit Multiplier:<line-height=0>\n<align=right>{attributesManager.CriticalHitMultiplier}<line-height=1em>\n" +
+                    $"<align=left>Attack Speed:<line-height=0>\n<align=right>{attributesManager.AttackSpeed}<line-height=1em>\n" +
+                    $"<align=left>Armor:<line-height=0>\n<align=right>{attributesManager.Armor}<line-height=1em>\n" +
+                    $"<align=left>Block Chance:<line-height=0>\n<align=right>{attributesManager.BlockChance}<line-height=1em>\n" +
+                    $"<align=left>Dodge Chance:<line-height=0>\n<align=right>{attributesManager.DodgeChance}<line-height=1em>" +
+                    "\n \n"
+                   
+                    ;
+            
+
+        }
+
+
+        #endregion
+
 
         #region Movement Settings
         public float acceleration = 2f;
@@ -111,6 +155,7 @@ namespace SG{
                 inputActions.UI.HotBarSelector.performed += attributesManager.InventoryManager.OnHotBarSelection;
                 inputActions.UI.Click.canceled += attributesManager.InventoryManager.OnClick;
                 inputActions.UI.HotBarSelector.canceled += attributesManager.InventoryManager.OnHotBarSelection;
+                UpdatePlayerStats();
             }
             
 
@@ -121,6 +166,7 @@ namespace SG{
             if (context.performed) {
 
                 ToggleInventory();
+
             }
 
                 
@@ -134,12 +180,15 @@ namespace SG{
             InventoryVisible = !InventoryVisible;
             if (InventoryVisible)
             {
+                UpdatePlayerStats();
                 attributesManager.InventoryManager.InventoryPanel.SetActive(true);
+                attributesManager.InventoryManager.PlayerStatsPanel.SetActive(true);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
             else {
                 attributesManager.InventoryManager.InventoryPanel.SetActive(false);
+                attributesManager.InventoryManager.PlayerStatsPanel.SetActive(false);
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false; 
 

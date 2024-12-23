@@ -15,6 +15,7 @@ public class InventoryManager : MonoBehaviour
     //Above are temporary for testing purposes
     [SerializeField] private GameObject SlotHolder;
     public GameObject InventoryPanel;
+    public GameObject PlayerStatsPanel;
     private SlotClass[] Items;
   
     [SerializeField] private GameObject HotBarSlotHolder;
@@ -41,6 +42,7 @@ public class InventoryManager : MonoBehaviour
     public void Start()
     {
         InventoryPanel.SetActive(false);
+        PlayerStatsPanel.SetActive(false);
         slots = new GameObject[SlotHolder.transform.childCount];
         Items = new SlotClass[slots.Length];
 

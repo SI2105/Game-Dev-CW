@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2729960f52f1c0a4b8cd6c2142faa950, type: 3}
+  m_Name: Axe
+  m_EditorClassIdentifier: 
+  id: 7
+  displayName: Sharp Axe
+  icon: {fileID: 973244683, guid: 9e9e5dd5a0cdaa545a131cff1c03513c, type: 3}
+  prefab: {fileID: 1776472905282870, guid: 1fa34df54f1414448b502a85dfa4a95c, type: 3}
+  Stackable: 0
+  weaponType: 0

@@ -168,11 +168,6 @@ namespace SG{
                 ToggleInventory();
 
             }
-
-                
-
-
-
         }
 
         private void ToggleInventory()
@@ -191,11 +186,7 @@ namespace SG{
                 attributesManager.InventoryManager.PlayerStatsPanel.SetActive(false);
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false; 
-
-
             }
-            
-
         }
 
         private void Start()

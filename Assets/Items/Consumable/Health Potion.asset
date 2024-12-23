@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e951926ef5bdb4eb696edd465ec911, type: 3}
+  m_Name: Health Potion
+  m_EditorClassIdentifier: 
+  id: 2
+  displayName: Health Exlixir
+  icon: {fileID: 1833180537, guid: efe8b13bbb0a0664fbbd7891ec6def78, type: 3}
+  prefab: {fileID: 1000012970591572, guid: 7cafb89b5a0f61f479d0a748962abbbc, type: 3}
+  Stackable: 1

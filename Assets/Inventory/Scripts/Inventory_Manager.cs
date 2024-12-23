@@ -9,7 +9,7 @@ using UnityEngine.Events;
 
 public class InventoryManager : MonoBehaviour
 {
-
+    [SerializeField] private List<CraftingRecipe> craftingRecipes = new List<CraftingRecipe>();
     [SerializeField] private GameObject itemCursor;
     [SerializeField] private ItemClass[] itemToAdd;
     [SerializeField] private ItemClass[] itemToRemove;
@@ -273,6 +273,18 @@ public class InventoryManager : MonoBehaviour
             }
         }
         return null;
+    }
+
+    public bool Contains(ItemClass item, int quantity)
+    {
+        for (int i = 0; i < Items.Length; i++)
+        {
+            if (Items[i].GetItem() == item && Items[i].GetQuantity() >= quantity)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void RefreshInterface()

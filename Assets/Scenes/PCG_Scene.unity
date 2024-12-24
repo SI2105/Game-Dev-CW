@@ -30269,16 +30269,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef4f7a293916401d9dbffb584741185, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tilePrefab: {fileID: 4202724668555032227, guid: f96442df40a0bf74bbd6431cf2ee05d9, type: 3}
+  wallPrefab: {fileID: 2886493347970738491, guid: 0e2a0f88f62841f42ae86ae323be43bf, type: 3}
   terrain: {fileID: 1822333674}
-  terrainLayer: {fileID: 8574412962073106934, guid: f7ce30ec9b280b34cacb1a1005349890, type: 2}
-  grassTexture: {fileID: 2800000, guid: f2a86d9c4950f4c4e81271677d2e2624, type: 3}
-  treePrefab: {fileID: 4928616408704863665, guid: 1caa73a6296593c46bb83d678ff6609b, type: 3}
-  shrubPrefab: {fileID: 5153741093904279990, guid: ef8374d642969b14baa54045236c5fb0, type: 3}
-  rockPrefab: {fileID: 4140774597986965270, guid: 58cd8dc8c2359174baa15aa31e302c8b, type: 3}
-  numberOfTrees: 500
-  numberOfShrubs: 100
-  numberOfRocks: 100
-  mazeCellPrefab: {fileID: 3302801849785229089, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
 --- !u!4 &1563281406
 Transform:
   m_ObjectHideFlags: 0
@@ -40213,6 +40206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a3398fc388d4be99d9d9b579423043, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _roomBufferSize: 2
   _roomCount: 3
   _minRoomSize: 2
   _maxRoomSize: 4

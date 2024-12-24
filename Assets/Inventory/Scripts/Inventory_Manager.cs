@@ -122,6 +122,35 @@ public class InventoryManager : MonoBehaviour
        
     }
 
+    public bool isFull() {
+
+        for (int i = 0; i < Items.Length; i++)
+        {
+            if (Items[i].GetItem() == null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void CraftTest() {
+        CraftingRecipe recipe = craftingRecipes[0];
+        Craft(recipe);
+    }
+    public void Craft(CraftingRecipe recipe) {
+        if (recipe.CanCraft(this))
+        {
+            recipe.Craft(this);
+            RefreshInterface();
+        }
+
+        else {
+            Debug.Log("Cannot Craft");
+        }
+
+    }
+
     public void OnHotBarSelection(InputAction.CallbackContext context) { 
         if (context.performed)
         {
@@ -391,4 +420,52 @@ public class InventoryManager : MonoBehaviour
         return true;
 
     }
+
+    public bool Remove(ItemClass item, int quantity )
+    {
+        SlotClass temp = Contains(item);
+        if (temp != null)
+        {
+
+            if (temp.GetQuantity() > 1)
+            {
+                temp.SubQuantity(quantity);
+            }
+            else
+            {
+                int SlotToRemoveIndex = -1;
+                for (int i = 0; i < Items.Length; i++)
+                {
+                    if (Items[i].GetItem() == item)
+                    {
+
+                        SlotToRemoveIndex = i;
+                        break;
+
+                    }
+
+
+
+
+                }
+                if (SlotToRemoveIndex != -1)
+                {
+
+                    Items[SlotToRemoveIndex].RemoveItem();
+                }
+
+
+            }
+        }
+        else
+        {
+            return false;
+        }
+
+        RefreshInterface();
+        return true;
+
+    }
+
+
 }

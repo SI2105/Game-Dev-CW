@@ -13,10 +13,14 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private GameObject itemCursor;
     [SerializeField] private ItemClass[] itemToAdd;
     [SerializeField] private ItemClass[] itemToRemove;
-    //Above are temporary for testing purposes
+    
     [SerializeField] private GameObject SlotHolder;
     public GameObject InventoryPanel;
     public GameObject PlayerStatsPanel;
+    public GameObject CraftingPanel;
+    public GameObject Overlay;
+    public GameObject HotBar;
+    public GameObject HotBarSelector;
     private SlotClass[] Items;
   
     [SerializeField] private GameObject HotBarSlotHolder;
@@ -41,6 +45,30 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private GameObject HotbarSelector;
     public ItemClass selectedItem;
 
+
+    #region Crafting
+    [SerializeField] private GameObject craftingContainer;
+    [SerializeField] private GameObject craftingRecipeItem;
+
+    private void PopulateCraftingPanel()
+    {
+        foreach (Transform child in craftingContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (CraftingRecipe recipe in craftingRecipes)
+        {
+            GameObject recipeItem = Instantiate(craftingRecipeItem, craftingContainer.transform);
+            recipeItem.transform.GetChild(0).GetComponent<Image>().sprite = recipe.outputItem.GetItem().icon;
+            recipeItem.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = recipe.outputItem.GetItem().displayName;
+            recipeItem.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = recipe.getInputAsString();  
+            recipeItem.transform.GetChild(3).GetComponent<Button>().onClick.AddListener(() => Craft(recipe));
+        }
+    }
+
+    
+    #endregion
     public ItemClass SelectedItem
     {
         get => selectedItem;
@@ -71,8 +99,11 @@ public class InventoryManager : MonoBehaviour
 
     public void Start()
     {
+        PopulateCraftingPanel();    
         InventoryPanel.SetActive(false);
         PlayerStatsPanel.SetActive(false);
+        CraftingPanel.SetActive(false);
+        Overlay.SetActive(false);
         slots = new GameObject[SlotHolder.transform.childCount];
         Items = new SlotClass[slots.Length];
 
@@ -427,7 +458,7 @@ public class InventoryManager : MonoBehaviour
         if (temp != null)
         {
 
-            if (temp.GetQuantity() > 1)
+            if (temp.GetQuantity() > quantity)
             {
                 temp.SubQuantity(quantity);
             }

@@ -132,11 +132,7 @@ namespace SG
 
                 ToggleInventory();
             }
-
-
-
-
-
+        
         }
 
         private void ToggleInventory()
@@ -144,6 +140,8 @@ namespace SG
             InventoryVisible = !InventoryVisible;
             if (InventoryVisible)
             {
+                attributesManager.InventoryManager.CraftTest();
+                //UpdatePlayerStats();
                 attributesManager.InventoryManager.InventoryPanel.SetActive(true);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;

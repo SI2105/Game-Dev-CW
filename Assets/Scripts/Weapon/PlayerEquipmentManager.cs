@@ -7,6 +7,8 @@ public class PlayerEquipmentManager : MonoBehaviour
     public WeaponModelInstantiationSlot rightHandSlot;
     private InventoryManager inventoryManager;
     public GameObject rightHandWeaponModel;
+    private AnimationLayerController animationLayerController;
+    public PlayerAnimationManager animationManager;
 
     void Awake()
     {
@@ -16,6 +18,8 @@ public class PlayerEquipmentManager : MonoBehaviour
         {
             inventoryManager.onSelectedItemChanged.AddListener(LoadRightWeapon);
         }
+        animationLayerController = GetComponent<AnimationLayerController>();
+        animationManager = GetComponent<PlayerAnimationManager>();
     }
 
     void Start(){
@@ -28,10 +32,20 @@ public class PlayerEquipmentManager : MonoBehaviour
         }
 
         if (inventoryManager.SelectedItem !=null){
-            rightHandWeaponModel = Instantiate(inventoryManager.SelectedItem.prefab);
-            rightHandSlot.LoadWeapon(rightHandWeaponModel);
-        }
+            WeaponClass weapon = inventoryManager.SelectedItem.GetWeapon();
 
+            if (weapon != null){
+                animationLayerController.ActivateWeaponOverride();
+                if (weapon.weaponType == WeaponClass.WeaponType.Sword){
+                    rightHandWeaponModel = Instantiate(inventoryManager.SelectedItem.prefab);
+                    rightHandSlot.LoadWeapon(rightHandWeaponModel);
+                    animationManager.PlayUnsheathAnimation();
+                }
+            } else {
+                animationLayerController.DeactivateWeaponOverride();
+                animationManager.PlaySheatheAnimation();
+            }
+        }
     }
 
     private T GetChildComponent<T>() where T : Component

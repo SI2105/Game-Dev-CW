@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -691,6 +691,36 @@ RectTransform:
   m_AnchoredPosition: {x: -0.34246, y: 0}
   m_SizeDelta: {x: 45.20818, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1605541973 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1223026949811811228, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
+  m_PrefabInstance: {fileID: 4196299199337206338}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1605541984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1605541973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f93ae604eacd80941aa4fd1ff8194cb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  transitionDuration: 1
+--- !u!114 &1605541985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1605541973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3db52fb63c44ad64bbd90fafdd7e32d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1923094643
 GameObject:
   m_ObjectHideFlags: 0
@@ -901,6 +931,10 @@ PrefabInstance:
       propertyPath: PlayerStatsPanel
       value: 
       objectReference: {fileID: 1923094643}
+    - target: {fileID: 2691394509149153061, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
+      propertyPath: selectedSlotIndex
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3702643232410685266, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1039,7 +1073,13 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4445250040041948935, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       insertIndex: 1
       addedObject: {fileID: 1949040196}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1223026949811811228, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
+      insertIndex: 9
+      addedObject: {fileID: 1605541984}
+    - targetCorrespondingSourceObject: {fileID: 1223026949811811228, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1605541985}
   m_SourcePrefab: {fileID: 100100000, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
 --- !u!114 &4196299199337206339 stripped
 MonoBehaviour:

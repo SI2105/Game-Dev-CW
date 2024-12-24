@@ -41,6 +41,7 @@ namespace SG{
         bool leftPressed = false;
         bool rightPressed = false;
         bool InventoryVisible = false;
+        bool PauseVisible = false;
         #endregion
 
         #region Velocity Variables
@@ -82,6 +83,8 @@ namespace SG{
         #endregion
         private PlayerAttributesManager attributesManager;
 
+        GameObject pauseMenuPanel = GameObject.Find("PauseMenu");
+
         private void Awake()
         {
             inputActions = new GameDevCW();
@@ -102,6 +105,9 @@ namespace SG{
 
             inputActions.Player.Inventory.performed += HandleInventory;
             inputActions.Player.Inventory.canceled += HandleInventory;
+
+            inputActions.Player.Pause.performed += HandlePause;
+            inputActions.Player.Pause.canceled += HandlePause;
 
             attributesManager = GetComponent<PlayerAttributesManager>();
 
@@ -147,6 +153,38 @@ namespace SG{
             }
             
 
+        }
+
+        private void HandlePause(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                PauseVisible = !PauseVisible;
+                if (PauseVisible)
+                {
+                    // Enable the pause menu UI
+                    pauseMenuPanel.SetActive(true);
+
+                    // Freeze the game by setting time scale to 0
+                    Time.timeScale = 0f;
+
+                    // Unlock and show the cursor for UI interaction
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                }
+                else
+                {
+                    // Disable the pause menu UI
+                    pauseMenuPanel.SetActive(false);
+
+                    // Resume the game by setting time scale to 1
+                    Time.timeScale = 1f;
+
+                    // Lock and hide the cursor to return to gameplay
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+            }
         }
 
         private void Start()

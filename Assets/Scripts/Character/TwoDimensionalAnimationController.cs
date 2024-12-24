@@ -42,6 +42,7 @@ namespace SG{
         bool leftPressed = false;
         bool rightPressed = false;
         bool InventoryVisible = false;
+        bool PauseVisible = false;
         #endregion
 
         #region Velocity Variables
@@ -125,6 +126,8 @@ namespace SG{
         [SerializeField] private float mouseSensitivity = 2.0f;
         #endregion
         private PlayerAttributesManager attributesManager;
+        [SerializeField]
+        GameObject pauseMenuPanel;
 
         private void Awake()
         {
@@ -146,7 +149,8 @@ namespace SG{
 
             inputActions.Player.Inventory.performed += HandleInventory;
             inputActions.Player.Inventory.canceled += HandleInventory;
-
+            inputActions.Player.Pause.performed += HandlePause;
+            inputActions.Player.Pause.canceled += HandlePause;
             attributesManager = GetComponent<PlayerAttributesManager>();
 
             if (attributesManager) {
@@ -175,6 +179,7 @@ namespace SG{
             InventoryVisible = !InventoryVisible;
             if (InventoryVisible)
             {
+                // attributesManager.InventoryManager.CraftTest();
                 UpdatePlayerStats();
                 attributesManager.InventoryManager.InventoryPanel.SetActive(true);
                 attributesManager.InventoryManager.PlayerStatsPanel.SetActive(true);
@@ -539,6 +544,34 @@ namespace SG{
             }
             
             lookInput = context.ReadValue<Vector2>();
+        }
+
+        private void HandlePause(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                PauseVisible = !PauseVisible;
+                if (PauseVisible)
+                {
+                    // Enable the pause menu UI
+                    pauseMenuPanel.SetActive(true);
+                    // Freeze the game by setting time scale to 0
+                    Time.timeScale = 0f;
+                    // Unlock and show the cursor for UI interaction
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                }
+                else
+                {
+                    // Disable the pause menu UI
+                    pauseMenuPanel.SetActive(false);
+                    // Resume the game by setting time scale to 1
+                    Time.timeScale = 1f;
+                    // Lock and hide the cursor to return to gameplay
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+            }
         }
     }
 }

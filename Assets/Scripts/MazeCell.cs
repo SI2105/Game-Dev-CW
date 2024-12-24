@@ -32,6 +32,33 @@ public class MazeCell : MonoBehaviour
         ClearAllWalls(); // Open the room completely
     }
 
+    public List<GameObject> getWall()
+{
+    List<GameObject> activeWalls = new List<GameObject>();
+
+    if (_leftWall.activeSelf)
+    {
+        activeWalls.Add(_leftWall);
+    }
+
+    if (_rightWall.activeSelf)
+    {
+        activeWalls.Add(_rightWall);
+    }
+
+    if (_frontWall.activeSelf)
+    {
+        activeWalls.Add(_frontWall);
+    }
+
+    if (_backWall.activeSelf)
+    {
+        activeWalls.Add(_backWall);
+    }
+
+    return activeWalls;
+}
+
     public void ClearAllWalls()
     {
         ClearFrontWall();

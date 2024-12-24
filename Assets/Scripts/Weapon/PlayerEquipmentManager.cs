@@ -8,12 +8,11 @@ public class PlayerEquipmentManager : MonoBehaviour
     private InventoryManager inventoryManager;
     public GameObject rightHandWeaponModel;
     private AnimationLayerController animationLayerController;
-    public PlayerAnimationManager animationManager;
+    private PlayerAnimationManager animationManager;
 
     void Awake()
     {
         inventoryManager = GetChildComponent<InventoryManager>();
-
         if (inventoryManager != null)
         {
             inventoryManager.onSelectedItemChanged.AddListener(LoadRightWeapon);
@@ -22,29 +21,62 @@ public class PlayerEquipmentManager : MonoBehaviour
         animationManager = GetComponent<PlayerAnimationManager>();
     }
 
-    void Start(){
+    void Start()
+    {
         LoadRightWeapon();
     }
 
-    public void LoadRightWeapon(){
-        if (rightHandWeaponModel != null){
+    public void LoadRightWeapon()
+    {
+        // Clean up existing weapon model
+        if (rightHandWeaponModel != null)
+        {
             Destroy(rightHandWeaponModel);
         }
 
-        if (inventoryManager.SelectedItem !=null){
-            WeaponClass weapon = inventoryManager.SelectedItem.GetWeapon();
+        // Safety check for inventory manager and selected item
+        if (inventoryManager == null || inventoryManager.SelectedItem == null)
+        {
+            animationLayerController.DeactivateWeaponOverride();
+            animationManager.PlaySheatheAnimation();
+            return;
+        }
 
-            if (weapon != null){
-                animationLayerController.ActivateWeaponOverride();
-                if (weapon.weaponType == WeaponClass.WeaponType.Sword){
-                    rightHandWeaponModel = Instantiate(inventoryManager.SelectedItem.prefab);
-                    rightHandSlot.LoadWeapon(rightHandWeaponModel);
-                    animationManager.PlayUnsheathAnimation();
+        // Try to get weapon from selected item
+        WeaponClass weapon = null;
+        try
+        {
+            weapon = inventoryManager.SelectedItem.GetWeapon();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"Failed to get weapon from selected item: {e.Message}");
+        }
+
+        if (weapon != null && weapon.prefab != null)
+        {
+            Debug.Log($"Loading weapon: {weapon.prefab.name}");
+            
+            if (weapon.weaponType == WeaponClass.WeaponType.Sword)
+            {
+                if (rightHandSlot == null)
+                {
+                    Debug.LogError("RightHandSlot is not assigned in the Inspector.");
+                    return;
                 }
-            } else {
-                animationLayerController.DeactivateWeaponOverride();
-                animationManager.PlaySheatheAnimation();
+
+                rightHandWeaponModel = Instantiate(weapon.prefab);
+                rightHandSlot.LoadWeapon(rightHandWeaponModel);
+                
+                animationLayerController.ActivateWeaponOverride();
+                animationManager.PlayUnsheathAnimation();
             }
+        }
+        else
+        {
+            Debug.Log($"Selected item '{inventoryManager.SelectedItem.name}' is not a weapon or has no prefab");
+            animationLayerController.DeactivateWeaponOverride();
+            animationManager.PlaySheatheAnimation();
         }
     }
 
@@ -61,4 +93,3 @@ public class PlayerEquipmentManager : MonoBehaviour
         return null;
     }
 }
-

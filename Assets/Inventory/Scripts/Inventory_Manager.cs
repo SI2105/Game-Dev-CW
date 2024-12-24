@@ -38,21 +38,35 @@ public class InventoryManager : MonoBehaviour
 
     public UnityEvent onSelectedItemChanged;
     [SerializeField] private int selectedSlotIndex = 0;
+    public int SelectedSlotIndex
+    {
+        get => selectedSlotIndex;
+        set => selectedSlotIndex = value;
+    }
+
     [SerializeField] private GameObject HotbarSelector;
     public ItemClass selectedItem;
 
     public ItemClass SelectedItem
     {
-        get => selectedItem;
+        get { return selectedItem; }
         set
         {
-            if (selectedItem != value)
+            selectedItem = value;
+
+            // Ensure the event is invoked safely
+            if (onSelectedItemChanged != null)
             {
-                selectedItem = value;
-                onSelectedItemChanged?.Invoke(); // Trigger the event when the item changes
+                Debug.Log($"SelectedItem changed to: {selectedItem?.name ?? "null"}");
+                onSelectedItemChanged.Invoke();
+            }
+            else
+            {
+                Debug.LogError("onSelectedItemChanged is null. Ensure it is initialized.");
             }
         }
     }
+
 
     public ItemClass getSelectedItem(){
         return selectedItem;
@@ -122,12 +136,41 @@ public class InventoryManager : MonoBehaviour
        
     }
 
+    public bool isFull() {
+
+        for (int i = 0; i < Items.Length; i++)
+        {
+            if (Items[i].GetItem() == null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void CraftTest() {
+        CraftingRecipe recipe = craftingRecipes[0];
+        Craft(recipe);
+    }
+    public void Craft(CraftingRecipe recipe) {
+        if (recipe.CanCraft(this))
+        {
+            recipe.Craft(this);
+            RefreshInterface();
+        }
+
+        else {
+            Debug.Log("Cannot Craft");
+        }
+
+    }
+
     public void OnHotBarSelection(InputAction.CallbackContext context) { 
         if (context.performed)
         {
             
             float val = context.ReadValue<float>();
-            selectedSlotIndex = Mathf.Clamp((int)val - 1, 0, HotBarslots.Length - 1);
+            SelectedSlotIndex = Mathf.Clamp((int)val - 1, 0, HotBarslots.Length - 1);
         }
     }
 
@@ -391,4 +434,52 @@ public class InventoryManager : MonoBehaviour
         return true;
 
     }
+
+    public bool Remove(ItemClass item, int quantity )
+    {
+        SlotClass temp = Contains(item);
+        if (temp != null)
+        {
+
+            if (temp.GetQuantity() > 1)
+            {
+                temp.SubQuantity(quantity);
+            }
+            else
+            {
+                int SlotToRemoveIndex = -1;
+                for (int i = 0; i < Items.Length; i++)
+                {
+                    if (Items[i].GetItem() == item)
+                    {
+
+                        SlotToRemoveIndex = i;
+                        break;
+
+                    }
+
+
+
+
+                }
+                if (SlotToRemoveIndex != -1)
+                {
+
+                    Items[SlotToRemoveIndex].RemoveItem();
+                }
+
+
+            }
+        }
+        else
+        {
+            return false;
+        }
+
+        RefreshInterface();
+        return true;
+
+    }
+
+
 }

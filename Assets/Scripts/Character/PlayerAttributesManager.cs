@@ -1,13 +1,14 @@
 using System.Collections;
 using UnityEngine;
 using System;
+
 namespace SG
 {
     public class PlayerAttributesManager : MonoBehaviour
     {
         #region Inventory
         //public GameObject Inventory;
-        [SerializeField]private InventoryManager inventoryManager;
+        [SerializeField] private InventoryManager inventoryManager;
         public InventoryManager InventoryManager {
             get => inventoryManager;
             set => inventoryManager = value;

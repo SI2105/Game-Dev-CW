@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2729960f52f1c0a4b8cd6c2142faa950, type: 3}
+  m_Name: DoubleSided_Axe
+  m_EditorClassIdentifier: 
+  id: 8
+  displayName: Double Sided Axe
+  icon: {fileID: -1455725334, guid: 8c219f0a74b4c204391227508fc1652b, type: 3}
+  prefab: {fileID: 1948186286613674, guid: f063809a91c6b0248956e054e09b9b56, type: 3}
+  Stackable: 0
+  weaponType: 0

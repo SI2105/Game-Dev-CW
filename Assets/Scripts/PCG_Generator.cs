@@ -29,6 +29,9 @@ public class Room
 public class PCG_Generator : MonoBehaviour
 {
     [SerializeField]
+    private int _roomBufferSize = 2; // Minimum buffer between rooms    
+
+    [SerializeField]
     private int _roomCount = 3; // How many rooms to generate
 
     [SerializeField]
@@ -48,15 +51,16 @@ public class PCG_Generator : MonoBehaviour
     [SerializeField]
     private int _mazeDepth;
 
-    private MazeCell[,] _mazeGrid;
+    public MazeCell[,] _mazeGrid;
 
+    
+    [SerializeField]
+    public Terrain terrain;
     
     void Start()
 {
     _mazeGrid = new MazeCell[_mazeWidth, _mazeDepth];
 
-    // Get the terrain component and its data
-    Terrain terrain = GetComponent<Terrain>();
     if (terrain == null)
     {
         Debug.LogError("No Terrain component found on this GameObject. Please attach this script to a Terrain.");
@@ -93,10 +97,23 @@ public class PCG_Generator : MonoBehaviour
             cell.GridX = x;
             cell.GridZ = z;
 
-            // Scale the cell
-            cell.transform.localScale = new Vector3(cellSizeX, cell.transform.localScale.y, cellSizeZ);
-
+            // Scale the cell slightly smaller to avoid overlapping walls
+            float insetFactor = 0.98f; // Adjust this value for more or less inset
+            cell.transform.localScale = new Vector3(cellSizeX * insetFactor, cell.transform.localScale.y, cellSizeZ * insetFactor);
             _mazeGrid[x, z] = cell;
+
+            // Adjust render queue for each wall material
+            foreach (var wall in cell.getWall())
+            {
+                if (wall != null)
+                {
+                    Renderer renderer = wall.GetComponent<Renderer>();
+                    if (renderer != null && renderer.material != null)
+                    {
+                        renderer.material.renderQueue = 2000; // Default opaque queue
+                    }
+                }
+            }
         }
     }
 
@@ -209,21 +226,21 @@ public class PCG_Generator : MonoBehaviour
     }
 
 
-
     private bool DoesRoomOverlap(Room room)
+{
+    foreach (Room existingRoom in _rooms)
     {
-        foreach (Room existingRoom in _rooms)
+        // Add the buffer to the overlap check
+        if (room.X < existingRoom.X + existingRoom.Width + _roomBufferSize &&
+            room.X + room.Width + _roomBufferSize > existingRoom.X &&
+            room.Z < existingRoom.Z + existingRoom.Depth + _roomBufferSize &&
+            room.Z + room.Depth + _roomBufferSize > existingRoom.Z)
         {
-            if (room.X < existingRoom.X + existingRoom.Width &&
-                room.X + room.Width > existingRoom.X &&
-                room.Z < existingRoom.Z + existingRoom.Depth &&
-                room.Z + room.Depth > existingRoom.Z)
-            {
-                return true; // Overlap detected
-            }
+            return true; // Overlap or too close
         }
-        return false; // No overlap
     }
+    return false; // No overlap and buffer is maintained
+}
 
 
 

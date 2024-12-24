@@ -1,14 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace SG{
+namespace SG
+{
 
     public class TwoDimensionalAnimationController : MonoBehaviour
     {
-    #region Animator Variables
+        #region Animator Variables
         private Animator animator;
         private Vector2 moveInput;
         private int VelocityZHash;
@@ -42,6 +42,7 @@ namespace SG{
         bool leftPressed = false;
         bool rightPressed = false;
         bool InventoryVisible = false;
+        bool PauseVisible = false;
         #endregion
 
         #region Velocity Variables
@@ -58,49 +59,6 @@ namespace SG{
         private float targetRotation;
         private float lastTargetRotation;
         #endregion
-        #region PlayerStats Display
-
-        [SerializeField] private TextMeshProUGUI PlayerStatsText;
-
-        public void UpdatePlayerStats() {
-            if (PlayerStatsText != null) {
-                PlayerStatsText.text = GetPlayerStatsText();
-            }
-
-        }
-
-        public string GetPlayerStatsText() {
-
-            
-            return
-                    $"<align=left>Current Level:<line-height=0>\n<align=right>{attributesManager.CurrentLevel} / {attributesManager.MaxLevel}<line-height=1em>\n" +
-
-                    $"<align=left>Current XP:<line-height=0>\n<align=right>{attributesManager.CurrentXP}<line-height=1em>\n" +
-                    $"<align=left>XP to Next Level:<line-height=0>\n<align=right> \t {attributesManager.XPToNextLevel}<line-height=1em>\n" +
-                    $"<align=left>Strength:<line-height=0>\n<align=right>{attributesManager.Strength}<line-height=1em>\n" +
-                    $"<align=left>Agility:<line-height=0>\n<align=right>{attributesManager.Agility}<line-height=1em>\n" +
-                    $"<align=left>Endurance:<line-height=0>\n<align=right>{attributesManager.Endurance}<line-height=1em>\n" +
-                    $"<align=left>Intelligence:<line-height=0>\n<align=right>{attributesManager.Intelligence}<line-height=1em>\n" +
-                    $"<align=left>Luck:<line-height=0>\n<align=right>{attributesManager.Luck}<line-height=1em>" +
-                    "\n \n" +
-               
-                    $"<align=left>Base Damage:<line-height=0>\n<align=right>{attributesManager.BaseDamage}<line-height=1em>\n" +
-                    $"<align=left>Critical Hit Chance:<line-height=0>\n<align=right>{attributesManager.CriticalHitChance}<line-height=1em>\n" +
-                    $"<align=left>Critical Hit Multiplier:<line-height=0>\n<align=right>{attributesManager.CriticalHitMultiplier}<line-height=1em>\n" +
-                    $"<align=left>Attack Speed:<line-height=0>\n<align=right>{attributesManager.AttackSpeed}<line-height=1em>\n" +
-                    $"<align=left>Armor:<line-height=0>\n<align=right>{attributesManager.Armor}<line-height=1em>\n" +
-                    $"<align=left>Block Chance:<line-height=0>\n<align=right>{attributesManager.BlockChance}<line-height=1em>\n" +
-                    $"<align=left>Dodge Chance:<line-height=0>\n<align=right>{attributesManager.DodgeChance}<line-height=1em>" +
-                    "\n \n"
-                   
-                    ;
-            
-
-        }
-
-
-        #endregion
-
 
         #region Movement Settings
         public float acceleration = 2f;
@@ -126,6 +84,8 @@ namespace SG{
         #endregion
         private PlayerAttributesManager attributesManager;
 
+        GameObject pauseMenuPanel = GameObject.Find("PauseMenu");
+
         private void Awake()
         {
             inputActions = new GameDevCW();
@@ -147,27 +107,36 @@ namespace SG{
             inputActions.Player.Inventory.performed += HandleInventory;
             inputActions.Player.Inventory.canceled += HandleInventory;
 
+            inputActions.Player.Pause.performed += HandlePause;
+            inputActions.Player.Pause.canceled += HandlePause;
+
             attributesManager = GetComponent<PlayerAttributesManager>();
 
-            if (attributesManager) {
+            if (attributesManager)
+            {
                 Debug.Log("Inventory Manager found");
                 inputActions.UI.Click.performed += attributesManager.InventoryManager.OnClick;
                 inputActions.UI.HotBarSelector.performed += attributesManager.InventoryManager.OnHotBarSelection;
                 inputActions.UI.Click.canceled += attributesManager.InventoryManager.OnClick;
                 inputActions.UI.HotBarSelector.canceled += attributesManager.InventoryManager.OnHotBarSelection;
-                UpdatePlayerStats();
             }
-            
+
 
         }
 
-            private void HandleInventory(InputAction.CallbackContext context) {
+        private void HandleInventory(InputAction.CallbackContext context)
+        {
 
-            if (context.performed) {
+            if (context.performed)
+            {
 
                 ToggleInventory();
-
             }
+
+
+
+
+
         }
 
         private void ToggleInventory()
@@ -175,17 +144,51 @@ namespace SG{
             InventoryVisible = !InventoryVisible;
             if (InventoryVisible)
             {
-                UpdatePlayerStats();
                 attributesManager.InventoryManager.InventoryPanel.SetActive(true);
-                attributesManager.InventoryManager.PlayerStatsPanel.SetActive(true);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
-            else {
+            else
+            {
                 attributesManager.InventoryManager.InventoryPanel.SetActive(false);
-                attributesManager.InventoryManager.PlayerStatsPanel.SetActive(false);
                 Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false; 
+                Cursor.visible = false;
+
+
+            }
+
+
+        }
+
+        private void HandlePause(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                PauseVisible = !PauseVisible;
+                if (PauseVisible)
+                {
+                    // Enable the pause menu UI
+                    pauseMenuPanel.SetActive(true);
+
+                    // Freeze the game by setting time scale to 0
+                    Time.timeScale = 0f;
+
+                    // Unlock and show the cursor for UI interaction
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                }
+                else
+                {
+                    // Disable the pause menu UI
+                    pauseMenuPanel.SetActive(false);
+
+                    // Resume the game by setting time scale to 1
+                    Time.timeScale = 1f;
+
+                    // Lock and hide the cursor to return to gameplay
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
             }
         }
 
@@ -201,7 +204,7 @@ namespace SG{
 
             if (idleTransform == null)
                 idleTransform = transform;
-                        
+
             if (cameraTransform == null && Camera.main != null)
                 cameraTransform = Camera.main.transform;
 
@@ -211,7 +214,7 @@ namespace SG{
 
         private void Update()
         {
-            
+
             HandleRotation();
             Movement();
             UpdateAnimatorParameters();
@@ -273,7 +276,8 @@ namespace SG{
         /// Updates the animation state based on player input and sprint state.
         /// </summary>
 
-        private void UpdateAnimatorParameters(){
+        private void UpdateAnimatorParameters()
+        {
             float speed = Mathf.Abs(rb.velocity.x);
             forwardPressed = moveInput.y > 0;
             leftPressed = moveInput.x < 0;
@@ -300,7 +304,7 @@ namespace SG{
             else if (!isGrounded && wasGrounded)
             {
                 Debug.Log("");
-                
+
             }
             wasGrounded = isGrounded;
         }
@@ -321,7 +325,7 @@ namespace SG{
                     break;  // Exit loop once we find valid ground
                 }
             }
-            
+
             if (foundValidGround)
             {
                 isGrounded = true;
@@ -383,8 +387,9 @@ namespace SG{
             // Apply horizontal rotation to the player
             idleTransform.rotation = Quaternion.Euler(0f, currentRotationY, 0f);
         }
-        
-        private void Movement(){
+
+        private void Movement()
+        {
             // Determine current maximum velocities based on sprinting
             float currentMaxVelocityZ = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
             float currentMaxVelocityX = isRunning ? sprintMaxVelocityX : maxVelocityX;
@@ -469,8 +474,9 @@ namespace SG{
             if (isRunning && forwardPressed)
             {
                 float staminaCost = attributesManager.StaminaCostPerSecond * Time.deltaTime;
-                
-                if (!attributesManager.UseStamina(staminaCost)){
+
+                if (!attributesManager.UseStamina(staminaCost))
+                {
                     isRunning = false;
                 }
             }
@@ -531,13 +537,14 @@ namespace SG{
             moveInput = context.ReadValue<Vector2>();
         }
 
-        private void HandleLook(InputAction.CallbackContext context){
+        private void HandleLook(InputAction.CallbackContext context)
+        {
 
             if (InventoryVisible)
             {
                 return;
             }
-            
+
             lookInput = context.ReadValue<Vector2>();
         }
     }

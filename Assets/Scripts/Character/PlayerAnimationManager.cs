@@ -18,4 +18,6 @@ public class PlayerAnimationManager : MonoBehaviour
     {
         animator.SetTrigger("Sheathe");
     }
+
+    
 }

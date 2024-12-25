@@ -75,8 +75,9 @@ public class PlayerEquipmentManager : MonoBehaviour
         else
         {
             Debug.Log($"Selected item '{inventoryManager.SelectedItem.name}' is not a weapon or has no prefab");
-            animationLayerController.DeactivateWeaponOverride();
+            animationManager.PlayUnsheathAnimation();
             animationManager.PlaySheatheAnimation();
+            animationLayerController.DeactivateWeaponOverride();
         }
     }
 

@@ -70,4 +70,17 @@ public class AnimationLayerController : MonoBehaviour
 
         currentTransition = null;
     }
+
+    public void ResetTriggers(){
+        animator.ResetTrigger("Unsheath");
+        animator.ResetTrigger("Sheathe");
+    }
+
+    public void ResetLayerWeights()
+    {
+        for (int i = 1; i < animator.layerCount; i++)
+        {
+            animator.SetLayerWeight(i, 0);
+        }
+    }
 }

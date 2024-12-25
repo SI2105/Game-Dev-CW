@@ -10724,15 +10724,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1995868877756786982, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5
+      value: 51.2
       objectReference: {fileID: 0}
     - target: {fileID: 1995868877756786982, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1995868877756786982, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 10
+      value: 34.9
       objectReference: {fileID: 0}
     - target: {fileID: 1995868877756786982, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: m_LocalRotation.w
@@ -10804,7 +10804,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4339962306765574104, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.008992195
+      value: 0.008991241
       objectReference: {fileID: 0}
     - target: {fileID: 4339962306765574104, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: m_LocalPosition.y
@@ -10812,7 +10812,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4339962306765574104, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.05371189
+      value: 0.053710938
       objectReference: {fileID: 0}
     - target: {fileID: 5393550208875356629, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10908,7 +10908,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7439382588686736040, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.008992195
+      value: 0.008991241
       objectReference: {fileID: 0}
     - target: {fileID: 7439382588686736040, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: m_LocalPosition.y
@@ -10916,7 +10916,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7439382588686736040, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.05371189
+      value: 0.053710938
       objectReference: {fileID: 0}
     - target: {fileID: 8525264380551391379, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21031,7 +21031,7 @@ MonoBehaviour:
     skyboxMaterial: {fileID: 2100000, guid: 1cc6e6796f833a94f94e6d794ca654c3, type: 2}
   skyboxTransitionManager: {fileID: 820454847}
   weatherSystem: {fileID: 96266344}
-  _currentTimeOfDay: 0
+  _currentTimeOfDay: 3
   currentHour: 0
 --- !u!4 &1295435671
 Transform:
@@ -30997,8 +30997,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef4f7a293916401d9dbffb584741185, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 7564636611156017616, guid: e7a79a14190d3d34f93236ba7164d734, type: 3}
+  tilePrefabs:
+  - {fileID: 7564636611156017616, guid: e7a79a14190d3d34f93236ba7164d734, type: 3}
+  - {fileID: 7564636611156017616, guid: a76c3e5083ed044c2bc7e491f3bfc603, type: 3}
+  - {fileID: 7564636611156017616, guid: fc9550a368deb4ae287a4fb2e1ec2a2a, type: 3}
+  - {fileID: 7564636611156017616, guid: 99c79318f291b4f19ae5ab62a0b03fbc, type: 3}
+  - {fileID: 7564636611156017616, guid: d2e3f827c6a7948a59565b55ccc500f5, type: 3}
+  - {fileID: 7564636611156017616, guid: 0835aacb563144f25a309c468923c942, type: 3}
+  - {fileID: 7564636611156017616, guid: 9fa3d5e6eb61f4e028f457515ab378b3, type: 3}
+  - {fileID: 7564636611156017616, guid: 4749e40a230d7496f8111b123c4f1f6e, type: 3}
+  plainTilePrefab: {fileID: 7564636611156017616, guid: de75c5edf7b7a49cb9102a88da3380b2, type: 3}
   terrain: {fileID: 1822333674}
+  plainTileWeight: 1
 --- !u!4 &1563281406
 Transform:
   m_ObjectHideFlags: 0
@@ -40876,11 +40886,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a3398fc388d4be99d9d9b579423043, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wallPrefab: {fileID: 2190261499954311791, guid: 7d6dacf1e814a4580bb8c073983ef390, type: 3}
+  _wallPrefabs:
+  - {fileID: 2190261499954311791, guid: 7d6dacf1e814a4580bb8c073983ef390, type: 3}
+  - {fileID: 2190261499954311791, guid: 1ead324516bf74bd186aa9f9010e9562, type: 3}
   _pillarPrefab: {fileID: 178811535428721102, guid: f8c0297a8d99e2747baeb5697c8ecb66, type: 3}
   _roomBufferSize: 2
+  _maze_configuration: 5
   _roomCount: 3
-  _minRoomSize: 2
+  _minRoomSize: 4
   _maxRoomSize: 4
   _mazeCellPrefab: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
   _mazeWidth: 10

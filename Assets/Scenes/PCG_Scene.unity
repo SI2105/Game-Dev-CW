@@ -145,7 +145,7 @@ Transform:
   m_GameObject: {fileID: 12846553}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.12, y: 1.1, z: 9.54}
+  m_LocalPosition: {x: 8.58, y: 2.32, z: 13.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -30255,62 +30255,6 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!1 &1563281404
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1563281406}
-  - component: {fileID: 1563281405}
-  m_Layer: 0
-  m_Name: TerrainManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1563281405
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563281404}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eef4f7a293916401d9dbffb584741185, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tilePrefabs:
-  - {fileID: 7564636611156017616, guid: e7a79a14190d3d34f93236ba7164d734, type: 3}
-  - {fileID: 7564636611156017616, guid: a76c3e5083ed044c2bc7e491f3bfc603, type: 3}
-  - {fileID: 7564636611156017616, guid: fc9550a368deb4ae287a4fb2e1ec2a2a, type: 3}
-  - {fileID: 7564636611156017616, guid: 99c79318f291b4f19ae5ab62a0b03fbc, type: 3}
-  - {fileID: 7564636611156017616, guid: d2e3f827c6a7948a59565b55ccc500f5, type: 3}
-  - {fileID: 7564636611156017616, guid: 0835aacb563144f25a309c468923c942, type: 3}
-  - {fileID: 7564636611156017616, guid: 9fa3d5e6eb61f4e028f457515ab378b3, type: 3}
-  - {fileID: 7564636611156017616, guid: 4749e40a230d7496f8111b123c4f1f6e, type: 3}
-  plainTilePrefab: {fileID: 7564636611156017616, guid: de75c5edf7b7a49cb9102a88da3380b2, type: 3}
-  terrain: {fileID: 1822333674}
-  plainTileWeight: 1
---- !u!4 &1563281406
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563281404}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 60.9, y: 5, z: 47.6}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1663060732
 GameObject:
   m_ObjectHideFlags: 0
@@ -40093,6 +40037,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _wall: {fileID: -1720509009710389966, guid: 7d6dacf1e814a4580bb8c073983ef390, type: 3}
+  _archwayPrefab: {fileID: 8644115839786080152, guid: 4963b55652180e946b10fda98efef25e, type: 3}
+  _archwayWithDoorPrefab: {fileID: 8644115839786080152, guid: eedc232f795364935a90ab6adc550a45, type: 3}
+  _plainWallPrefab: {fileID: 1159351990771520630, guid: 91ad7bf144749b04ab484a680630a040, type: 3}
   _roomBufferSize: 2
   _maze_configuration: 6
   _roomCount: 3
@@ -45140,7 +45087,6 @@ SceneRoots:
   - {fileID: 96266345}
   - {fileID: 820454848}
   - {fileID: 92922973}
-  - {fileID: 1563281406}
   - {fileID: 1822333675}
   - {fileID: 446663349}
   - {fileID: 12846554}

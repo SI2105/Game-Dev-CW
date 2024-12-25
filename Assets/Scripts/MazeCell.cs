@@ -20,11 +20,18 @@ public class MazeCell : MonoBehaviour
     private GameObject _unvisitedBlock;
 
     public bool IsVisited { get; private set; }
-
     public int GridX { get; set; } // Store the grid X index
     public int GridZ { get; set; } // Store the grid Z index
-    
     public bool IsRoom { get; private set; }
+    public bool IsRoomEntrance { get; private set; }
+
+    public void MarkAsRoomEntrance()
+    {
+        IsRoomEntrance = true;
+    }
+    
+    // Dictionary to track archway status for each wall
+    private Dictionary<string, bool> _archwayStatus = new Dictionary<string, bool>();
 
     public void MarkAsRoom()
     {
@@ -32,33 +39,19 @@ public class MazeCell : MonoBehaviour
         ClearAllWalls(); // Open the room completely
     }
 
-   public Dictionary<string, GameObject> GetWalls()
+    // Modified GetWalls to return all walls, including their archway status
+    public Dictionary<string, (GameObject wallObject, bool isArchway)> GetWalls()
     {
-        Dictionary<string, GameObject> activeWalls = new Dictionary<string, GameObject>();
-
-        if (_leftWall.activeSelf)
+        Dictionary<string, (GameObject, bool)> walls = new Dictionary<string, (GameObject, bool)>
         {
-            activeWalls["leftWall"] = _leftWall;
-        }
+            { "leftWall", (_leftWall, IsArchway("leftWall")) },
+            { "rightWall", (_rightWall, IsArchway("rightWall")) },
+            { "frontWall", (_frontWall, IsArchway("frontWall")) },
+            { "backWall", (_backWall, IsArchway("backWall")) }
+        };
 
-        if (_rightWall.activeSelf)
-        {
-            activeWalls["rightWall"] = _rightWall;
-        }
-
-        if (_frontWall.activeSelf)
-        {
-            activeWalls["frontWall"] = _frontWall;
-        }
-
-        if (_backWall.activeSelf)
-        {
-            activeWalls["backWall"] = _backWall;
-        }
-
-        return activeWalls;
+        return walls;
     }
-
 
     public void ClearAllWalls()
     {
@@ -68,30 +61,53 @@ public class MazeCell : MonoBehaviour
         ClearRightWall();
     }
 
-
     public void Visit()
     {
         IsVisited = true;
         _unvisitedBlock.SetActive(false);
     }
 
+    // Clear and mark as archway
     public void ClearLeftWall()
     {
         _leftWall.SetActive(false);
+        MarkAsArchway("leftWall");
     }
 
     public void ClearRightWall()
     {
         _rightWall.SetActive(false);
+        MarkAsArchway("rightWall");
     }
 
     public void ClearFrontWall()
     {
         _frontWall.SetActive(false);
+        MarkAsArchway("frontWall");
     }
 
     public void ClearBackWall()
     {
         _backWall.SetActive(false);
+        MarkAsArchway("backWall");
+    }
+
+    // Mark a wall as an archway
+    private void MarkAsArchway(string wallName)
+    {
+        if (_archwayStatus.ContainsKey(wallName))
+        {
+            _archwayStatus[wallName] = true;
+        }
+        else
+        {
+            _archwayStatus.Add(wallName, true);
+        }
+    }
+
+    // Check if a wall is an archway
+    private bool IsArchway(string wallName)
+    {
+        return _archwayStatus.ContainsKey(wallName) && _archwayStatus[wallName];
     }
 }

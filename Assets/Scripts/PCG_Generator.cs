@@ -30,10 +30,16 @@ public class PCG_Generator : MonoBehaviour
 {
 
     [SerializeField]
-    private GameObject [] _wallPrefabs;
+    private Wall _wall;
 
     [SerializeField]
-    private GameObject _pillarPrefab;
+    private GameObject _archwayPrefab;
+
+    [SerializeField]
+    private GameObject _archwayWithDoorPrefab;
+
+    [SerializeField]
+    private GameObject _plainWallPrefab;
 
     [SerializeField]
     private int _roomBufferSize = 2; // Minimum buffer between rooms    
@@ -145,24 +151,25 @@ public class PCG_Generator : MonoBehaviour
  
 private void ReplaceWallsInMaze()
 {
+    bool isFlagActive = true;
     foreach (MazeCell cell in _mazeGrid)
     {
         if (cell == null) continue;
 
-        // Get the dictionary of walls from the cell
-        Dictionary<string, GameObject> walls = cell.GetWalls();
+        // Get the dictionary of walls with their archway status
+        var walls = cell.GetWalls();
 
         foreach (var wallEntry in walls)
         {
-            int wallIndex=0;
             string wallName = wallEntry.Key; // e.g., "leftWall", "frontWall"
-            GameObject oldWall = wallEntry.Value;
+            GameObject wallObject = wallEntry.Value.wallObject; // The wall GameObject
+            bool isArchway = wallEntry.Value.isArchway; // Archway status
 
-            if (oldWall == null) continue;
+            if (wallObject == null) continue;
 
-            // Get the position and scale of the old wall
-            Vector3 wallPosition = oldWall.transform.position;
-            Vector3 scale = oldWall.transform.localScale;
+            // Get the position and scale of the wall
+            Vector3 wallPosition = wallObject.transform.position;
+            Vector3 scale = wallObject.transform.localScale;
 
             // Adjust position to align with terrain
             float terrainHeight = terrain.SampleHeight(wallPosition) + terrain.GetPosition().y;
@@ -177,22 +184,110 @@ private void ReplaceWallsInMaze()
                 rotation = Quaternion.Euler(0, 90, 0); // Rotate 90 degrees for vertical walls
             }
 
-            // Fixed starting position for the first segment
-            // Segment length and total number of walls
+            // Destroy the old wall
+            Destroy(wallObject);
+
+             // Fixed starting position for the first segment
             float segmentLength = 5.9f; // Length of one segment
             int fullWalls = Mathf.FloorToInt(cellSizeX / _maze_configuration);
-            float remainder = (cellSizeX % _maze_configuration)/_maze_configuration; 
+            float remainder = (cellSizeX % _maze_configuration) / _maze_configuration;
 
-            if(fullWalls>=2){
+            
+            if (isArchway)
+            {
+                if(!cell.IsRoom){
+                    // Calculate total length of the wall segments
+                    float totalLength = (fullWalls + remainder) * segmentLength;
 
-          
+                    // Calculate the starting position offset
+                    float offset = (totalLength / 2) - (segmentLength / 2);
+
+                    // Calculate the starting position for the first segment
+                    Vector3 startPosition = wallPosition;
+                    if (isVerticalWall)
+                    {
+                        startPosition.z = wallPosition.z - offset; // Adjust for vertical walls
+                    }
+                    else
+                    {
+                        startPosition.x = wallPosition.x - offset; // Adjust for horizontal walls
+                    }
+
+                    // Place smaller walls
+                    Vector3 currentPosition = startPosition;
+                    GameObject archway;
+                    
+                    if(cell.IsRoomEntrance){
+                         // Place an archway with door prefab
+                        archway = Instantiate(_archwayWithDoorPrefab, currentPosition, rotation);
+                    }
+                    else{
+                         // Place an archway prefab
+                        archway = Instantiate(_archwayPrefab, currentPosition, rotation);
+                    }
+                
+                    archway.transform.localScale = scale; // Adjust the scale of the archway if needed
+
+                    fullWalls-=1;
+
+                    // Update the position for the next wall
+                    if (isVerticalWall)
+                        {
+                            currentPosition.z += segmentLength; // Move along Z-axis for vertical walls
+                        }
+                    else
+                        {
+                            currentPosition.x += segmentLength; // Move along X-axis for horizontal walls
+                    }
+                    
+                    while ((fullWalls + remainder) >= 2)
+                    {
+                        GameObject newWall = Instantiate(_plainWallPrefab, currentPosition, rotation);
+                        newWall.transform.localScale = scale; // Use the original scale for each wall
+
+                        // Update the position for the next wall
+                        if (isVerticalWall)
+                        {
+                            currentPosition.z += segmentLength; // Move along Z-axis for vertical walls
+                        }
+                        else
+                        {
+                            currentPosition.x += segmentLength; // Move along X-axis for horizontal walls
+                        }
+
+                        // Decrement fullWalls
+                        fullWalls--;
+                    }
+
+                    // Add the remainder wall if needed
+                    if ((remainder + fullWalls) > 0)
+                    {
+                        GameObject remainderWall = Instantiate(_plainWallPrefab, currentPosition, rotation);
+                        remainderWall.transform.localScale = new Vector3(remainder + fullWalls, scale.y, scale.z);
+
+                        if (isVerticalWall)
+                        {
+                            currentPosition.z += segmentLength * (remainder + fullWalls); // Move along Z-axis for vertical walls
+                        }
+                        else
+                        {
+                            currentPosition.x += segmentLength * (remainder + fullWalls); // Move along X-axis for horizontal walls
+                        }
+                    }
+                   
+                }
+                 continue; // Skip the rest of the logic for this wall
+            }
+
+    
+            if (fullWalls >= 2)
+            {
                 // Calculate total length of the wall segments
                 float totalLength = (fullWalls + remainder) * segmentLength;
 
                 // Calculate the starting position offset
                 float offset = (totalLength / 2) - (segmentLength / 2);
 
-      
                 // Calculate the starting position for the first segment
                 Vector3 startPosition = wallPosition;
                 if (isVerticalWall)
@@ -204,16 +299,12 @@ private void ReplaceWallsInMaze()
                     startPosition.x = wallPosition.x - offset; // Adjust for horizontal walls
                 }
 
-                // Destroy the old wall
-                Destroy(oldWall);
-
-
                 // Place smaller walls
                 Vector3 currentPosition = startPosition;
-            
-                 while ((fullWalls + remainder) >= 2)
+
+                while ((fullWalls + remainder) >= 2)
                 {
-                    GameObject newWall = Instantiate(_wallPrefabs[wallIndex], currentPosition, rotation);
+                    GameObject newWall = Instantiate(_wall.wallPrefab, currentPosition, rotation);
                     newWall.transform.localScale = scale; // Use the original scale for each wall
 
                     // Update the position for the next wall
@@ -228,62 +319,41 @@ private void ReplaceWallsInMaze()
 
                     // Decrement fullWalls
                     fullWalls--;
-                    
-                    if(wallIndex==0){
-                        wallIndex=1;
-                    }else{
-                        wallIndex=0;
-                    }
+
+                    _wall.toggleWall(isFlagActive);
+                    isFlagActive = !isFlagActive;
                 }
 
-                  // Add the remainder wall if needed
+                // Add the remainder wall if needed
                 if ((remainder + fullWalls) > 0)
                 {
-                    GameObject remainderWall = Instantiate(_wallPrefabs[wallIndex], currentPosition, rotation);
-
-                
-                    remainderWall.transform.localScale = new Vector3(remainder+ fullWalls, scale.y, scale.z);
+                    GameObject remainderWall = Instantiate(_wall.wallPrefab, currentPosition, rotation);
+                    remainderWall.transform.localScale = new Vector3(remainder + fullWalls, scale.y, scale.z);
 
                     if (isVerticalWall)
                     {
-                        currentPosition.z += segmentLength * (remainder+ fullWalls); // Move along Z-axis for vertical walls
+                        currentPosition.z += segmentLength * (remainder + fullWalls); // Move along Z-axis for vertical walls
                     }
                     else
                     {
-                        currentPosition.x += segmentLength * (remainder+ fullWalls);// Move along X-axis for horizontal walls
+                        currentPosition.x += segmentLength * (remainder + fullWalls); // Move along X-axis for horizontal walls
                     }
 
-                    if(wallIndex==0){
-                        wallIndex=1;
-                    }else{
-                        wallIndex=0;
-                    }
-                    
+                    _wall.toggleWall(isFlagActive);
+                    isFlagActive = !isFlagActive;
                 }
             }
-
-            else{
-                // Destroy the old wall
-                Destroy(oldWall);
-                GameObject Wall = Instantiate(_wallPrefabs[wallIndex], wallPosition, rotation);
-
-                Wall.transform.localScale = new Vector3(scale.x * (cellSizeX/6), scale.y, scale.z);
-
-                if(wallIndex==0){
-                        wallIndex=1;
-                    }else{
-                        wallIndex=0;
-                    }
-
+            else
+            {
+                // Place a single wall if the total length is less than two segments
+                GameObject Wall = Instantiate(_wall.wallPrefab, wallPosition, rotation);
+                Wall.transform.localScale = new Vector3(scale.x * (cellSizeX / 6), scale.y, scale.z);
+                _wall.toggleWall(isFlagActive);
+                isFlagActive = !isFlagActive;
             }
-
-          
-
         }
     }
 }
-
-
     public int GetMazeDepth()
     {
         return _mazeDepth;
@@ -326,6 +396,8 @@ private void ReplaceWallsInMaze()
                                         Mathf.Clamp(entrancePos.y, room.Z, room.Z + room.Depth - 1)];
 
             ClearWalls(roomEdgeCell, roomCell);
+            // Mark the maze cell (roomEdgeCell) as a room opening
+            roomEdgeCell.MarkAsRoomEntrance();
         }
     }
 

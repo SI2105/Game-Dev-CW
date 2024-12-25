@@ -27,6 +27,17 @@ public class CraftingRecipe : ScriptableObject
  
         return true;
     }
+
+    public string getInputAsString() { 
+
+        string toReturn = "";
+
+        for (int i = 0; i < inputItems.Length; i++)
+        {
+            toReturn += inputItems[i].GetQuantity() + "x " + inputItems[i].GetItem().displayName + "\n";
+        }
+        return toReturn;
+    }
     public void Craft(InventoryManager inventory)
     {
  

@@ -179,16 +179,24 @@ namespace SG{
             InventoryVisible = !InventoryVisible;
             if (InventoryVisible)
             {
-                // attributesManager.InventoryManager.CraftTest();
+                //attributesManager.InventoryManager.CraftTest();
                 UpdatePlayerStats();
                 attributesManager.InventoryManager.InventoryPanel.SetActive(true);
                 attributesManager.InventoryManager.PlayerStatsPanel.SetActive(true);
+                attributesManager.InventoryManager.CraftingPanel.SetActive(true);
+                attributesManager.InventoryManager.Overlay.SetActive(true);
+                attributesManager.InventoryManager.HotBar.SetActive(false);
+                attributesManager.InventoryManager.HotBarSelector.SetActive(false);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
             else {
                 attributesManager.InventoryManager.InventoryPanel.SetActive(false);
                 attributesManager.InventoryManager.PlayerStatsPanel.SetActive(false);
+                attributesManager.InventoryManager.CraftingPanel.SetActive(false);
+                attributesManager.InventoryManager.Overlay.SetActive(false);
+                attributesManager.InventoryManager.HotBar.SetActive(true);
+                attributesManager.InventoryManager.HotBarSelector.SetActive(true);
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false; 
             }

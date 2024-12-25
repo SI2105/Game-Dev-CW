@@ -42,6 +42,12 @@ public class InventoryManager : MonoBehaviour
 
     public UnityEvent onSelectedItemChanged;
     [SerializeField] private int selectedSlotIndex = 0;
+    public int SelectedSlotIndex
+    {
+        get => selectedSlotIndex;
+        set => selectedSlotIndex = value;
+    }
+
     [SerializeField] private GameObject HotbarSelector;
     public ItemClass selectedItem;
 
@@ -71,16 +77,24 @@ public class InventoryManager : MonoBehaviour
     #endregion
     public ItemClass SelectedItem
     {
-        get => selectedItem;
+        get { return selectedItem; }
         set
         {
-            if (selectedItem != value)
+            selectedItem = value;
+
+            // Ensure the event is invoked safely
+            if (onSelectedItemChanged != null)
             {
-                selectedItem = value;
-                onSelectedItemChanged?.Invoke(); // Trigger the event when the item changes
+                Debug.Log($"SelectedItem changed to: {selectedItem?.name ?? "null"}");
+                onSelectedItemChanged.Invoke();
+            }
+            else
+            {
+                Debug.LogError("onSelectedItemChanged is null. Ensure it is initialized.");
             }
         }
     }
+
 
     public ItemClass getSelectedItem(){
         return selectedItem;
@@ -187,7 +201,7 @@ public class InventoryManager : MonoBehaviour
         {
             
             float val = context.ReadValue<float>();
-            selectedSlotIndex = Mathf.Clamp((int)val - 1, 0, HotBarslots.Length - 1);
+            SelectedSlotIndex = Mathf.Clamp((int)val - 1, 0, HotBarslots.Length - 1);
         }
     }
 

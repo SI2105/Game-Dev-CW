@@ -11,6 +11,7 @@ public class CameraHeadTracker : MonoBehaviour
     {
         if (headBone != null)
         {
+            Debug.Log("following ");
             // Update the virtual camera's transform position to follow the head
             virtualCamera.transform.position = headBone.position + offsetFromHead;
         }

@@ -48,7 +48,6 @@ public class InventoryManager : MonoBehaviour
         set => selectedSlotIndex = value;
     }
 
-    [SerializeField] private GameObject HotbarSelector;
     public ItemClass selectedItem;
 
 
@@ -163,7 +162,7 @@ public class InventoryManager : MonoBehaviour
         }
 
         
-        HotbarSelector.transform.position = HotBarslots[selectedSlotIndex].transform.position;
+        HotBarSelector.transform.position = HotBarslots[selectedSlotIndex].transform.position;
         SelectedItem = Items[selectedSlotIndex].GetItem();
        
     }

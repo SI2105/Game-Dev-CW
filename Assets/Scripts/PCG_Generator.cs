@@ -28,8 +28,19 @@ public class Room
 
 public class PCG_Generator : MonoBehaviour
 {
+
+    [SerializeField]
+    private GameObject [] _wallPrefabs;
+
+    [SerializeField]
+    private GameObject _pillarPrefab;
+
     [SerializeField]
     private int _roomBufferSize = 2; // Minimum buffer between rooms    
+
+
+    [SerializeField]
+    private float _maze_configuration = 6f; // Minimum buffer between rooms    
 
     [SerializeField]
     private int _roomCount = 3; // How many rooms to generate
@@ -56,6 +67,10 @@ public class PCG_Generator : MonoBehaviour
     
     [SerializeField]
     public Terrain terrain;
+
+    private float cellSizeX;
+
+    private float cellSizeZ;
     
     void Start()
 {
@@ -75,8 +90,8 @@ public class PCG_Generator : MonoBehaviour
     Vector3 terrainPosition = terrain.GetPosition(); // World position of the terrain
 
     // Calculate the size of each maze cell based on the terrain and grid dimensions
-    float cellSizeX = terrainWidth / _mazeWidth;
-    float cellSizeZ = terrainDepth / _mazeDepth;
+    cellSizeX = terrainWidth / _mazeWidth;
+    cellSizeZ = terrainDepth / _mazeDepth;
 
     // Generate maze grid
     for (int x = 0; x < _mazeWidth; x++)
@@ -97,23 +112,11 @@ public class PCG_Generator : MonoBehaviour
             cell.GridX = x;
             cell.GridZ = z;
 
-            // Scale the cell slightly smaller to avoid overlapping walls
-            float insetFactor = 0.98f; // Adjust this value for more or less inset
-            cell.transform.localScale = new Vector3(cellSizeX * insetFactor, cell.transform.localScale.y, cellSizeZ * insetFactor);
+            
+            cell.transform.localScale = new Vector3(cellSizeX, cell.transform.localScale.y, cellSizeZ);
             _mazeGrid[x, z] = cell;
 
-            // Adjust render queue for each wall material
-            foreach (var wall in cell.getWall())
-            {
-                if (wall != null)
-                {
-                    Renderer renderer = wall.GetComponent<Renderer>();
-                    if (renderer != null && renderer.material != null)
-                    {
-                        renderer.material.renderQueue = 2000; // Default opaque queue
-                    }
-                }
-            }
+            
         }
     }
 
@@ -124,6 +127,9 @@ public class PCG_Generator : MonoBehaviour
 
     // Start generating the maze
     GenerateMaze(null, _mazeGrid[0, 0]);
+
+    ReplaceWallsInMaze();
+    
 }
 
     public MazeCell[,] GetMazeGrid()
@@ -135,6 +141,148 @@ public class PCG_Generator : MonoBehaviour
     {
         return _mazeWidth;
     }
+
+ 
+private void ReplaceWallsInMaze()
+{
+    foreach (MazeCell cell in _mazeGrid)
+    {
+        if (cell == null) continue;
+
+        // Get the dictionary of walls from the cell
+        Dictionary<string, GameObject> walls = cell.GetWalls();
+
+        foreach (var wallEntry in walls)
+        {
+            int wallIndex=0;
+            string wallName = wallEntry.Key; // e.g., "leftWall", "frontWall"
+            GameObject oldWall = wallEntry.Value;
+
+            if (oldWall == null) continue;
+
+            // Get the position and scale of the old wall
+            Vector3 wallPosition = oldWall.transform.position;
+            Vector3 scale = oldWall.transform.localScale;
+
+            // Adjust position to align with terrain
+            float terrainHeight = terrain.SampleHeight(wallPosition) + terrain.GetPosition().y;
+            wallPosition.y = terrainHeight;
+
+            // Determine rotation and wall orientation
+            Quaternion rotation = Quaternion.identity;
+            bool isVerticalWall = wallName == "leftWall" || wallName == "rightWall";
+
+            if (isVerticalWall)
+            {
+                rotation = Quaternion.Euler(0, 90, 0); // Rotate 90 degrees for vertical walls
+            }
+
+            // Fixed starting position for the first segment
+            // Segment length and total number of walls
+            float segmentLength = 5.9f; // Length of one segment
+            int fullWalls = Mathf.FloorToInt(cellSizeX / _maze_configuration);
+            float remainder = (cellSizeX % _maze_configuration)/_maze_configuration; 
+
+            if(fullWalls>=2){
+
+          
+                // Calculate total length of the wall segments
+                float totalLength = (fullWalls + remainder) * segmentLength;
+
+                // Calculate the starting position offset
+                float offset = (totalLength / 2) - (segmentLength / 2);
+
+      
+                // Calculate the starting position for the first segment
+                Vector3 startPosition = wallPosition;
+                if (isVerticalWall)
+                {
+                    startPosition.z = wallPosition.z - offset; // Adjust for vertical walls
+                }
+                else
+                {
+                    startPosition.x = wallPosition.x - offset; // Adjust for horizontal walls
+                }
+
+                // Destroy the old wall
+                Destroy(oldWall);
+
+
+                // Place smaller walls
+                Vector3 currentPosition = startPosition;
+            
+                 while ((fullWalls + remainder) >= 2)
+                {
+                    GameObject newWall = Instantiate(_wallPrefabs[wallIndex], currentPosition, rotation);
+                    newWall.transform.localScale = scale; // Use the original scale for each wall
+
+                    // Update the position for the next wall
+                    if (isVerticalWall)
+                    {
+                        currentPosition.z += segmentLength; // Move along Z-axis for vertical walls
+                    }
+                    else
+                    {
+                        currentPosition.x += segmentLength; // Move along X-axis for horizontal walls
+                    }
+
+                    // Decrement fullWalls
+                    fullWalls--;
+                    
+                    if(wallIndex==0){
+                        wallIndex=1;
+                    }else{
+                        wallIndex=0;
+                    }
+                }
+
+                  // Add the remainder wall if needed
+                if ((remainder + fullWalls) > 0)
+                {
+                    GameObject remainderWall = Instantiate(_wallPrefabs[wallIndex], currentPosition, rotation);
+
+                
+                    remainderWall.transform.localScale = new Vector3(remainder+ fullWalls, scale.y, scale.z);
+
+                    if (isVerticalWall)
+                    {
+                        currentPosition.z += segmentLength * (remainder+ fullWalls); // Move along Z-axis for vertical walls
+                    }
+                    else
+                    {
+                        currentPosition.x += segmentLength * (remainder+ fullWalls);// Move along X-axis for horizontal walls
+                    }
+
+                    if(wallIndex==0){
+                        wallIndex=1;
+                    }else{
+                        wallIndex=0;
+                    }
+                    
+                }
+            }
+
+            else{
+                // Destroy the old wall
+                Destroy(oldWall);
+                GameObject Wall = Instantiate(_wallPrefabs[wallIndex], wallPosition, rotation);
+
+                Wall.transform.localScale = new Vector3(scale.x * (cellSizeX/6), scale.y, scale.z);
+
+                if(wallIndex==0){
+                        wallIndex=1;
+                    }else{
+                        wallIndex=0;
+                    }
+
+            }
+
+          
+
+        }
+    }
+}
+
 
     public int GetMazeDepth()
     {

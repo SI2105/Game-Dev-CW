@@ -106,6 +106,7 @@ public class InventoryManager : MonoBehaviour
 
         if (onSelectedItemChanged == null)
         {
+            Debug.Log("selceted item");
             onSelectedItemChanged = new UnityEvent();
         }
     }

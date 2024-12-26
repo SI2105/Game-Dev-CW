@@ -48,6 +48,7 @@ public class MazeCell : MonoBehaviour
     public void MarkAsRoom()
     {
         IsRoom = true;
+        _ceiling.SetActive(false);
         ClearAllWalls(); // Open the room completely
     }
 
@@ -58,9 +59,9 @@ public class MazeCell : MonoBehaviour
 
         if(!IsRoom){
              ReplaceFloorWithTile(); // Replace floor with a random tile when the cell is visited
-            
+            ReplaceCeilingWithTile(); // Replace ceiling with a tile when the cell is encountered
         }
-         ReplaceCeilingWithTile(); // Replace ceiling with a tile when the cell is encountered
+         
     }
 
  
@@ -87,7 +88,7 @@ public class MazeCell : MonoBehaviour
         newCeiling.transform.localScale = new Vector3(adjustedScale.x, tileScale.y, adjustedScale.z);
 
         // Adjust the position relative to the parent, offset by -0.5 in the z-axis
-        newCeiling.transform.localPosition += new Vector3(0, 0, -0.5f);
+        newCeiling.transform.localPosition += new Vector3(0, 0.7f, -0.5f);
 
           // Apply a -180° rotation on the Z-axis after instantiation
         newCeiling.transform.Rotate(0, 0, -180f);

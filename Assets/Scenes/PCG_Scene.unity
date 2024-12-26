@@ -40037,6 +40037,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _wall: {fileID: -1720509009710389966, guid: 7d6dacf1e814a4580bb8c073983ef390, type: 3}
+  roomPrefab: {fileID: 5999752013328667120, guid: 92544768dcda148b695bc92e1fcd29cd, type: 3}
   _archwayPrefab: {fileID: 8644115839786080152, guid: 4963b55652180e946b10fda98efef25e, type: 3}
   _archwayWithDoorPrefab: {fileID: 8644115839786080152, guid: eedc232f795364935a90ab6adc550a45, type: 3}
   _plainWallPrefab: {fileID: 1159351990771520630, guid: 91ad7bf144749b04ab484a680630a040, type: 3}

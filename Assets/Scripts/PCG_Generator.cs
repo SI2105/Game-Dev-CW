@@ -14,6 +14,7 @@ public class Room
     public int Z; // Top-left corner Z
     public int Width;
     public int Depth;
+    public GameObject RoomPrefabInstance;
 
     public Room(int x, int z, int width, int depth)
     {
@@ -31,6 +32,10 @@ public class PCG_Generator : MonoBehaviour
 
     [SerializeField]
     private Wall _wall;
+
+
+    [SerializeField]
+    private GameObject roomPrefab;
 
     [SerializeField]
     private GameObject _archwayPrefab;
@@ -358,90 +363,141 @@ private void ReplaceWallsInMaze()
     }
 
     private void ConnectRooms()
+{
+    foreach (Room room in _rooms)
     {
-        foreach (Room room in _rooms)
+        // Store valid front edge cells of the room
+        List<Vector2Int> frontEdgeCells = new List<Vector2Int>();
+
+        // Determine the z position of the front of the room (using the prefab instance position)
+        float roomFrontZ = room.RoomPrefabInstance.transform.position.z;
+
+        // Collect valid front edge cells
+        for (int dx = 0; dx < room.Width; dx++)
         {
-            // Store valid edge cells of the room
-            List<Vector2Int> edgeCells = new List<Vector2Int>();
-
-            // Collect room edge cells that have a neighboring maze cell
-            for (int dx = 0; dx < room.Width; dx++)
+            int x = room.X + dx;
+            int z = room.Z + room.Depth; // Only consider cells beyond the room's depth
+            if (z >= 0 && z < _mazeDepth && x >= 0 && x < _mazeWidth)
             {
-                // Top edge
-                edgeCells.Add(new Vector2Int(room.X + dx, room.Z - 1));
-                // Bottom edge
-                edgeCells.Add(new Vector2Int(room.X + dx, room.Z + room.Depth));
+                MazeCell candidateCell = _mazeGrid[x, z];
+                if (candidateCell != null && candidateCell.transform.position.z > roomFrontZ)
+                {
+                    frontEdgeCells.Add(new Vector2Int(x, z));
+                }
             }
-            for (int dz = 0; dz < room.Depth; dz++)
-            {
-                // Left edge
-                edgeCells.Add(new Vector2Int(room.X - 1, room.Z + dz));
-                // Right edge
-                edgeCells.Add(new Vector2Int(room.X + room.Width, room.Z + dz));
-            }
-
-            // Filter edge cells that are within the maze bounds
-            edgeCells = edgeCells.Where(pos => 
-                pos.x >= 0 && pos.x < _mazeWidth && pos.y >= 0 && pos.y < _mazeDepth
-            ).ToList();
-
-            // Randomly pick one edge cell
-            Vector2Int entrancePos = edgeCells[Random.Range(0, edgeCells.Count)];
-
-            // Connect the room to the maze
-            MazeCell roomEdgeCell = _mazeGrid[entrancePos.x, entrancePos.y];
-            MazeCell roomCell = _mazeGrid[Mathf.Clamp(entrancePos.x, room.X, room.X + room.Width - 1),
-                                        Mathf.Clamp(entrancePos.y, room.Z, room.Z + room.Depth - 1)];
-
-            ClearWalls(roomEdgeCell, roomCell);
-            // Mark the maze cell (roomEdgeCell) as a room opening
-            roomEdgeCell.MarkAsRoomEntrance();
         }
+
+        // Ensure we have valid front edge cells
+        if (frontEdgeCells.Count == 0)
+        {
+            Debug.LogWarning($"No valid front edge cells found for room at ({room.X}, {room.Z})");
+            continue;
+        }
+
+        // Randomly pick one front edge cell
+        Vector2Int entrancePos = frontEdgeCells[Random.Range(0, frontEdgeCells.Count)];
+
+        // Connect the room to the maze
+        MazeCell roomEdgeCell = _mazeGrid[entrancePos.x, entrancePos.y];
+        MazeCell roomCell = _mazeGrid[Mathf.Clamp(entrancePos.x, room.X, room.X + room.Width - 1),
+                                      Mathf.Clamp(entrancePos.y, room.Z, room.Z + room.Depth - 1)];
+
+        ClearWalls(roomEdgeCell, roomCell);
+        // Mark the maze cell (roomEdgeCell) as a room opening
+        roomEdgeCell.MarkAsRoomEntrance();
     }
+}
 
 
     private void GenerateRooms()
+{
+    int attempts = 0; // Track attempts to avoid infinite loops
+    int maxAttempts = _roomCount * 10; // A safe limit for retries
+
+    while (_rooms.Count < _roomCount && attempts < maxAttempts)
     {
-        int attempts = 0; // Track attempts to avoid infinite loops
-        int maxAttempts = _roomCount * 10; // A safe limit for retries
+        // Randomly determine room size
+        int roomWidth = Random.Range(_minRoomSize, _maxRoomSize + 1);
+        int roomDepth = Random.Range(_minRoomSize, _maxRoomSize + 1);
 
-        while (_rooms.Count < _roomCount && attempts < maxAttempts)
+        // Randomly determine room position
+        int x = Random.Range(1, _mazeWidth - roomWidth - 1);
+        int z = Random.Range(1, _mazeDepth - roomDepth - 1);
+
+        Room newRoom = new Room(x, z, roomWidth, roomDepth);
+
+        // Check for overlaps
+        // Check for overlaps
+        if (!DoesRoomOverlap(newRoom))
         {
-            // Randomly determine room size
-            int roomWidth = Random.Range(_minRoomSize, _maxRoomSize + 1);
-            int roomDepth = Random.Range(_minRoomSize, _maxRoomSize + 1);
+            _rooms.Add(newRoom);
 
-            // Randomly determine room position
-            int x = Random.Range(1, _mazeWidth - roomWidth - 1);
-            int z = Random.Range(1, _mazeDepth - roomDepth - 1);
+            // Get the position of the top-left cell (or any reference cell for the room)
+            MazeCell referenceCell = _mazeGrid[x, z];
+            Vector3 basePosition = referenceCell.transform.position;
 
-            Room newRoom = new Room(x, z, roomWidth, roomDepth);
+            // Instantiate room prefab at the base position
+            GameObject roomInstance = Instantiate(roomPrefab, basePosition, Quaternion.identity);
 
-            // Check for overlaps
-            if (!DoesRoomOverlap(newRoom))
-            {
-                _rooms.Add(newRoom);
+            // Adjust the scale of the room prefab
+            Vector3 finalScale = new Vector3(
+                4.2f,  // Increased width
+                1,     // Keep original height
+                3.5f   // Increased depth
+            );
+            roomInstance.transform.localScale = finalScale;
 
-                // Mark cells as rooms and clear their walls
-                for (int dx = 0; dx < roomWidth; dx++)
-                {
-                    for (int dz = 0; dz < roomDepth; dz++)
-                    {
-                        MazeCell cell = _mazeGrid[x + dx, z + dz];
-                        cell.MarkAsRoom();
-                        cell.Visit(); // Prevent maze generation here
-                    }
-                }
+            if(cellSizeX==30){
+                // Adjust position to center the prefab based on its size
+                roomInstance.transform.position = new Vector3(
+                    basePosition.x -46.3f, //
+                    basePosition.y,
+                    basePosition.z +43.8f 
+                );
             }
 
-            attempts++;
+            else if(cellSizeX==15){
+                // Adjust position to center the prefab based on its size
+                roomInstance.transform.position = new Vector3(
+                    basePosition.x -38.9f, //
+                    basePosition.y,
+                    basePosition.z +50.9f 
+                );
+            }
+
+            else{
+                Debug.LogWarning("Here");
+                // Adjust position to center the prefab based on its size
+                roomInstance.transform.position = new Vector3(
+                    basePosition.x -36.6f, //
+                    basePosition.y,
+                    basePosition.z +53.7f 
+                );
+            }
+
+            // Store a reference to the instance in the room object
+            newRoom.RoomPrefabInstance = roomInstance;
+
+            // Mark cells as rooms and clear their walls
+            for (int dx = 0; dx < roomWidth; dx++)
+            {
+                for (int dz = 0; dz < roomDepth; dz++)
+                {
+                    MazeCell cell = _mazeGrid[x + dx, z + dz];
+                    cell.MarkAsRoom();
+                    cell.Visit(); // Prevent maze generation here
+                }
+            }
         }
 
-        if (_rooms.Count < _roomCount)
-        {
-            Debug.LogWarning($"Only {_rooms.Count} rooms were placed out of {_roomCount} due to space constraints.");
-        }
+        attempts++;
     }
+
+    if (_rooms.Count < _roomCount)
+    {
+        Debug.LogWarning($"Only {_rooms.Count} rooms were placed out of {_roomCount} due to space constraints.");
+    }
+}
 
 
     private bool DoesRoomOverlap(Room room)

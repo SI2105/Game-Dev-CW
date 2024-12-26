@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public class PlayerComboManager : MonoBehaviour
 {
     private Animator animator;
@@ -6,13 +7,19 @@ public class PlayerComboManager : MonoBehaviour
     private int currentComboStep = 0;
     private bool isComboActive = false;
     private GameDevCW inputActions;
+
     [SerializeField] private float comboResetTime = 1f;
     [SerializeField] private float comboWindowTime = 0.3f;
-    
+
     // Input queuing variables
     private bool hasQueuedAttack = false;
     private float queueTimer = 0f;
     [SerializeField] private float maxQueueTime = 0.5f; // How long to remember queued input
+
+    // Camera manager reference
+    [Header("Camera Settings")]
+    [SerializeField] private CameraManager cameraManager; // Reference to CameraManager
+    [SerializeField] private Cinemachine.CinemachineVirtualCamera attackCamera; // Attack camera
 
     private void Awake()
     {
@@ -46,8 +53,8 @@ public class PlayerComboManager : MonoBehaviour
             {
                 // Check if we can now perform the queued attack
                 AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                bool canAttackNow = !stateInfo.IsName("Attack") || 
-                                  (stateInfo.normalizedTime > (1 - comboWindowTime) && 
+                bool canAttackNow = !stateInfo.IsName("Attack") ||
+                                  (stateInfo.normalizedTime > (1 - comboWindowTime) &&
                                    stateInfo.normalizedTime < 1.0f);
 
                 if (canAttackNow)
@@ -63,8 +70,8 @@ public class PlayerComboManager : MonoBehaviour
     private void QueueAttack()
     {
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        bool canAttackNow = !stateInfo.IsName("Attack") || 
-                           (stateInfo.normalizedTime > (1 - comboWindowTime) && 
+        bool canAttackNow = !stateInfo.IsName("Attack") ||
+                           (stateInfo.normalizedTime > (1 - comboWindowTime) &&
                             stateInfo.normalizedTime < 1.0f);
 
         if (canAttackNow)
@@ -102,6 +109,12 @@ public class PlayerComboManager : MonoBehaviour
             animator.SetInteger("ComboIndex", currentComboStep);
             animator.SetTrigger("Attack");
             comboTimer = 0f;
+
+            // Switch to the attack camera when the combo starts
+            if (cameraManager != null && attackCamera != null)
+            {
+                cameraManager.SetActiveCamera(attackCamera);
+            }
         }
 
         CancelInvoke(nameof(ResetCombo));
@@ -119,6 +132,12 @@ public class PlayerComboManager : MonoBehaviour
         animator.SetInteger("ComboIndex", 0);
         animator.ResetTrigger("Attack");
         animator.SetTrigger("ResetCombo");
+
+        // Switch back to the default camera
+        if (cameraManager != null)
+        {
+            cameraManager.SetDefaultCamera();
+        }
     }
 
     public void OnAttackAnimationComplete()

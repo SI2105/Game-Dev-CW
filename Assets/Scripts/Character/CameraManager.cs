@@ -1,55 +1,52 @@
 using UnityEngine;
 using Cinemachine;
-using UnityEngine.InputSystem;
 
 public class CameraManager : MonoBehaviour
 {
-    [SerializeField] private CinemachineVirtualCamera cameraA; // First camera
-    [SerializeField] private CinemachineVirtualCamera cameraB; // Second camera
-    [SerializeField] private int highPriority = 10; // High priority value
-    [SerializeField] private int lowPriority = 0;  // Low priority value
+    [Header("Cinemachine Cameras")]
+    [SerializeField] private CinemachineVirtualCamera defaultCamera; // Default gameplay camera
+    private CinemachineVirtualCamera activeCamera;
 
-    private GameDevCW inputActions;
+    [Header("Camera Priorities")]
+    [SerializeField] private int highPriority = 10; // Priority for active camera
+    [SerializeField] private int lowPriority = 0; // Priority for inactive camera
 
-    private void Awake()
+    private void Start()
     {
-        // Initialize input actions
-        inputActions = new GameDevCW();
+        // Ensure the default camera is active at the start
+        SetDefaultCamera();
     }
 
-    private void OnEnable()
+    /// <summary>
+    /// Activates the specified camera.
+    /// </summary>
+    /// <param name="cameraToActivate">The camera to activate.</param>
+    public void SetActiveCamera(CinemachineVirtualCamera cameraToActivate)
     {
-        // Enable the input action
-        inputActions.Enable();
-        inputActions.Player.ToggleCamera.performed += OnToggleCamera; // Bind the action
-    }
-
-    private void OnDisable()
-    {
-        // Disable the input action
-        inputActions.Player.ToggleCamera.performed -= OnToggleCamera; // Unbind the action
-        inputActions.Disable();
-    }
-
-    private void OnToggleCamera(InputAction.CallbackContext context)
-    {
-        // Call the toggle camera method when the input is performed
-        ToggleCameras();
-    }
-
-    private void ToggleCameras()
-    {
-        if (cameraA.Priority == highPriority)
+        if (cameraToActivate == null)
         {
-            // Swap priorities
-            cameraA.Priority = lowPriority;
-            cameraB.Priority = highPriority;
+            Debug.LogError("Attempted to activate a null camera!");
+            return;
         }
-        else
+
+        Debug.Log("activating new camera");
+        // Set the priority of the new active camera
+        cameraToActivate.Priority = highPriority;
+
+        // Lower the priority of the previous active camera
+        if (activeCamera != null && activeCamera != cameraToActivate)
         {
-            // Swap priorities
-            cameraA.Priority = highPriority;
-            cameraB.Priority = lowPriority;
+            activeCamera.Priority = lowPriority;
         }
+
+        activeCamera = cameraToActivate;
+    }
+
+    /// <summary>
+    /// Switches back to the default camera.
+    /// </summary>
+    public void SetDefaultCamera()
+    {
+        SetActiveCamera(defaultCamera);
     }
 }

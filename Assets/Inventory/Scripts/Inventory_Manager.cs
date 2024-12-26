@@ -13,10 +13,14 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private GameObject itemCursor;
     [SerializeField] private ItemClass[] itemToAdd;
     [SerializeField] private ItemClass[] itemToRemove;
-    //Above are temporary for testing purposes
+    
     [SerializeField] private GameObject SlotHolder;
     public GameObject InventoryPanel;
     public GameObject PlayerStatsPanel;
+    public GameObject CraftingPanel;
+    public GameObject Overlay;
+    public GameObject HotBar;
+    public GameObject HotBarSelector;
     private SlotClass[] Items;
   
     [SerializeField] private GameObject HotBarSlotHolder;
@@ -38,21 +42,58 @@ public class InventoryManager : MonoBehaviour
 
     public UnityEvent onSelectedItemChanged;
     [SerializeField] private int selectedSlotIndex = 0;
-    [SerializeField] private GameObject HotbarSelector;
+    public int SelectedSlotIndex
+    {
+        get => selectedSlotIndex;
+        set => selectedSlotIndex = value;
+    }
+
     public ItemClass selectedItem;
 
+
+    #region Crafting
+    [SerializeField] private GameObject craftingContainer;
+    [SerializeField] private GameObject craftingRecipeItem;
+
+    private void PopulateCraftingPanel()
+    {
+        foreach (Transform child in craftingContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (CraftingRecipe recipe in craftingRecipes)
+        {
+            GameObject recipeItem = Instantiate(craftingRecipeItem, craftingContainer.transform);
+            recipeItem.transform.GetChild(0).GetComponent<Image>().sprite = recipe.outputItem.GetItem().icon;
+            recipeItem.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = recipe.outputItem.GetItem().displayName;
+            recipeItem.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = recipe.getInputAsString();  
+            recipeItem.transform.GetChild(3).GetComponent<Button>().onClick.AddListener(() => Craft(recipe));
+        }
+    }
+
+    
+    #endregion
     public ItemClass SelectedItem
     {
-        get => selectedItem;
+        get { return selectedItem; }
         set
         {
-            if (selectedItem != value)
+            selectedItem = value;
+
+            // Ensure the event is invoked safely
+            if (onSelectedItemChanged != null)
             {
-                selectedItem = value;
-                onSelectedItemChanged?.Invoke(); // Trigger the event when the item changes
+                Debug.Log($"SelectedItem changed to: {selectedItem?.name ?? "null"}");
+                onSelectedItemChanged.Invoke();
+            }
+            else
+            {
+                Debug.LogError("onSelectedItemChanged is null. Ensure it is initialized.");
             }
         }
     }
+
 
     public ItemClass getSelectedItem(){
         return selectedItem;
@@ -65,14 +106,18 @@ public class InventoryManager : MonoBehaviour
 
         if (onSelectedItemChanged == null)
         {
+            Debug.Log("selceted item");
             onSelectedItemChanged = new UnityEvent();
         }
     }
 
     public void Start()
     {
+        PopulateCraftingPanel();    
         InventoryPanel.SetActive(false);
         PlayerStatsPanel.SetActive(false);
+        CraftingPanel.SetActive(false);
+        Overlay.SetActive(false);
         slots = new GameObject[SlotHolder.transform.childCount];
         Items = new SlotClass[slots.Length];
 
@@ -117,7 +162,7 @@ public class InventoryManager : MonoBehaviour
         }
 
         
-        HotbarSelector.transform.position = HotBarslots[selectedSlotIndex].transform.position;
+        HotBarSelector.transform.position = HotBarslots[selectedSlotIndex].transform.position;
         SelectedItem = Items[selectedSlotIndex].GetItem();
        
     }
@@ -156,7 +201,7 @@ public class InventoryManager : MonoBehaviour
         {
             
             float val = context.ReadValue<float>();
-            selectedSlotIndex = Mathf.Clamp((int)val - 1, 0, HotBarslots.Length - 1);
+            SelectedSlotIndex = Mathf.Clamp((int)val - 1, 0, HotBarslots.Length - 1);
         }
     }
 
@@ -427,7 +472,7 @@ public class InventoryManager : MonoBehaviour
         if (temp != null)
         {
 
-            if (temp.GetQuantity() > 1)
+            if (temp.GetQuantity() > quantity)
             {
                 temp.SubQuantity(quantity);
             }

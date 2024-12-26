@@ -13,6 +13,7 @@ public class WeaponClass : ItemClass
         Sword,
         Axe
     }
+    
     public override ItemClass GetItem() { return this; }
     public override WeaponClass GetWeapon() { return this;  }
     public override ConsumableClass GetConsumable() { return null;  }

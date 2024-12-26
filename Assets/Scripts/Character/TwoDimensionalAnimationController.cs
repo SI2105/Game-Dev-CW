@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Cinemachine;
 
 namespace SG{
 
@@ -128,6 +129,8 @@ namespace SG{
         private PlayerAttributesManager attributesManager;
         [SerializeField]
         GameObject pauseMenuPanel;
+        public CinemachineFreeLook freeLookCamera;
+
 
         private void Awake()
         {
@@ -179,16 +182,24 @@ namespace SG{
             InventoryVisible = !InventoryVisible;
             if (InventoryVisible)
             {
-                // attributesManager.InventoryManager.CraftTest();
+                //attributesManager.InventoryManager.CraftTest();
                 UpdatePlayerStats();
                 attributesManager.InventoryManager.InventoryPanel.SetActive(true);
                 attributesManager.InventoryManager.PlayerStatsPanel.SetActive(true);
+                attributesManager.InventoryManager.CraftingPanel.SetActive(true);
+                attributesManager.InventoryManager.Overlay.SetActive(true);
+                attributesManager.InventoryManager.HotBar.SetActive(false);
+                attributesManager.InventoryManager.HotBarSelector.SetActive(false);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
             else {
                 attributesManager.InventoryManager.InventoryPanel.SetActive(false);
                 attributesManager.InventoryManager.PlayerStatsPanel.SetActive(false);
+                attributesManager.InventoryManager.CraftingPanel.SetActive(false);
+                attributesManager.InventoryManager.Overlay.SetActive(false);
+                attributesManager.InventoryManager.HotBar.SetActive(true);
+                attributesManager.InventoryManager.HotBarSelector.SetActive(true);
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false; 
             }
@@ -217,7 +228,7 @@ namespace SG{
         private void Update()
         {
             
-            HandleRotation();
+            // HandleRotation();
             Movement();
             UpdateAnimatorParameters();
         }
@@ -346,7 +357,6 @@ namespace SG{
                 isGrounded = false;
             }
         }
-
 
         private void HandleRotation()
         {
@@ -497,34 +507,37 @@ namespace SG{
         {
             HandleMovement(); // Apply movement in FixedUpdate for physics consistency
         }
-
+        [SerializeField] private CinemachineVirtualCamera virtualCamera; // Reference to the virtual camera
         private void HandleMovement()
         {
+            if (InventoryVisible) return;
 
-            //Remove Below once we have freeze method
-            if (InventoryVisible)
+            // Ensure the virtual camera is properly assigned
+            if (virtualCamera == null)
             {
+                Debug.LogWarning("Virtual Camera is not assigned.");
                 return;
             }
 
-
-            // Ensure camera directions are updated
+            // Get the forward and right direction relative to the virtual camera
+            Transform cameraTransform = virtualCamera.transform;
             Vector3 cameraForward = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up).normalized;
             Vector3 cameraRight = Vector3.ProjectOnPlane(cameraTransform.right, Vector3.up).normalized;
 
-            // Calculate movement direction based on updated camera orientation
-            Vector3 moveDirection = (cameraForward * velocityZ) + (cameraRight * velocityX);
-
-            // Prevent unintended drift due to floating-point errors
-            if (moveDirection.magnitude < 0.01f)
-            {
-                moveDirection = Vector3.zero;
-            }
-
+            // Calculate movement direction based on input
+            Vector3 moveDirection = (cameraForward * moveInput.y + cameraRight * moveInput.x).normalized;
+            Debug.Log($"Move Direction: {moveDirection}");
             // Apply movement to Rigidbody
-            rb.MovePosition(rb.position + moveDirection * Time.fixedDeltaTime);
-        }
+            Vector3 targetPosition = rb.position + moveDirection * Mathf.Max(Mathf.Abs(velocityZ), Mathf.Abs(velocityX)) * Time.fixedDeltaTime;
+            rb.MovePosition(targetPosition);
 
+            // Rotate player to face the movement direction
+            if (moveDirection.magnitude > 0.01f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
+            }
+        }
 
         // Called when the Move action is performed or canceled
         private void HandleMove(InputAction.CallbackContext context)

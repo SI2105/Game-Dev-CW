@@ -34,15 +34,15 @@ namespace SlimUI.ModernMenu{
 		public GameObject cameraeffectstext; 
 
 		[Header("GAME SETTINGS")]
-		public GameObject showhudtext;
-		public GameObject tooltipstext;
+		// public GameObject showhudtext;
+		// public GameObject tooltipstext;
 		public GameObject difficultynormaltext;
 		public GameObject difficultynormaltextLINE;
 		public GameObject difficultyhardcoretext;
 		public GameObject difficultyhardcoretextLINE;
 
 		[Header("CONTROLS SETTINGS")]
-		public GameObject invertmousetext;
+		// public GameObject invertmousetext;
 
 		// sliders
 		public GameObject musicSlider;
@@ -83,20 +83,20 @@ namespace SlimUI.ModernMenu{
 			}
 
 			// check hud value
-			if(PlayerPrefs.GetInt("ShowHUD")==0){
-				showhudtext.GetComponent<TMP_Text>().text = "off";
-			}
-			else{
-				showhudtext.GetComponent<TMP_Text>().text = "on";
-			}
+			// if(PlayerPrefs.GetInt("ShowHUD")==0){
+			// 	showhudtext.GetComponent<TMP_Text>().text = "off";
+			// }
+			// else{
+			// 	showhudtext.GetComponent<TMP_Text>().text = "on";
+			// }
 
 			// check tool tip value
-			if(PlayerPrefs.GetInt("ToolTips")==0){
-				tooltipstext.GetComponent<TMP_Text>().text = "off";
-			}
-			else{
-				tooltipstext.GetComponent<TMP_Text>().text = "on";
-			}
+			// if(PlayerPrefs.GetInt("ToolTips")==0){
+			// 	tooltipstext.GetComponent<TMP_Text>().text = "off";
+			// }
+			// else{
+			// 	tooltipstext.GetComponent<TMP_Text>().text = "on";
+			// }
 
 			// check shadow distance/enabled
 			if(platform == Platform.Desktop){
@@ -155,12 +155,12 @@ namespace SlimUI.ModernMenu{
 			}
 
 			// check mouse inverse
-			if(PlayerPrefs.GetInt("Inverted")==0){
-				invertmousetext.GetComponent<TMP_Text>().text = "off";
-			}
-			else if(PlayerPrefs.GetInt("Inverted")==1){
-				invertmousetext.GetComponent<TMP_Text>().text = "on";
-			}
+			// if(PlayerPrefs.GetInt("Inverted")==0){
+			// 	invertmousetext.GetComponent<TMP_Text>().text = "off";
+			// }
+			// else if(PlayerPrefs.GetInt("Inverted")==1){
+			// 	invertmousetext.GetComponent<TMP_Text>().text = "on";
+			// }
 
 			// check motion blur
 			if(PlayerPrefs.GetInt("MotionBlur")==0){
@@ -236,16 +236,16 @@ namespace SlimUI.ModernMenu{
 		}
 
 		// the playerprefs variable that is checked to enable hud while in game
-		public void ShowHUD (){
-			if(PlayerPrefs.GetInt("ShowHUD")==0){
-				PlayerPrefs.SetInt("ShowHUD",1);
-				showhudtext.GetComponent<TMP_Text>().text = "on";
-			}
-			else if(PlayerPrefs.GetInt("ShowHUD")==1){
-				PlayerPrefs.SetInt("ShowHUD",0);
-				showhudtext.GetComponent<TMP_Text>().text = "off";
-			}
-		}
+		// public void ShowHUD (){
+		// 	if(PlayerPrefs.GetInt("ShowHUD")==0){
+		// 		PlayerPrefs.SetInt("ShowHUD",1);
+		// 		showhudtext.GetComponent<TMP_Text>().text = "on";
+		// 	}
+		// 	else if(PlayerPrefs.GetInt("ShowHUD")==1){
+		// 		PlayerPrefs.SetInt("ShowHUD",0);
+		// 		showhudtext.GetComponent<TMP_Text>().text = "off";
+		// 	}
+		// }
 
 		// the playerprefs variable that is checked to enable mobile sfx while in game
 		public void MobileSFXMute (){
@@ -271,16 +271,16 @@ namespace SlimUI.ModernMenu{
 		}
 
 		// show tool tips like: 'How to Play' control pop ups
-		public void ToolTips (){
-			if(PlayerPrefs.GetInt("ToolTips")==0){
-				PlayerPrefs.SetInt("ToolTips",1);
-				tooltipstext.GetComponent<TMP_Text>().text = "on";
-			}
-			else if(PlayerPrefs.GetInt("ToolTips")==1){
-				PlayerPrefs.SetInt("ToolTips",0);
-				tooltipstext.GetComponent<TMP_Text>().text = "off";
-			}
-		}
+		// public void ToolTips (){
+		// 	if(PlayerPrefs.GetInt("ToolTips")==0){
+		// 		PlayerPrefs.SetInt("ToolTips",1);
+		// 		tooltipstext.GetComponent<TMP_Text>().text = "on";
+		// 	}
+		// 	else if(PlayerPrefs.GetInt("ToolTips")==1){
+		// 		PlayerPrefs.SetInt("ToolTips",0);
+		// 		tooltipstext.GetComponent<TMP_Text>().text = "off";
+		// 	}
+		// }
 
 		public void NormalDifficulty (){
 			difficultyhardcoretextLINE.gameObject.SetActive(false);
@@ -361,16 +361,16 @@ namespace SlimUI.ModernMenu{
 			}
 		}
 
-		public void InvertMouse (){
-			if(PlayerPrefs.GetInt("Inverted")==0){
-				PlayerPrefs.SetInt("Inverted",1);
-				invertmousetext.GetComponent<TMP_Text>().text = "on";
-			}
-			else if(PlayerPrefs.GetInt("Inverted")==1){
-				PlayerPrefs.SetInt("Inverted",0);
-				invertmousetext.GetComponent<TMP_Text>().text = "off";
-			}
-		}
+		// public void InvertMouse (){
+		// 	if(PlayerPrefs.GetInt("Inverted")==0){
+		// 		PlayerPrefs.SetInt("Inverted",1);
+		// 		invertmousetext.GetComponent<TMP_Text>().text = "on";
+		// 	}
+		// 	else if(PlayerPrefs.GetInt("Inverted")==1){
+		// 		PlayerPrefs.SetInt("Inverted",0);
+		// 		invertmousetext.GetComponent<TMP_Text>().text = "off";
+		// 	}
+		// }
 
 		public void MotionBlur (){
 			if(PlayerPrefs.GetInt("MotionBlur")==0){

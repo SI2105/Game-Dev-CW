@@ -14,6 +14,7 @@ public class Room
     public int Z; // Top-left corner Z
     public int Width;
     public int Depth;
+    public GameObject RoomPrefabInstance;
 
     public Room(int x, int z, int width, int depth)
     {
@@ -30,10 +31,20 @@ public class PCG_Generator : MonoBehaviour
 {
 
     [SerializeField]
-    private GameObject [] _wallPrefabs;
+    private Wall _wall;
+
 
     [SerializeField]
-    private GameObject _pillarPrefab;
+    private GameObject roomPrefab;
+
+    [SerializeField]
+    private GameObject _archwayPrefab;
+
+    [SerializeField]
+    private GameObject _archwayWithDoorPrefab;
+
+    [SerializeField]
+    private GameObject _plainWallPrefab;
 
     [SerializeField]
     private int _roomBufferSize = 2; // Minimum buffer between rooms    
@@ -145,24 +156,26 @@ public class PCG_Generator : MonoBehaviour
  
 private void ReplaceWallsInMaze()
 {
+    bool isFlagActive = true;
+
     foreach (MazeCell cell in _mazeGrid)
     {
         if (cell == null) continue;
 
-        // Get the dictionary of walls from the cell
-        Dictionary<string, GameObject> walls = cell.GetWalls();
+        // Get the dictionary of walls with their archway status
+        var walls = cell.GetWalls();
 
         foreach (var wallEntry in walls)
         {
-            int wallIndex=0;
             string wallName = wallEntry.Key; // e.g., "leftWall", "frontWall"
-            GameObject oldWall = wallEntry.Value;
+            GameObject wallObject = wallEntry.Value.wallObject; // The wall GameObject
+            bool isArchway = wallEntry.Value.isArchway; // Archway status
 
-            if (oldWall == null) continue;
+            if (wallObject == null) continue;
 
-            // Get the position and scale of the old wall
-            Vector3 wallPosition = oldWall.transform.position;
-            Vector3 scale = oldWall.transform.localScale;
+            // Get the position and scale of the wall
+            Vector3 wallPosition = wallObject.transform.position;
+            Vector3 scale = wallObject.transform.localScale;
 
             // Adjust position to align with terrain
             float terrainHeight = terrain.SampleHeight(wallPosition) + terrain.GetPosition().y;
@@ -177,44 +190,54 @@ private void ReplaceWallsInMaze()
                 rotation = Quaternion.Euler(0, 90, 0); // Rotate 90 degrees for vertical walls
             }
 
+            // Destroy the old wall
+            Destroy(wallObject);
+
             // Fixed starting position for the first segment
-            // Segment length and total number of walls
             float segmentLength = 5.9f; // Length of one segment
             int fullWalls = Mathf.FloorToInt(cellSizeX / _maze_configuration);
-            float remainder = (cellSizeX % _maze_configuration)/_maze_configuration; 
+            float remainder = (cellSizeX % _maze_configuration) / _maze_configuration;
 
-            if(fullWalls>=2){
+            Vector3 currentPosition = wallPosition;
 
-          
-                // Calculate total length of the wall segments
-                float totalLength = (fullWalls + remainder) * segmentLength;
-
-                // Calculate the starting position offset
-                float offset = (totalLength / 2) - (segmentLength / 2);
-
-      
-                // Calculate the starting position for the first segment
-                Vector3 startPosition = wallPosition;
-                if (isVerticalWall)
+            if (isArchway)
+            {
+                if (!cell.IsRoom)
                 {
-                    startPosition.z = wallPosition.z - offset; // Adjust for vertical walls
-                }
-                else
-                {
-                    startPosition.x = wallPosition.x - offset; // Adjust for horizontal walls
-                }
+                    // Calculate total length of the wall segments
+                    float archwayTotalLength = (fullWalls + remainder) * segmentLength;
 
-                // Destroy the old wall
-                Destroy(oldWall);
+                    // Calculate the starting position offset
+                    float archwayOffset = (archwayTotalLength / 2) - (segmentLength / 2);
 
+                    // Calculate the starting position for the first segment
+                    Vector3 archwayStartPosition = wallPosition;
+                    if (isVerticalWall)
+                    {
+                        archwayStartPosition.z -= archwayOffset; // Adjust for vertical walls
+                    }
+                    else
+                    {
+                        archwayStartPosition.x -= archwayOffset; // Adjust for horizontal walls
+                    }
 
-                // Place smaller walls
-                Vector3 currentPosition = startPosition;
-            
-                 while ((fullWalls + remainder) >= 2)
-                {
-                    GameObject newWall = Instantiate(_wallPrefabs[wallIndex], currentPosition, rotation);
-                    newWall.transform.localScale = scale; // Use the original scale for each wall
+                    currentPosition = archwayStartPosition;
+
+                    GameObject archway;
+                    if (cell.IsRoomEntrance)
+                    {
+                        // Place an archway with door prefab
+                        archway = Instantiate(_archwayWithDoorPrefab, currentPosition, rotation);
+                    }
+                    else
+                    {
+                        // Place an archway prefab
+                        archway = Instantiate(_archwayPrefab, currentPosition, rotation);
+                    }
+
+                    archway.transform.localScale = scale; // Adjust the scale of the archway if needed
+
+                    fullWalls -= 1;
 
                     // Update the position for the next wall
                     if (isVerticalWall)
@@ -226,63 +249,113 @@ private void ReplaceWallsInMaze()
                         currentPosition.x += segmentLength; // Move along X-axis for horizontal walls
                     }
 
-                    // Decrement fullWalls
-                    fullWalls--;
-                    
-                    if(wallIndex==0){
-                        wallIndex=1;
-                    }else{
-                        wallIndex=0;
+                    while (fullWalls > 0)
+                    {
+                        GameObject newWall = Instantiate(_plainWallPrefab, currentPosition, rotation);
+                        newWall.transform.localScale = scale; // Use the original scale for each wall
+
+                        // Update the position for the next wall
+                        if (isVerticalWall)
+                        {
+                            currentPosition.z += segmentLength; // Move along Z-axis for vertical walls
+                        }
+                        else
+                        {
+                            currentPosition.x += segmentLength; // Move along X-axis for horizontal walls
+                        }
+
+                        fullWalls--;
+                    }
+
+                    if (remainder > 0)
+                    {
+                        // Calculate the scale for the remainder wall
+                        float scaledLength = segmentLength * remainder;
+
+                        // Adjust the position to center the scaled wall correctly
+                        Vector3 adjustedPosition = currentPosition;
+                        if (isVerticalWall)
+                        {
+                            adjustedPosition.z -= (segmentLength - scaledLength) / 2; // Center along Z-axis
+                        }
+                        else
+                        {
+                            adjustedPosition.x -= (segmentLength - scaledLength) / 2; // Center along X-axis
+                        }
+
+                        // Place the remainder wall
+                        GameObject remainderWall = Instantiate(_plainWallPrefab, adjustedPosition, rotation);
+                        remainderWall.transform.localScale = new Vector3(remainder, scale.y, scale.z);
                     }
                 }
+                continue;
+            }
 
-                  // Add the remainder wall if needed
-                if ((remainder + fullWalls) > 0)
-                {
-                    GameObject remainderWall = Instantiate(_wallPrefabs[wallIndex], currentPosition, rotation);
+            // Calculate total length of the wall segments
+            float totalLength = (fullWalls + remainder) * segmentLength;
 
+            // Calculate the starting position offset
+            float offset = (totalLength / 2) - (segmentLength / 2);
+
+            // Calculate the starting position for the first segment
+            Vector3 startPosition = wallPosition;
+            if (isVerticalWall)
+            {
+                startPosition.z -= offset; // Adjust for vertical walls
+            }
+            else
+            {
+                startPosition.x -= offset; // Adjust for horizontal walls
+            }
+
+            currentPosition = startPosition;
+
+            while (fullWalls > 0)
+            {
                 
-                    remainderWall.transform.localScale = new Vector3(remainder+ fullWalls, scale.y, scale.z);
+                GameObject newWall = Instantiate(_wall.wallPrefab, currentPosition, rotation);
+                newWall.transform.localScale = scale; // Use the original scale for each wall
 
-                    if (isVerticalWall)
-                    {
-                        currentPosition.z += segmentLength * (remainder+ fullWalls); // Move along Z-axis for vertical walls
-                    }
-                    else
-                    {
-                        currentPosition.x += segmentLength * (remainder+ fullWalls);// Move along X-axis for horizontal walls
-                    }
-
-                    if(wallIndex==0){
-                        wallIndex=1;
-                    }else{
-                        wallIndex=0;
-                    }
-                    
+                // Update the position for the next wall
+                if (isVerticalWall)
+                {
+                    currentPosition.z += segmentLength; // Move along Z-axis for vertical walls
                 }
+                else
+                {
+                    currentPosition.x += segmentLength; // Move along X-axis for horizontal walls
+                }
+
+                fullWalls--;
+
+                _wall.toggleWall(isFlagActive);
+                isFlagActive = !isFlagActive;
             }
 
-            else{
-                // Destroy the old wall
-                Destroy(oldWall);
-                GameObject Wall = Instantiate(_wallPrefabs[wallIndex], wallPosition, rotation);
+            if (remainder > 0)
+            {
+            
+                // Calculate the scale for the remainder wall
+                float scaledLength = segmentLength * remainder;
 
-                Wall.transform.localScale = new Vector3(scale.x * (cellSizeX/6), scale.y, scale.z);
+                // Adjust the position to center the scaled wall correctly
+                Vector3 adjustedPosition = currentPosition;
+                if (isVerticalWall)
+                {
+                    adjustedPosition.z -= (segmentLength - scaledLength) / 2; // Center along Z-axis
+                }
+                else
+                {
+                    adjustedPosition.x -= (segmentLength - scaledLength) / 2; // Center along X-axis
+                }
 
-                if(wallIndex==0){
-                        wallIndex=1;
-                    }else{
-                        wallIndex=0;
-                    }
-
+                // Place the remainder wall
+                GameObject remainderWall = Instantiate(_plainWallPrefab, adjustedPosition, rotation);
+                remainderWall.transform.localScale = new Vector3(remainder, scale.y, scale.z);
             }
-
-          
-
         }
     }
 }
-
 
     public int GetMazeDepth()
     {
@@ -290,88 +363,141 @@ private void ReplaceWallsInMaze()
     }
 
     private void ConnectRooms()
+{
+    foreach (Room room in _rooms)
     {
-        foreach (Room room in _rooms)
+        // Store valid front edge cells of the room
+        List<Vector2Int> frontEdgeCells = new List<Vector2Int>();
+
+        // Determine the z position of the front of the room (using the prefab instance position)
+        float roomFrontZ = room.RoomPrefabInstance.transform.position.z;
+
+        // Collect valid front edge cells
+        for (int dx = 0; dx < room.Width; dx++)
         {
-            // Store valid edge cells of the room
-            List<Vector2Int> edgeCells = new List<Vector2Int>();
-
-            // Collect room edge cells that have a neighboring maze cell
-            for (int dx = 0; dx < room.Width; dx++)
+            int x = room.X + dx;
+            int z = room.Z + room.Depth; // Only consider cells beyond the room's depth
+            if (z >= 0 && z < _mazeDepth && x >= 0 && x < _mazeWidth)
             {
-                // Top edge
-                edgeCells.Add(new Vector2Int(room.X + dx, room.Z - 1));
-                // Bottom edge
-                edgeCells.Add(new Vector2Int(room.X + dx, room.Z + room.Depth));
+                MazeCell candidateCell = _mazeGrid[x, z];
+                if (candidateCell != null && candidateCell.transform.position.z > roomFrontZ)
+                {
+                    frontEdgeCells.Add(new Vector2Int(x, z));
+                }
             }
-            for (int dz = 0; dz < room.Depth; dz++)
-            {
-                // Left edge
-                edgeCells.Add(new Vector2Int(room.X - 1, room.Z + dz));
-                // Right edge
-                edgeCells.Add(new Vector2Int(room.X + room.Width, room.Z + dz));
-            }
-
-            // Filter edge cells that are within the maze bounds
-            edgeCells = edgeCells.Where(pos => 
-                pos.x >= 0 && pos.x < _mazeWidth && pos.y >= 0 && pos.y < _mazeDepth
-            ).ToList();
-
-            // Randomly pick one edge cell
-            Vector2Int entrancePos = edgeCells[Random.Range(0, edgeCells.Count)];
-
-            // Connect the room to the maze
-            MazeCell roomEdgeCell = _mazeGrid[entrancePos.x, entrancePos.y];
-            MazeCell roomCell = _mazeGrid[Mathf.Clamp(entrancePos.x, room.X, room.X + room.Width - 1),
-                                        Mathf.Clamp(entrancePos.y, room.Z, room.Z + room.Depth - 1)];
-
-            ClearWalls(roomEdgeCell, roomCell);
         }
+
+        // Ensure we have valid front edge cells
+        if (frontEdgeCells.Count == 0)
+        {
+            Debug.LogWarning($"No valid front edge cells found for room at ({room.X}, {room.Z})");
+            continue;
+        }
+
+        // Randomly pick one front edge cell
+        Vector2Int entrancePos = frontEdgeCells[Random.Range(0, frontEdgeCells.Count)];
+
+        // Connect the room to the maze
+        MazeCell roomEdgeCell = _mazeGrid[entrancePos.x, entrancePos.y];
+        MazeCell roomCell = _mazeGrid[Mathf.Clamp(entrancePos.x, room.X, room.X + room.Width - 1),
+                                      Mathf.Clamp(entrancePos.y, room.Z, room.Z + room.Depth - 1)];
+
+        ClearWalls(roomEdgeCell, roomCell);
+        // Mark the maze cell (roomEdgeCell) as a room opening
+        roomEdgeCell.MarkAsRoomEntrance();
     }
+}
 
 
     private void GenerateRooms()
+{
+    int attempts = 0; // Track attempts to avoid infinite loops
+    int maxAttempts = _roomCount * 10; // A safe limit for retries
+
+    while (_rooms.Count < _roomCount && attempts < maxAttempts)
     {
-        int attempts = 0; // Track attempts to avoid infinite loops
-        int maxAttempts = _roomCount * 10; // A safe limit for retries
+        // Randomly determine room size
+        int roomWidth = Random.Range(_minRoomSize, _maxRoomSize + 1);
+        int roomDepth = Random.Range(_minRoomSize, _maxRoomSize + 1);
 
-        while (_rooms.Count < _roomCount && attempts < maxAttempts)
+        // Randomly determine room position
+        int x = Random.Range(1, _mazeWidth - roomWidth - 1);
+        int z = Random.Range(1, _mazeDepth - roomDepth - 1);
+
+        Room newRoom = new Room(x, z, roomWidth, roomDepth);
+
+        // Check for overlaps
+        // Check for overlaps
+        if (!DoesRoomOverlap(newRoom))
         {
-            // Randomly determine room size
-            int roomWidth = Random.Range(_minRoomSize, _maxRoomSize + 1);
-            int roomDepth = Random.Range(_minRoomSize, _maxRoomSize + 1);
+            _rooms.Add(newRoom);
 
-            // Randomly determine room position
-            int x = Random.Range(1, _mazeWidth - roomWidth - 1);
-            int z = Random.Range(1, _mazeDepth - roomDepth - 1);
+            // Get the position of the top-left cell (or any reference cell for the room)
+            MazeCell referenceCell = _mazeGrid[x, z];
+            Vector3 basePosition = referenceCell.transform.position;
 
-            Room newRoom = new Room(x, z, roomWidth, roomDepth);
+            // Instantiate room prefab at the base position
+            GameObject roomInstance = Instantiate(roomPrefab, basePosition, Quaternion.identity);
 
-            // Check for overlaps
-            if (!DoesRoomOverlap(newRoom))
-            {
-                _rooms.Add(newRoom);
+            // Adjust the scale of the room prefab
+            Vector3 finalScale = new Vector3(
+                4.2f,  // Increased width
+                1,     // Keep original height
+                3.5f   // Increased depth
+            );
+            roomInstance.transform.localScale = finalScale;
 
-                // Mark cells as rooms and clear their walls
-                for (int dx = 0; dx < roomWidth; dx++)
-                {
-                    for (int dz = 0; dz < roomDepth; dz++)
-                    {
-                        MazeCell cell = _mazeGrid[x + dx, z + dz];
-                        cell.MarkAsRoom();
-                        cell.Visit(); // Prevent maze generation here
-                    }
-                }
+            if(cellSizeX==30){
+                // Adjust position to center the prefab based on its size
+                roomInstance.transform.position = new Vector3(
+                    basePosition.x -46.3f, //
+                    basePosition.y,
+                    basePosition.z +43.8f 
+                );
             }
 
-            attempts++;
+            else if(cellSizeX==15){
+                // Adjust position to center the prefab based on its size
+                roomInstance.transform.position = new Vector3(
+                    basePosition.x -38.9f, //
+                    basePosition.y,
+                    basePosition.z +50.9f 
+                );
+            }
+
+            else{
+                Debug.LogWarning("Here");
+                // Adjust position to center the prefab based on its size
+                roomInstance.transform.position = new Vector3(
+                    basePosition.x -36.6f, //
+                    basePosition.y,
+                    basePosition.z +53.7f 
+                );
+            }
+
+            // Store a reference to the instance in the room object
+            newRoom.RoomPrefabInstance = roomInstance;
+
+            // Mark cells as rooms and clear their walls
+            for (int dx = 0; dx < roomWidth; dx++)
+            {
+                for (int dz = 0; dz < roomDepth; dz++)
+                {
+                    MazeCell cell = _mazeGrid[x + dx, z + dz];
+                    cell.MarkAsRoom();
+                    cell.Visit(); // Prevent maze generation here
+                }
+            }
         }
 
-        if (_rooms.Count < _roomCount)
-        {
-            Debug.LogWarning($"Only {_rooms.Count} rooms were placed out of {_roomCount} due to space constraints.");
-        }
+        attempts++;
     }
+
+    if (_rooms.Count < _roomCount)
+    {
+        Debug.LogWarning($"Only {_rooms.Count} rooms were placed out of {_roomCount} due to space constraints.");
+    }
+}
 
 
     private bool DoesRoomOverlap(Room room)

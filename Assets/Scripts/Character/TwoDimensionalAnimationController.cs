@@ -520,7 +520,9 @@ namespace SG{
         {
             HandleMovement(); // Apply movement in FixedUpdate for physics consistency
         }
+        
         [SerializeField] private CinemachineVirtualCamera virtualCamera; // Reference to the virtual camera
+
         private void HandleMovement()
         {
             if (InventoryVisible) return;

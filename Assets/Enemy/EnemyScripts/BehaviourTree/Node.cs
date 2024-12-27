@@ -10,6 +10,11 @@ public abstract class Node : MonoBehaviour
 
     //method for evaluating state of Node
     public abstract State Evaluate();
+
+    public State GetNodeState()
+    {
+        return node_state;
+    }
 }
 
 

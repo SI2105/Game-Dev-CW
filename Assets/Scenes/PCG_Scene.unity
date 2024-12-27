@@ -729,7 +729,7 @@ MonoBehaviour:
   probabilityOfLightningFall: 0
   probabilityOfLightningWinter: 0.7
   probabilityOfSandstormSpring: 0
-  probabilityOfSandstormSummer: 0.6
+  probabilityOfSandstormSummer: 1
   probabilityOfSandstormFall: 0.1
   probabilityOfSandstormWinter: 0
   probabilityOfFogSpring: 0.2
@@ -801,7 +801,7 @@ MonoBehaviour:
   skyboxTransitionManager: {fileID: 820454847}
   dayNightSystem: {fileID: 1295435670}
   isSpecialWeather: 0
-  currentCondition: 0
+  currentCondition: 4
 --- !u!4 &96266345
 Transform:
   m_ObjectHideFlags: 0
@@ -8284,8 +8284,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1433263207}
   m_HandleRect: {fileID: 1433263206}
   m_Direction: 2
-  m_Value: 1.0000012
-  m_Size: 0.18300003
+  m_Value: 1.0000011
+  m_Size: 0.183
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -14988,7 +14988,7 @@ Transform:
   m_GameObject: {fileID: 446663348}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 34.9, y: 11.6, z: 44.5}
+  m_LocalPosition: {x: 4, y: 11.6, z: 2.01829}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -16814,7 +16814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adc91f7c7ca8345d7bd2a19fd63038a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentSeasonOfYear: 3
+  currentSeasonOfYear: 1
   numberOfDaysPerSeasonOfYear: 30
   currentSeasonOfYearDay: 1
   currentTimeOfDayEnum: 3
@@ -17225,7 +17225,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 683160812}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e8aab618540c794286948e53f5107c8, type: 3}
   m_Name: 
@@ -25783,8 +25783,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 822781449}
   m_HandleRect: {fileID: 822781448}
   m_Direction: 0
-  m_Value: 1.0001559
-  m_Size: 0.97554153
+  m_Value: 1.0001618
+  m_Size: 0.9755416
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -44809,7 +44809,7 @@ Transform:
   m_GameObject: {fileID: 1655078559}
   serializedVersion: 2
   m_LocalRotation: {x: -0.0000004917383, y: 0.00000008345883, z: 0.000000038824737, w: 1}
-  m_LocalPosition: {x: -0.01, y: 0.14, z: 0.07}
+  m_LocalPosition: {x: -0.01, y: 0.083, z: 0.163}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -50411,7 +50411,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: f1fa2014cc6faa0418ab2703cdaea3ea, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f1fa2014cc6faa0418ab2703cdaea3ea, type: 3}
       propertyPath: m_LocalPosition.y
@@ -58312,7 +58312,7 @@ Transform:
   m_GameObject: {fileID: 2033971154}
   serializedVersion: 2
   m_LocalRotation: {x: -4.4228143e-15, y: -4.9587e-12, z: -8.628831e-11, w: 1}
-  m_LocalPosition: {x: -0.011167765, y: 1.6801698, z: 0.029023647}
+  m_LocalPosition: {x: -0.011167765, y: 1.6231699, z: 0.12202358}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -63359,7 +63359,7 @@ Transform:
   m_GameObject: {fileID: 2078636826}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.011167765, y: 1.6801698, z: 0.029023647}
+  m_LocalPosition: {x: -5.9191947, y: 0.6801698, z: 0.029023647}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Axe
   m_EditorClassIdentifier: 
   id: 7
-  displayName: Sharp Axe
+  displayName: Axe
   icon: {fileID: 973244683, guid: 9e9e5dd5a0cdaa545a131cff1c03513c, type: 3}
   prefab: {fileID: 1776472905282870, guid: 1fa34df54f1414448b502a85dfa4a95c, type: 3}
   Stackable: 0

@@ -162,13 +162,26 @@ namespace SG{
                 inputActions.UI.HotBarSelector.performed += attributesManager.InventoryManager.OnHotBarSelection;
                 inputActions.UI.Click.canceled += attributesManager.InventoryManager.OnClick;
                 inputActions.UI.HotBarSelector.canceled += attributesManager.InventoryManager.OnHotBarSelection;
+                inputActions.Player.Objective.performed += onObjective;
+                inputActions.Player.Objective.canceled += onObjective;
+
                 UpdatePlayerStats();
             }
             
 
         }
 
-            private void HandleInventory(InputAction.CallbackContext context) {
+
+        public void onObjective(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+               //calls the method to toggle the panel directly in Objective Manager
+                attributesManager.ObjectiveManager.ToggleObjectivePanel();
+            }
+
+        }
+        private void HandleInventory(InputAction.CallbackContext context) {
 
             if (context.performed) {
 

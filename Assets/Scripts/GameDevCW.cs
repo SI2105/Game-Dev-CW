@@ -107,6 +107,15 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Objective"",
+                    ""type"": ""Button"",
+                    ""id"": ""8741246a-e639-4644-a4f5-084734bafa26"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -360,6 +369,17 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""ToggleCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b84adfa6-854e-49b2-9c82-5313e0e551dc"",
+                    ""path"": ""<Keyboard>/o"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Objective"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1020,6 +1040,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         m_Player_Inventory = m_Player.FindAction("Inventory", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_ToggleCamera = m_Player.FindAction("ToggleCamera", throwIfNotFound: true);
+        m_Player_Objective = m_Player.FindAction("Objective", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1103,6 +1124,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Inventory;
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_ToggleCamera;
+    private readonly InputAction m_Player_Objective;
     public struct PlayerActions
     {
         private @GameDevCW m_Wrapper;
@@ -1116,6 +1138,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         public InputAction @Inventory => m_Wrapper.m_Player_Inventory;
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @ToggleCamera => m_Wrapper.m_Player_ToggleCamera;
+        public InputAction @Objective => m_Wrapper.m_Player_Objective;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1152,6 +1175,9 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @ToggleCamera.started += instance.OnToggleCamera;
             @ToggleCamera.performed += instance.OnToggleCamera;
             @ToggleCamera.canceled += instance.OnToggleCamera;
+            @Objective.started += instance.OnObjective;
+            @Objective.performed += instance.OnObjective;
+            @Objective.canceled += instance.OnObjective;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1183,6 +1209,9 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @ToggleCamera.started -= instance.OnToggleCamera;
             @ToggleCamera.performed -= instance.OnToggleCamera;
             @ToggleCamera.canceled -= instance.OnToggleCamera;
+            @Objective.started -= instance.OnObjective;
+            @Objective.performed -= instance.OnObjective;
+            @Objective.canceled -= instance.OnObjective;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1382,6 +1411,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         void OnInventory(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnToggleCamera(InputAction.CallbackContext context);
+        void OnObjective(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

@@ -360,45 +360,13 @@ namespace SG{
 
         private void HandleRotation()
         {
-            if (cameraTransform == null || InventoryVisible)
-            {
-                return;
-            }
-
-            // Apply sensitivity to input
-            Vector2 sensitiveInput = lookInput * mouseSensitivity;
-
-            // Smooth input
-            smoothedLookInput = Vector2.Lerp(
-                smoothedLookInput,
-                sensitiveInput,
-                1f - Mathf.Exp(-inputSmoothTime * 60f)
-            );
-
-            // Vertical rotation (POV camera)
-            float mouseY = smoothedLookInput.y * verticalRotationSpeed * Time.deltaTime;
-            verticalRotation -= mouseY;
-
-            // Clamp vertical rotation to prevent looking too far up or down
-            verticalRotation = Mathf.Clamp(verticalRotation, -30f, 60f); // Adjust values for POV
-
-            // Apply vertical rotation to the camera
-            cameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-
-            // Horizontal rotation (player rotation)
-            float mouseX = smoothedLookInput.x * rotationSpeed * Time.deltaTime;
-            targetRotation += mouseX * 60f; // Normalize for framerate
-            float currentRotationY = Mathf.SmoothDampAngle(
-                idleTransform.eulerAngles.y,
-                targetRotation,
-                ref currentRotationVelocity,
-                smoothRotationTime
-            );
-
-            // Apply horizontal rotation to the player
-            idleTransform.rotation = Quaternion.Euler(0f, currentRotationY, 0f);
+            if (cameraTransform == null || InventoryVisible) return;
+            // Use look input for rotation
+            float mouseX = lookInput.x * rotationSpeed * Time.deltaTime;
+            targetRotation += mouseX * 60f; // Smooth rotation factor
+            transform.rotation = Quaternion.Euler(0f, targetRotation, 0f);
         }
-        
+
         private void Movement(){
             // Determine current maximum velocities based on sprinting
             float currentMaxVelocityZ = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
@@ -514,32 +482,16 @@ namespace SG{
         {
             if (InventoryVisible) return;
 
-            // Ensure the virtual camera is properly assigned
-            if (virtualCamera == null)
-            {
-                Debug.LogWarning("Virtual Camera is not assigned.");
-                return;
-            }
+            // Calculate movement direction relative to the player's facing direction
+            Vector3 moveDirection = (transform.forward * moveInput.y) + (transform.right * moveInput.x);
+            moveDirection = moveDirection.normalized;
 
-            // Get the forward and right direction relative to the virtual camera
-            Transform cameraTransform = virtualCamera.transform;
-            Vector3 cameraForward = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up).normalized;
-            Vector3 cameraRight = Vector3.ProjectOnPlane(cameraTransform.right, Vector3.up).normalized;
-
-            // Calculate movement direction based on input
-            Vector3 moveDirection = (cameraForward * moveInput.y + cameraRight * moveInput.x).normalized;
-            Debug.Log($"Move Direction: {moveDirection}");
             // Apply movement to Rigidbody
-            Vector3 targetPosition = rb.position + moveDirection * Mathf.Max(Mathf.Abs(velocityZ), Mathf.Abs(velocityX)) * Time.fixedDeltaTime;
+            float movementSpeed = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
+            Vector3 targetPosition = rb.position + moveDirection * movementSpeed * Time.fixedDeltaTime;
             rb.MovePosition(targetPosition);
-
-            // Rotate player to face the movement direction
-            if (moveDirection.magnitude > 0.01f)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
-            }
         }
+
 
         // Called when the Move action is performed or canceled
         private void HandleMove(InputAction.CallbackContext context)
@@ -559,6 +511,7 @@ namespace SG{
             }
             
             lookInput = context.ReadValue<Vector2>();
+            print(lookInput);
         }
 
         private void HandlePause(InputAction.CallbackContext context)

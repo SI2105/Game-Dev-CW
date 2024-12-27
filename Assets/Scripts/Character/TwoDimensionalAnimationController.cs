@@ -19,6 +19,7 @@ namespace SG{
         private int isIdleHash;
         private int isJumpingHash;
         private int isGroundedHash;
+        private int RotationMismatchHash;
         #endregion
 
         #region Player State Variables
@@ -36,6 +37,7 @@ namespace SG{
         private bool isGrounded;
         private bool wasGrounded;
         private Vector2 jumpMovement;
+        public float maxSlopeAngle = 45f;
         #endregion
 
         #region Input Actions
@@ -51,6 +53,7 @@ namespace SG{
         #region Velocity Variables
         private float velocityZ = 0.0f;
         private float velocityX = 0.0f;
+        public float maxDownwardSpeed = 10f;
         #endregion
 
         #region Look Input and Rotation Variables
@@ -115,11 +118,53 @@ namespace SG{
         [SerializeField] private float smoothRotationTime = 0.05f;
         [SerializeField] private float inputSmoothTime = 0.02f;
         [SerializeField] private float mouseSensitivity = 2.0f;
+        public float RotationMismatch {get; private set;} = 0f;
+        public bool IsRotatingToTarget {get; private set;} = false;
+        public float rotateToTargetTime = 0.25f;
+
+        private float _rotateToTargetTimer = 0f;
         #endregion
 
         #region UI and Miscellaneous
         [SerializeField] private GameObject pauseMenuPanel;
         public float movingThreashold = 0.01f;
+        #endregion
+
+        #region Slope Handling
+
+        private bool IsOnSlope(out RaycastHit slopeHit) {
+            if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, 1.5f)) {
+                float angle = Vector3.Angle(slopeHit.normal, Vector3.up);
+                return angle > 0 && angle <= maxSlopeAngle;
+            }
+            slopeHit = default;
+            return false;
+        }
+
+
+
+        private void AdjustGravityOnSlope() {
+            if (IsOnSlope(out RaycastHit slopeHit)) {
+                Vector3 gravityDirection = Vector3.ProjectOnPlane(Physics.gravity, slopeHit.normal);
+                rb.AddForce(gravityDirection, ForceMode.Acceleration);
+            } else {
+                rb.AddForce(Physics.gravity, ForceMode.Acceleration);
+            }
+        }
+
+        private void ClampVerticalVelocity() {
+            if (rb.velocity.y < -maxDownwardSpeed) {
+                rb.velocity = new Vector3(rb.velocity.x, -maxDownwardSpeed, rb.velocity.z);
+            }
+        }
+
+        private void PreventSliding() {
+            if (IsOnSlope(out RaycastHit slopeHit) && rb.velocity.magnitude > 0) {
+                Vector3 slopeForce = Vector3.Project(rb.velocity, slopeHit.normal) * -1f;
+                rb.AddForce(slopeForce, ForceMode.Acceleration);
+            }
+        }
+
         #endregion
 
 
@@ -205,6 +250,7 @@ namespace SG{
             isRunningHash = Animator.StringToHash("isRunning");
             isJumpingHash = Animator.StringToHash("isJumping");
             isGroundedHash = Animator.StringToHash("isGrounded");
+            RotationMismatchHash = Animator.StringToHash("rotationMismatch");
 
             if (idleTransform == null)
                 idleTransform = transform;
@@ -221,6 +267,7 @@ namespace SG{
             
             // HandleRotation();
             Movement();
+            print("groundcheck" + groundCheck);
             UpdateAnimatorParameters();
             UpdateMovementState();
         }
@@ -291,7 +338,7 @@ namespace SG{
 
             isWalking = forwardPressed || leftPressed || rightPressed || backwardPressed;
             bool canRun = isGrounded && isSprinting && attributesManager.CurrentStamina > 5f;
-
+            print(isGrounded+ "grounded");
             isRunning = isWalking && canRun;
             isIdle = !forwardPressed && !leftPressed && !rightPressed && !backwardPressed;
 
@@ -338,7 +385,7 @@ namespace SG{
             // Use a small radius for the sphere cast
             float groundCheckRadius = 0.4f;
             // Use a small distance for the check
-            float groundCheckDistance = 0.3f;
+            float groundCheckDistance = 0.5f;
             
             // Perform a SphereCast from slightly above the groundCheck position
             isGrounded = Physics.SphereCast(
@@ -384,6 +431,7 @@ namespace SG{
         //         isGrounded = false;
         //     }
         // }
+
 
         private void HandleRotation()
         {
@@ -503,25 +551,27 @@ namespace SG{
         {
             CheckGrounded();
             HandleMovement();
+            AdjustGravityOnSlope();
+            ClampVerticalVelocity();
         }
         
         [SerializeField] private CinemachineVirtualCamera virtualCamera; // Reference to the virtual camera
 
-        private void HandleMovement()
-        {
+        private void HandleMovement() {
             if (InventoryVisible) return;
-            bool isSprinting = _playerState.CurrentPlayerMovementState == PlayerMovementState.Running;
 
-            // Calculate movement direction relative to the player's facing direction
             Vector3 moveDirection = (transform.forward * moveInput.y) + (transform.right * moveInput.x);
-            moveDirection = moveDirection.normalized;
+            moveDirection.Normalize();
 
-            // Apply movement to Rigidbody
+            RaycastHit slopeHit;
+            if (IsOnSlope(out slopeHit)) {
+                moveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
+            }
+
             float movementSpeed = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
             Vector3 targetPosition = rb.position + moveDirection * movementSpeed * Time.fixedDeltaTime;
             rb.MovePosition(targetPosition);
         }
-
 
         // Called when the Move action is performed or canceled
         private void HandleMove(InputAction.CallbackContext context)

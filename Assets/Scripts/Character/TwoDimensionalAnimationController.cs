@@ -292,11 +292,6 @@ namespace SG{
                     Debug.Log("Not enough stamina to jump.");
                 }
             }
-            else if (context.canceled)
-            {
-                // Don't set isJumping to false here - let OnLand handle that
-                animator.SetBool(isJumpingHash, false);
-            }
         }
 
         private void Jump()
@@ -344,7 +339,7 @@ namespace SG{
             backwardPressed = moveInput.y < 0;
 
             isWalking = forwardPressed || leftPressed || rightPressed || backwardPressed;
-            bool canRun = isGrounded && isSprinting && attributesManager.CurrentStamina > 5f;
+            bool canRun = isSprinting && attributesManager.CurrentStamina > 5f;
             isRunning = isWalking && canRun;
             isIdle = !forwardPressed && !leftPressed && !rightPressed && !backwardPressed;
 

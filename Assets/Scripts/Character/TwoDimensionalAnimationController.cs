@@ -20,6 +20,7 @@ namespace SG{
         private int isJumpingHash;
         private int isGroundedHash;
         private int RotationMismatchHash;
+        private int isFallingHash;
         #endregion
 
         #region Player State Variables
@@ -133,7 +134,8 @@ namespace SG{
         #region Slope Handling
 
         private bool IsOnSlope(out RaycastHit slopeHit) {
-            if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, 1.5f)) {
+            float groundCheckRadius = 0.4f;
+            if (Physics.SphereCast(transform.position + Vector3.up * groundCheckRadius, groundCheckRadius, Vector3.down, out slopeHit, 1.5f)) {
                 float angle = Vector3.Angle(slopeHit.normal, Vector3.up);
                 return angle > 0 && angle <= maxSlopeAngle;
             }
@@ -141,14 +143,21 @@ namespace SG{
             return false;
         }
 
-
-
         private void AdjustGravityOnSlope() {
             if (IsOnSlope(out RaycastHit slopeHit)) {
                 Vector3 gravityDirection = Vector3.ProjectOnPlane(Physics.gravity, slopeHit.normal);
-                rb.AddForce(gravityDirection, ForceMode.Acceleration);
+                rb.AddForce(gravityDirection - Physics.gravity, ForceMode.Acceleration);
             } else {
                 rb.AddForce(Physics.gravity, ForceMode.Acceleration);
+            }
+        }
+
+        private void PreventSliding() {
+            if (IsOnSlope(out RaycastHit slopeHit)) {
+                Vector3 projectedVelocity = Vector3.ProjectOnPlane(rb.velocity, slopeHit.normal);
+                if (projectedVelocity.magnitude > 0.05f) { // Sliding threshold
+                    rb.velocity = new Vector3(0, rb.velocity.y, 0); // Stop all sliding
+                }
             }
         }
 
@@ -157,14 +166,6 @@ namespace SG{
                 rb.velocity = new Vector3(rb.velocity.x, -maxDownwardSpeed, rb.velocity.z);
             }
         }
-
-        private void PreventSliding() {
-            if (IsOnSlope(out RaycastHit slopeHit) && rb.velocity.magnitude > 0) {
-                Vector3 slopeForce = Vector3.Project(rb.velocity, slopeHit.normal) * -1f;
-                rb.AddForce(slopeForce, ForceMode.Acceleration);
-            }
-        }
-
         #endregion
 
 
@@ -250,6 +251,7 @@ namespace SG{
             isRunningHash = Animator.StringToHash("isRunning");
             isJumpingHash = Animator.StringToHash("isJumping");
             isGroundedHash = Animator.StringToHash("isGrounded");
+            isFallingHash = Animator.StringToHash("isFalling");
             RotationMismatchHash = Animator.StringToHash("rotationMismatch");
 
             if (idleTransform == null)
@@ -267,14 +269,12 @@ namespace SG{
             
             // HandleRotation();
             Movement();
-            print("groundcheck" + groundCheck);
             UpdateAnimatorParameters();
             UpdateMovementState();
         }
 
         private void HandleJump(InputAction.CallbackContext context)
         {
-            print("jumping");
             if (context.performed && isGrounded)
             {
                 // Check if the player has enough stamina to jump
@@ -301,6 +301,13 @@ namespace SG{
 
         private void Jump()
         {
+            RaycastHit slopeHit;
+            if (IsOnSlope(out slopeHit)){
+                Vector3 slope = slopeHit.normal;
+                Vector3 jumpDir = Vector3.ProjectOnPlane(Vector3.up, slope).normalized;
+                rb.AddForce(jumpDir * 50f, ForceMode.Impulse);
+
+            }
             rb.AddForce(new Vector3(0, 50f), ForceMode.Impulse);
         }
 
@@ -313,6 +320,7 @@ namespace SG{
             isJumping = false;
             // Debug.Log($"Player landed. Setting isJumping to {isJumping}");
             animator.SetBool(isJumpingHash, false);
+            animator.SetBool(isFallingHash, false);
         }
 
         private void OnEnable()
@@ -329,8 +337,7 @@ namespace SG{
         /// Updates the animation state based on player input and sprint state.
         /// </summary>
 
-        private void UpdateAnimatorParameters(){
-            float speed = Mathf.Abs(rb.velocity.x);
+        private void UpdateAnimatorParameters() {
             forwardPressed = moveInput.y > 0;
             leftPressed = moveInput.x < 0;
             rightPressed = moveInput.x > 0;
@@ -338,27 +345,22 @@ namespace SG{
 
             isWalking = forwardPressed || leftPressed || rightPressed || backwardPressed;
             bool canRun = isGrounded && isSprinting && attributesManager.CurrentStamina > 5f;
-            print(isGrounded+ "grounded");
             isRunning = isWalking && canRun;
             isIdle = !forwardPressed && !leftPressed && !rightPressed && !backwardPressed;
 
-            // Debug.Log($"walking {isWalking}");
             animator.SetBool(isIdleHash, isIdle);
             animator.SetBool(isWalkingHash, isWalking);
             animator.SetBool(isRunningHash, isRunning);
-            animator.SetBool(isIdleHash, isIdle);
-            if (isGrounded && !wasGrounded)
-            {
-                OnLand();
-                // Debug.Log("Player landed. Setting isJumping to false.");
+
+            if (isGrounded && !wasGrounded) {
+                OnLand(); // Reset jumping state
+            } else if (!isGrounded && wasGrounded) {
+                // No additional logic here, falling is handled by velocity check
             }
-            else if (!isGrounded && wasGrounded)
-            {
-                Debug.Log("");
-                
-            }
+
             wasGrounded = isGrounded;
             animator.SetBool(isGroundedHash, isGrounded);
+            IsFalling();
         }
 
         private void UpdateMovementState(){
@@ -397,6 +399,25 @@ namespace SG{
                 groundLayer
             );
         }
+
+        private void IsFalling() {
+            float raycastDistance = 20f;
+            float fallingThreshold = 0.75f;
+
+            RaycastHit hit;
+            if (Physics.Raycast(idleTransform.position, Vector3.down, out hit, raycastDistance, groundLayer)) {
+                float distanceToGround = hit.distance;
+
+                // Player is falling if they are not grounded and far from the ground
+                if (!isGrounded && distanceToGround > fallingThreshold) {
+                    animator.SetBool(isFallingHash, true);
+                }
+            } else {
+                // No ground detected, assume falling
+                animator.SetBool(isFallingHash, true);
+            }
+        }
+
         // private void OnCollisionStay(Collision collision)
         // {
 
@@ -553,6 +574,7 @@ namespace SG{
             HandleMovement();
             AdjustGravityOnSlope();
             ClampVerticalVelocity();
+            PreventSliding();
         }
         
         [SerializeField] private CinemachineVirtualCamera virtualCamera; // Reference to the virtual camera
@@ -591,7 +613,6 @@ namespace SG{
             }
             
             lookInput = context.ReadValue<Vector2>();
-            print(lookInput);
         }
 
         private void HandlePause(InputAction.CallbackContext context)

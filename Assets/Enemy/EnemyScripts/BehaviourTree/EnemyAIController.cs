@@ -7,6 +7,12 @@ public class EnemyAIController : MonoBehaviour
     //serializable field for the enemy starting health, will be 100
     [SerializeField] private float enemyStartingHealth;
 
+    private float velocity =0.0f;
+    private float acceleration = 3f;
+    private float decceleration = 10f;
+    private float maxVelocity = 4.0f;
+    //field for the enemy animator component
+    Animator animator;
     // public field for the enemy transform
     public Transform enemyTransform;
 
@@ -33,6 +39,7 @@ public class EnemyAIController : MonoBehaviour
 
     private void Awake(){
         enemyAgent= GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
     }
 
     void Start(){
@@ -40,6 +47,23 @@ public class EnemyAIController : MonoBehaviour
         AssembleBehaviourTree();
     }
 
+    public float getEnemyVelocity(){
+        return velocity;
+    }
+
+    public void IncrementVelocity(){
+        velocity+=Time.deltaTime * acceleration;
+        if(velocity>maxVelocity){
+            velocity=maxVelocity;
+        }
+    }
+
+    public void DecrementVelocity(){
+        velocity-=Time.deltaTime * decceleration; 
+        if(velocity<0.0f){
+            velocity=0.0f;
+        }
+    }
 
     void Update(){
         topNode.Evaluate();
@@ -66,7 +90,7 @@ public class EnemyAIController : MonoBehaviour
         DieNode deathNode = new DieNode(this, enemyAgent);
 
         //node for chasing player
-        ChaseNode chaseNode = new ChaseNode(enemyAgent, playerTransform);
+        ChaseNode chaseNode = new ChaseNode(enemyAgent, playerTransform, animator, this);
 
         //node for blocking
         BlockNode blockNode = new BlockNode(this, 0.5f);
@@ -78,13 +102,13 @@ public class EnemyAIController : MonoBehaviour
         IsInSightNode isInSight = new IsInSightNode(this, playerTransform);
 
         //node for first set of attacks
-        Attack_1Node attackNode1 = new Attack_1Node(enemyAgent, this);
+        Attack_1Node attackNode1 = new Attack_1Node(enemyAgent, this, animator);
 
         //node for second set of attacks
-        Attack_2Node attackNode2 = new Attack_2Node(enemyAgent, this);
+        Attack_2Node attackNode2 = new Attack_2Node(enemyAgent, this, animator);
 
         //node for patrolling
-        PatrolNode patrolNode = new PatrolNode(enemyAgent, this, 10, 3.5f);
+        PatrolNode patrolNode = new PatrolNode(enemyAgent, this, 10, 3.5f, animator);
 
         //Define Sequence and Selector Nodes in Behaviour Tree
 
@@ -118,7 +142,7 @@ public class EnemyAIController : MonoBehaviour
 
 
         //selector node for root node of behaviour tree
-        topNode= new SelectorNode(new List<Node> {patrollingSequence, chaseSequence, attacks1, attacks2, enemyDeath, block_dodge});
+        topNode= new SelectorNode(new List<Node> {attacks1, attacks2, chaseSequence,patrollingSequence, enemyDeath, block_dodge});
 
     }
     //getter for the current enemy health
@@ -139,6 +163,15 @@ public class EnemyAIController : MonoBehaviour
     //getter method for attacking threshold
     public float getAttackingThreshold(){
         return attackingThreshold;
+    }
+
+    //method for taking damage to be used by player class
+    public void takeDamage(float damage){
+        enemyCurrentHealth-=damage;
+        //check if health is below 0 and if so reset it
+        if(enemyCurrentHealth<0.0f){
+            enemyCurrentHealth=0.0f;
+        }
     }
 
     //method for initiating the death of the enemy

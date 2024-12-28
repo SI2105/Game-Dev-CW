@@ -11,20 +11,35 @@ public class PatrolNode : Node
     private float patrolRadius;
     private float patrolSpeed;
     private float patrolTimer;
+    
+    private Animator animator;
 
-    public PatrolNode(NavMeshAgent enemyAgent, EnemyAIController enemyAI, float patrolRadius, float patrolSpeed)
+    public PatrolNode(NavMeshAgent enemyAgent, EnemyAIController enemyAI, float patrolRadius, float patrolSpeed, Animator animator)
     {
         this.enemyAgent = enemyAgent;
         this.enemyAI = enemyAI;
         this.patrolCenter = enemyAgent.transform.position;
         this.patrolRadius = patrolRadius;
         this.patrolSpeed = patrolSpeed;
-
+        this.animator = animator;
         patrolTimer = Random.Range(0f, Mathf.PI * 2); // Randomize the starting point for varied behavior
     }
 
     public override State Evaluate()
     {
+         //increment the velocity to 1.0f to make player transition to walking state
+        if(enemyAI.getEnemyVelocity()<1.0f){
+            // Debug.LogError(enemyAI.getEnemyVelocity());
+            enemyAI.IncrementVelocity();
+            animator.SetFloat("velocity", enemyAI.getEnemyVelocity());
+        }
+        
+        //decrement the velocity to 1.0f to make player transition to walking state
+        if(enemyAI.getEnemyVelocity()>1.0f){
+            enemyAI.DecrementVelocity();
+            animator.SetFloat("velocity", enemyAI.getEnemyVelocity());
+        }
+        
         // Make the enemy patrol in a circular area around the patrol center
         enemyAgent.speed = patrolSpeed;
 

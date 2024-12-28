@@ -1,59 +1,9 @@
 fileFormatVersion: 2
-guid: 36443d99735e944fa9146499866f967b
+guid: eda7ad444db724084aed966bdeecb2d0
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Ch25_Body
-    second: {fileID: 2100000, guid: 999505073fa2740a9bf7e2b72813c186, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Ch25_body1
-    second: {fileID: 2100000, guid: 7e248b1820194440a9b7c6245b2cc6f1, type: 2}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch25_1001_Diffuse
-    second: {fileID: 2800000, guid: e30cf1c848a2e4123a3dae6aad17a83f, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch25_1001_Glossiness
-    second: {fileID: 2800000, guid: b49b9913ce0584301910a1199ba7bb93, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch25_1001_Normal
-    second: {fileID: 2800000, guid: 5785c7bab77db4810b65cbfabace62c5, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch25_1001_Specular
-    second: {fileID: 2800000, guid: 2adcac75815bc43209a37b2d4b668f5c, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch25_1002_Diffuse
-    second: {fileID: 2800000, guid: c6a7966969c154a8cb241ac663f3fee4, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch25_1002_Glossiness
-    second: {fileID: 2800000, guid: e4ad2c823ef514ed7b9191fb68a64b39, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch25_1002_Normal
-    second: {fileID: 2800000, guid: 66280200a2d8f4eac9006a56a8635002, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch25_1002_Specular
-    second: {fileID: 2800000, guid: b48dec8f61c354a4fa6d6940db525535, type: 3}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -125,17 +75,7 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
-  referencedClips:
-  - ab7f31611ad09429a8b22faa782298d2
-  - 8d2840ff17c6b412aa5e8ec58c4a8c5a
-  - eda7ad444db724084aed966bdeecb2d0
-  - 0df236c1f41c447278b2c99c0fed3c7a
-  - 1929a2a54e7da440e9e83620a7259a13
-  - 421c955e643614ad4ad98ce4622977df
-  - 08340f63c48a9466d83551c7496a278b
-  - ab4d5f764172747a28b4b8f40e295f49
-  - cf59d34b5ca7445a894c9944834a2e8f
-  - a7968a04bbb43486d834f68bdedb7567
+  referencedClips: []
   importAnimation: 1
   humanDescription:
     serializedVersion: 3
@@ -904,11 +844,11 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 36443d99735e944fa9146499866f967b, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 2
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

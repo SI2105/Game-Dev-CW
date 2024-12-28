@@ -2863,7 +2863,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 722486060}
   m_HandleRect: {fileID: 722486059}
   m_Direction: 0
-  m_Value: 1.0000573
+  m_Value: 1.0000603
   m_Size: 0.9755411
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -7612,6 +7612,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 2622bb70c302d474f89366b1f2b652d6, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 36443d99735e944fa9146499866f967b, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8579,7 +8583,7 @@ MonoBehaviour:
   enemyStartingHealth: 100
   enemyTransform: {fileID: 1794581763}
   chasingThreshold: 6
-  attackingThreshold: 3
+  attackingThreshold: 2.5
   lowHealthThreshold: 20
   playerTransform: {fileID: 1714022014}
 --- !u!1001 &1796857007
@@ -9310,7 +9314,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1745871714}
   m_Direction: 2
   m_Value: 1.0000001
-  m_Size: 0.18300003
+  m_Size: 0.183
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -9411,7 +9415,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2000482250}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0.00000045448536, y: -0.000000119209275, z: -0.000000052241937, w: 1}
   m_LocalPosition: {x: -0.0071678245, y: 1.6841698, z: 0.093025215}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

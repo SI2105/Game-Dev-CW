@@ -27,29 +27,36 @@ public class PatrolNode : Node
 
     public override State Evaluate()
     {
-         //increment the velocity to 1.0f to make player transition to walking state
-        if(enemyAI.getEnemyVelocity()<1.0f){
-            // Debug.LogError(enemyAI.getEnemyVelocity());
-            enemyAI.IncrementVelocity();
-            animator.SetFloat("velocity", enemyAI.getEnemyVelocity());
+        // Set the Movement Layer weight to 1 (fully active)
+        animator.SetLayerWeight(0, 1.0f); // Movement Layer (index 0)
+        animator.SetLayerWeight(1, 0.0f); // Attack Layer (index 1)
+
+        // Increment the velocity to smoothly transition to walking state (0.5)
+        if (animator.GetFloat("velocity") < 0.5f)
+        {
+            float newVelocity = animator.GetFloat("velocity") + Time.deltaTime;
+            animator.SetFloat("velocity", Mathf.Clamp(newVelocity, 0.0f, 0.5f));
         }
-        
-        //decrement the velocity to 1.0f to make player transition to walking state
-        if(enemyAI.getEnemyVelocity()>1.0f){
-            enemyAI.DecrementVelocity();
-            animator.SetFloat("velocity", enemyAI.getEnemyVelocity());
+
+        // Decrement the velocity to smoothly transition to walking state (0.5)
+        if (animator.GetFloat("velocity") > 0.5f)
+        {
+            float newVelocity = animator.GetFloat("velocity") - Time.deltaTime;
+            animator.SetFloat("velocity", Mathf.Clamp(newVelocity, 0.5f, 1.0f));
         }
-        
-        // Make the enemy patrol in a circular area around the patrol center
+
+        // Set the patrol speed for the NavMeshAgent
         enemyAgent.speed = patrolSpeed;
 
+        // Make the enemy patrol in a circular area around the patrol center
         patrolTimer += Time.deltaTime;
         Vector3 offset = new Vector3(Mathf.Sin(patrolTimer) * patrolRadius, 0, Mathf.Cos(patrolTimer) * patrolRadius);
-
         enemyAgent.SetDestination(patrolCenter + offset);
 
         // Patrol is always ongoing, so return RUNNING
         node_state = State.RUNNING;
         return node_state;
     }
+
+
 }

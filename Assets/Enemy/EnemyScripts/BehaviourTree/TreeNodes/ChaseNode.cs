@@ -17,35 +17,42 @@ public class ChaseNode : Node
         this.enemyAI = enemyAI;
     }
 
-    public override State Evaluate(){
-        //increment the velocity to 2.0f to make player transition to running state
-        if(enemyAI.getEnemyVelocity()<2.0f){
-            // Debug.LogError(enemyAI.getEnemyVelocity());
-            enemyAI.IncrementVelocity();
-            animator.SetFloat("velocity", enemyAI.getEnemyVelocity());
+    public override State Evaluate()
+    {
+        // Set the Movement Layer weight to 1 (fully active)
+        animator.SetLayerWeight(0, 1.0f); // Movement Layer (index 0)
+        animator.SetLayerWeight(1, 0.0f); // Attack Layer (index 1)
+
+        // Increment the velocity to smoothly transition to running state (1.0)
+        float currentVelocity = animator.GetFloat("velocity");
+        if (currentVelocity < 1.0f)
+        {
+            float newVelocity = currentVelocity + Time.deltaTime;
+            animator.SetFloat("velocity", Mathf.Clamp(newVelocity, 0.0f, 1.0f));
         }
 
-        //decrement the velocity to 2.0f to make player transition back to chasing state
-        if(enemyAI.getEnemyVelocity()>2.0f){
-            enemyAI.DecrementVelocity();
-            animator.SetFloat("velocity", enemyAI.getEnemyVelocity());
-        }
-
-        //calculate distance between enemy and player
+        // Calculate the distance between the enemy and the player
         float distance = Vector3.Distance(enemyAgent.transform.position, player.position);
 
-        //if the distancce of the enemy is more than 0.2f, continue chasing
-        if(distance>3f){
-            enemyAgent.isStopped=false;
+        // If the distance is more than 3.0f, continue chasing
+        if (distance > 2.5f)
+        {
+            enemyAgent.isStopped = false;
             enemyAgent.SetDestination(player.position);
-            node_state=State.RUNNING;
+            node_state = State.RUNNING;
             return node_state;
         }
-        //otherwise stop as now, the enemy will go to attack mode
-        else{
-            enemyAgent.isStopped=true;
-            node_state=State.FAILURE;
+        // Otherwise, stop as the enemy transitions to attack mode
+        else
+        {
+            // Stop the NavMeshAgent to prepare for attacking
+            enemyAgent.isStopped = true;
+
+            // Set the node state to FAILURE to indicate transition to AttackNode
+            node_state = State.FAILURE;
             return node_state;
         }
     }
+
+
 }

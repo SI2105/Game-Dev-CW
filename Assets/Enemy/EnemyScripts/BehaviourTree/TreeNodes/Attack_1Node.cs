@@ -16,7 +16,6 @@ public class Attack_1Node : Node
     private bool isInCooldown= false;
     private bool isIdle = false; // Tracks if the enemy is in idle state
     private bool isInAttack=true;
-
     private Vector3 originalIdlePosition; // Tracks original idle position
     private Quaternion originalIdleRotation; // Tracks original idle rotation
     private bool positionCaptured = false; // Ensures position is captured once during idle
@@ -63,7 +62,7 @@ public class Attack_1Node : Node
                 positionCaptured = true; // Ensure position is captured only once
             }
 
-    
+        
               // Check if the Animator is transitioning to another state
             if (animator.IsInTransition(1))
             {
@@ -78,23 +77,38 @@ public class Attack_1Node : Node
             }
         }
 
-        if(isInCooldown){
-            
+       if (isInCooldown)
+        {
             AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(1);
-            if (stateInfo.IsName("Fight Idle")){
-                // Restore original position and rotation
-                enemyAI.enemyTransform.position = originalIdlePosition;
-                enemyAI.enemyTransform.rotation = originalIdleRotation;
+
+            if (stateInfo.IsName("Fight Idle"))
+            {
+                // Gradually restore position and rotation
+                enemyAI.enemyTransform.position = Vector3.Lerp(
+                    enemyAI.enemyTransform.position,
+                    originalIdlePosition,
+                    Time.deltaTime * transitionSpeed
+                );
+
+                enemyAI.enemyTransform.rotation = Quaternion.Slerp(
+                    enemyAI.enemyTransform.rotation,
+                    originalIdleRotation,
+                    Time.deltaTime * transitionSpeed
+                );
             }
-            attackTimer+= Time.deltaTime;
+
+            // Increment the cooldown timer
+            attackTimer += Time.deltaTime;
+
             if (attackTimer >= attackCooldown)
             {
                 // Cooldown complete, prepare for next attack
                 attackTimer = 0.0f; // Reset timer
-                isInAttack=true;
-                isInCooldown=false;
+                isInAttack = true;
+                isInCooldown = false;
             }
         }
+
 
         if(isInAttack)
         {

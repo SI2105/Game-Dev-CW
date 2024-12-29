@@ -7,56 +7,115 @@ public class PatrolNode : Node
 {
     private NavMeshAgent enemyAgent;
     private EnemyAIController enemyAI;
-    private Vector3 patrolCenter;
-    private float patrolRadius;
-    private float patrolSpeed;
-    private float patrolTimer;
-    
     private Animator animator;
+    private float patrolSpeed;
 
-    public PatrolNode(NavMeshAgent enemyAgent, EnemyAIController enemyAI, float patrolRadius, float patrolSpeed, Animator animator)
+    private bool isTurning;
+
+    public PatrolNode(NavMeshAgent enemyAgent, EnemyAIController enemyAI, float patrolSpeed, Animator animator)
     {
         this.enemyAgent = enemyAgent;
         this.enemyAI = enemyAI;
-        this.patrolCenter = enemyAgent.transform.position;
-        this.patrolRadius = patrolRadius;
         this.patrolSpeed = patrolSpeed;
         this.animator = animator;
-        patrolTimer = Random.Range(0f, Mathf.PI * 2); // Randomize the starting point for varied behavior
+        isTurning = false;
     }
 
     public override State Evaluate()
     {
-        // Set the Movement Layer weight to 1 (fully active)
-        animator.SetLayerWeight(0, 1.0f); // Movement Layer (index 0)
-        animator.SetLayerWeight(1, 0.0f); // Attack Layer (index 1)
-
-        // Increment the velocity to smoothly transition to walking state (0.5)
-        if (animator.GetFloat("velocity") < 0.5f)
+        // Check if AI should turn
+        if (isTurning)
         {
-            float newVelocity = animator.GetFloat("velocity") + Time.deltaTime;
-            animator.SetFloat("velocity", Mathf.Clamp(newVelocity, 0.0f, 0.5f));
+            Debug.LogError("Turning");
+            HandleTurning();
+            node_state = State.RUNNING;
+            return node_state;
         }
 
-        // Decrement the velocity to smoothly transition to walking state (0.5)
-        if (animator.GetFloat("velocity") > 0.5f)
-        {
-            float newVelocity = animator.GetFloat("velocity") - Time.deltaTime;
-            animator.SetFloat("velocity", Mathf.Clamp(newVelocity, 0.5f, 1.0f));
-        }
+        // Adjust layer weights and animator booleans for patrolling
+        animator.SetLayerWeight(0, 1.0f); // Movement Layer
+        animator.SetLayerWeight(1, 0.0f); // Attack Layer
+        animator.SetLayerWeight(2, 0.0f); // Turning Layer
 
-        // Set the patrol speed for the NavMeshAgent
+        animator.SetBool("isPatrolling", true);
+        animator.SetBool("isChasing", false);
+        animator.SetBool("isIdle", false);
+        animator.SetBool("IsRightTurning", false);
+        animator.SetBool("IsLeftTurning", false);
+
+        // Set patrol speed
         enemyAgent.speed = patrolSpeed;
 
-        // Make the enemy patrol in a circular area around the patrol center
-        patrolTimer += Time.deltaTime;
-        Vector3 offset = new Vector3(Mathf.Sin(patrolTimer) * patrolRadius, 0, Mathf.Cos(patrolTimer) * patrolRadius);
-        enemyAgent.SetDestination(patrolCenter + offset);
+        // Check if the AI detects a wall
+        if (DetectWall())
+        {
+            Debug.LogError("Here");
+            StartTurning();
+        }
+        else
+        {
+            // Move forward
+            Vector3 forwardPosition = enemyAgent.transform.position + enemyAgent.transform.forward * 1.0f;
+            enemyAgent.SetDestination(forwardPosition);
+        }
 
-        // Patrol is always ongoing, so return RUNNING
         node_state = State.RUNNING;
         return node_state;
     }
 
+    private bool DetectWall()
+    {
+        // Check if the sensor detects any obstacles (walls)
+        return enemyAI.sensor.objects.Count > 0;
+    }
 
+    private void StartTurning()
+    {
+        isTurning = true;
+        enemyAgent.ResetPath(); // Stop movement during turn
+
+        if (enemyAI.sensor.objects.Count > 0)
+        {
+            GameObject obstacle = enemyAI.sensor.objects[0];
+            Vector3 toObstacle = obstacle.transform.position - enemyAgent.transform.position;
+
+            // Determine if the obstacle is to the right or left
+            float dotProduct = Vector3.Dot(enemyAgent.transform.right, toObstacle.normalized);
+
+            if (dotProduct > 0)
+            {
+                // Obstacle is on the right
+                animator.SetBool("IsRightTurning", true);
+                animator.SetBool("IsLeftTurning", false);
+            }
+            else
+            {
+                // Obstacle is on the left
+                animator.SetBool("IsRightTurning", false);
+                animator.SetBool("IsLeftTurning", true);
+            }
+        }
+    }
+
+    private void HandleTurning()
+    {
+        // Adjust layer weights for turning
+        animator.SetLayerWeight(0, 0.0f); // Movement Layer
+        animator.SetLayerWeight(2, 1.0f); // Turning Layer
+
+        // Check if obstacles are cleared to stop turning
+        if (enemyAI.sensor.objects.Count == 0)
+        {
+            animator.SetBool("IsRightTurning", false);
+            animator.SetBool("IsLeftTurning", false);
+
+            // Wait for the turning animation to finish before resuming forward movement
+            if (animator.IsInTransition(2)) // Assuming Turning Layer is index 2
+            {
+                isTurning = false;
+                animator.SetLayerWeight(0, 1.0f); // Movement Layer
+                animator.SetLayerWeight(2, 0.0f); // Turning Layer
+            }
+        }
+    }
 }

@@ -11,9 +11,9 @@ TagManager:
   - PlayerLayer
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Pickup
+  - Player
+  - Terrain
   - 
   - 
   - 

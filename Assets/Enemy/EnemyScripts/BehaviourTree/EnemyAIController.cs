@@ -11,6 +11,10 @@ public class EnemyAIController : MonoBehaviour
     private float acceleration = 3f;
     private float decceleration = 10f;
     private float maxVelocity = 4.0f;
+
+    public EnemyAISensor sensor;
+
+    public EnemyPlayerSensor player_sensor;
     //field for the enemy animator component
     Animator animator;
     // public field for the enemy transform
@@ -40,6 +44,8 @@ public class EnemyAIController : MonoBehaviour
     private void Awake(){
         enemyAgent= GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        sensor = GetComponent<EnemyAISensor>();
+        player_sensor = GetComponent<EnemyPlayerSensor>();
     }
 
     void Start(){
@@ -77,7 +83,7 @@ public class EnemyAIController : MonoBehaviour
         IsInRangeNode isInAttackingRange = new IsInRangeNode(this, playerTransform, attackingThreshold);
 
         //range node for chasing range
-        IsInRangeNode isInChasingRange = new IsInRangeNode(this, playerTransform, chasingThreshold);
+        canSensePlayerNode isInChasingRange = new canSensePlayerNode(this);
 
     
         //health node
@@ -98,9 +104,6 @@ public class EnemyAIController : MonoBehaviour
         //node for dodging
         DodgeNode dodgeNode = new DodgeNode(this, 0.5f);
 
-        //node for checking if player is in sight
-        IsInSightNode isInSight = new IsInSightNode(this, playerTransform);
-
         //node for first set of attacks
         Attack_1Node attackNode1 = new Attack_1Node(enemyAgent, this, animator);
 
@@ -108,19 +111,15 @@ public class EnemyAIController : MonoBehaviour
         Attack_2Node attackNode2 = new Attack_2Node(enemyAgent, this, animator);
 
         //node for patrolling
-        PatrolNode patrolNode = new PatrolNode(enemyAgent, this, 10, 3.5f, animator);
+        PatrolNode patrolNode = new PatrolNode(enemyAgent, this, 1f, animator);
 
         //Define Sequence and Selector Nodes in Behaviour Tree
 
-
-        //Selector node for sensing the player based on sight and hearing range
-        SelectorNode canSensePlayer = new SelectorNode(new List<Node> {isInSight, isInChasingRange});
-
         //Sequence node for chasing
-        SequenceNode chaseSequence = new SequenceNode(new List<Node> {canSensePlayer, chaseNode});
+        SequenceNode chaseSequence = new SequenceNode(new List<Node> {isInChasingRange, chaseNode});
 
         //Invertor node for determing if enemy is in patrolling range
-        InverterNode isInPatrollingRange = new InverterNode(canSensePlayer);
+        InverterNode isInPatrollingRange = new InverterNode(isInChasingRange);
 
         //Sequence node for patrolling
         SequenceNode patrollingSequence = new SequenceNode(new List<Node> {isInPatrollingRange, patrolNode});

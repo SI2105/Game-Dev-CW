@@ -17,7 +17,7 @@ namespace SG
 
         public float MaxHealth { get; set; } = 100f;
         public float HealthRegenRate { get; set; } = 10f;
-        public float MaxStamina { get; set; } = 1000f;
+        public float MaxStamina { get; set; } = 100f;
         public float StaminaCostPerSecond { get; set; } = 25f;
         public float StaminaRegenRate { get; set; } = 15f;
         private float currentStamina;

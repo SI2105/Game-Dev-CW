@@ -125,6 +125,15 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""9adc8979-08eb-4a06-9f95-7b25c3baeea9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -424,6 +433,17 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""action"": ""SpinAttack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dfdbb3b3-be0c-44bb-92ff-9418aa3d3c00"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1084,6 +1104,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         m_Player_ToggleCamera = m_Player.FindAction("ToggleCamera", throwIfNotFound: true);
         m_Player_Block = m_Player.FindAction("Block", throwIfNotFound: true);
         m_Player_SpinAttack = m_Player.FindAction("SpinAttack", throwIfNotFound: true);
+        m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1169,6 +1190,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_ToggleCamera;
     private readonly InputAction m_Player_Block;
     private readonly InputAction m_Player_SpinAttack;
+    private readonly InputAction m_Player_Interact;
     public struct PlayerActions
     {
         private @GameDevCW m_Wrapper;
@@ -1184,6 +1206,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         public InputAction @ToggleCamera => m_Wrapper.m_Player_ToggleCamera;
         public InputAction @Block => m_Wrapper.m_Player_Block;
         public InputAction @SpinAttack => m_Wrapper.m_Player_SpinAttack;
+        public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1226,6 +1249,9 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @SpinAttack.started += instance.OnSpinAttack;
             @SpinAttack.performed += instance.OnSpinAttack;
             @SpinAttack.canceled += instance.OnSpinAttack;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1263,6 +1289,9 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @SpinAttack.started -= instance.OnSpinAttack;
             @SpinAttack.performed -= instance.OnSpinAttack;
             @SpinAttack.canceled -= instance.OnSpinAttack;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1464,6 +1493,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         void OnToggleCamera(InputAction.CallbackContext context);
         void OnBlock(InputAction.CallbackContext context);
         void OnSpinAttack(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

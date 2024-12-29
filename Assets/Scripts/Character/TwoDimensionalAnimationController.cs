@@ -48,6 +48,7 @@ namespace SG{
         private bool leftPressed = false;
         private bool rightPressed = false;
         private bool InventoryVisible = false;
+        private bool objectiveVisible = false;
         private bool PauseVisible = false;
         #endregion
 
@@ -200,11 +201,41 @@ namespace SG{
                 inputActions.UI.HotBarSelector.performed += attributesManager.InventoryManager.OnHotBarSelection;
                 inputActions.UI.Click.canceled += attributesManager.InventoryManager.OnClick;
                 inputActions.UI.HotBarSelector.canceled += attributesManager.InventoryManager.OnHotBarSelection;
+                inputActions.Player.Objective.performed += onObjective;
+                inputActions.Player.Objective.canceled += onObjective;
+
                 UpdatePlayerStats();
             }
         }
 
-            private void HandleInventory(InputAction.CallbackContext context) {
+
+        public void onObjective(InputAction.CallbackContext context)
+        {
+            if(context.performed)
+            {
+                ToggleObjective();
+            }
+
+
+        }
+
+        public void ToggleObjective() {
+            objectiveVisible = !objectiveVisible;
+
+            if (objectiveVisible)
+            {
+                
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+
+            attributesManager.ObjectiveManager.ToggleObjectivePanel();
+        }
+        private void HandleInventory(InputAction.CallbackContext context) {
 
             if (context.performed) {
 

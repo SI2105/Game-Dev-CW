@@ -13,6 +13,17 @@ namespace SG
             get => inventoryManager;
             set => inventoryManager = value;
         }
+
+        #endregion
+        #region Objectives
+        [SerializeField] private ObjectiveManager objectiveManager;
+
+        public ObjectiveManager ObjectiveManager
+        {
+            get => objectiveManager;
+            set => objectiveManager = value;
+        }
+        
         #endregion
 
         public float MaxHealth { get; set; } = 100f;

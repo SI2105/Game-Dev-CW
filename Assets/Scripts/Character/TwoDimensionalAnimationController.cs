@@ -128,10 +128,10 @@ namespace SG{
         private PlayerAttributesManager attributesManager;
         [SerializeField]
         GameObject pauseMenuPanel;
-
+        [SerializeField] private KeyBindings keyBindings;
         private void Awake()
         {
-            inputActions = new GameDevCW();
+            inputActions = InputManager.Instance.inputActions;
 
             // Subscribe to the Move action's performed and canceled events
             inputActions.Player.Move.performed += HandleMove;
@@ -196,6 +196,16 @@ namespace SG{
 
         private void Start()
         {
+            // // Load key bindings when the game starts
+            // if (keyBindings != null)
+            // {
+            //     keyBindings.LoadBindings();
+            // }
+            // else
+            // {
+            //     Debug.LogWarning("KeyBindings reference is missing. Bindings will not be loaded.");
+            // }
+
             animator = GetComponent<Animator>();
             VelocityZHash = Animator.StringToHash("VelocityZ");
             VelocityXHash = Animator.StringToHash("VelocityX");

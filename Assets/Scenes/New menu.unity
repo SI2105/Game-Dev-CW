@@ -4977,6 +4977,50 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &312828890
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 312828892}
+  - component: {fileID: 312828891}
+  m_Layer: 0
+  m_Name: InputManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &312828891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312828890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c69169202cdbd4b899e753edab23253b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &312828892
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312828890}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 28.01172, y: -3.642056, z: -22.367855}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &322631123
 GameObject:
   m_ObjectHideFlags: 0
@@ -25792,13 +25836,10 @@ MonoBehaviour:
   texturemedtextLINE: {fileID: 2023916416}
   texturehightextLINE: {fileID: 1499404040}
   cameraeffectstext: {fileID: 1978422610}
-  showhudtext: {fileID: 0}
-  tooltipstext: {fileID: 0}
   difficultynormaltext: {fileID: 1609450312}
   difficultynormaltextLINE: {fileID: 603588133}
   difficultyhardcoretext: {fileID: 120772098}
   difficultyhardcoretextLINE: {fileID: 1466266043}
-  invertmousetext: {fileID: 0}
   musicSlider: {fileID: 2135050952}
   sensitivityXSlider: {fileID: 1737524885}
   sensitivityYSlider: {fileID: 1189864573}
@@ -30650,7 +30691,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: DevScene_Andrej NEW
+          m_StringArgument: learnAnimations
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &2121066212
@@ -31104,3 +31145,4 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1273109228}
+  - {fileID: 312828892}

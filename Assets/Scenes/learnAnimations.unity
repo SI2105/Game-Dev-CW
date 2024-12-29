@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571363, b: 0.30692217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1256,6 +1256,7 @@ MonoBehaviour:
   inputSmoothTime: 0.1
   mouseSensitivity: 2
   pauseMenuPanel: {fileID: 0}
+  keyBindings: {fileID: 0}
   rb: {fileID: 0}
 --- !u!114 &1099598583
 MonoBehaviour:
@@ -1359,6 +1360,52 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4445250040041948935, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
   m_PrefabInstance: {fileID: 4196299199337206338}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1233983273
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1233983275}
+  - component: {fileID: 1233983274}
+  m_Layer: 0
+  m_Name: KeyBindingsManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1233983274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233983273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 365bb199f70914db49a65afe178cd8d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rebindingPopup: {fileID: 0}
+  cancelButton: {fileID: 0}
+--- !u!4 &1233983275
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233983273}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 28.01172, y: -3.642056, z: -22.367855}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1327991265
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1865,6 +1912,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1923094643}
     - target: {fileID: 3554534567586972548, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
+      propertyPath: keyBindings
+      value: 
+      objectReference: {fileID: 1233983274}
+    - target: {fileID: 3554534567586972548, guid: a9772aae65105d346ad8dbf341ebe6a8, type: 3}
       propertyPath: pauseMenuPanel
       value: 
       objectReference: {fileID: 1858162534}
@@ -2041,3 +2092,4 @@ SceneRoots:
   - {fileID: 185840165}
   - {fileID: 2047013437}
   - {fileID: 723113894}
+  - {fileID: 1233983275}

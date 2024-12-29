@@ -7,7 +7,7 @@ public class EnemyAISensor : MonoBehaviour
     public float distance;
     public float angle;
     public float height;
-    private Color meshColor = Color.green;
+    public Color meshColor = Color.green;
     private Mesh mesh;
     public int scanFrequency = 30;
     public LayerMask layers;
@@ -51,15 +51,12 @@ public class EnemyAISensor : MonoBehaviour
     
         float deltaAngle = Vector3.Angle(direction, transform.forward);
         if(deltaAngle>angle){
+        
             return false;
         }
 
         origin.y +=height/2;
         dest.y = origin.y;
-
-        if(Physics.Linecast(origin, dest, occlusionLayers)){
-            return false;
-        }
 
         return true;
     }

@@ -15,6 +15,8 @@ public class EnemyAIController : MonoBehaviour
     public EnemyAISensor sensor;
 
     public EnemyPlayerSensor player_sensor;
+
+    public EnemyAudioController audio_controller;
     //field for the enemy animator component
     Animator animator;
     // public field for the enemy transform
@@ -32,6 +34,8 @@ public class EnemyAIController : MonoBehaviour
     //threshold for when low player health threshold
     [SerializeField] private float lowHealthThreshold;
 
+    public float senseDistance;
+
     private NavMeshAgent enemyAgent;
     
 
@@ -46,6 +50,7 @@ public class EnemyAIController : MonoBehaviour
         animator = GetComponent<Animator>();
         sensor = GetComponent<EnemyAISensor>();
         player_sensor = GetComponent<EnemyPlayerSensor>();
+        audio_controller= GetComponent<EnemyAudioController>();
     }
 
     void Start(){
@@ -83,7 +88,7 @@ public class EnemyAIController : MonoBehaviour
         IsInRangeNode isInAttackingRange = new IsInRangeNode(this, playerTransform, attackingThreshold);
 
         //range node for chasing range
-        canSensePlayerNode isInChasingRange = new canSensePlayerNode(this);
+        canSensePlayerNode isInChasingRange = new canSensePlayerNode(this, playerTransform, senseDistance);
 
     
         //health node
@@ -111,7 +116,7 @@ public class EnemyAIController : MonoBehaviour
         Attack_2Node attackNode2 = new Attack_2Node(enemyAgent, this, animator);
 
         //node for patrolling
-        PatrolNode patrolNode = new PatrolNode(enemyAgent, this, 1f, animator);
+        PatrolNode patrolNode = new PatrolNode(enemyAgent, this, 1f, animator, audio_controller);
 
         //Define Sequence and Selector Nodes in Behaviour Tree
 
@@ -141,7 +146,7 @@ public class EnemyAIController : MonoBehaviour
 
 
         //selector node for root node of behaviour tree
-        topNode= new SelectorNode(new List<Node> {attacks1, attacks2, chaseSequence,patrollingSequence, enemyDeath, block_dodge});
+        topNode= new SelectorNode(new List<Node> {chaseSequence,patrollingSequence, enemyDeath, block_dodge});
 
     }
     //getter for the current enemy health

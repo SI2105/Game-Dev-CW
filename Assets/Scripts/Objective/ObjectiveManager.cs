@@ -13,15 +13,19 @@ public class ObjectiveManager : MonoBehaviour
     private GameObject ObjectiveUI;
     [SerializeField] private GameObject ObjectivePrefab;
     private bool IsObjectivePanelActive;
+    private GameObject ObjectivePopup;
     private void Awake()
     {
         //Ensures Singleton Pattern
         if (Instance == null) {
             Instance = this;
+            ObjectivePopup = GameObject.Find("ObjectivePopup");
             IsObjectivePanelActive = false;
             ObjectivePanel = GameObject.Find("ObjectivePanel").transform;
             ObjectiveUI = GameObject.Find("ObjectiveUI");
             ObjectiveUI.SetActive(IsObjectivePanelActive);
+            ObjectivePopup.SetActive(false);
+            ObjectivePopup.transform.GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = "";
             DontDestroyOnLoad(gameObject);
             IntializeObjective_Dict();
             UpdateDisplayedObjectives();
@@ -53,11 +57,12 @@ public class ObjectiveManager : MonoBehaviour
 
     public void SetEventComplete(string objectiveName) {
         //Sets the event to complete, will be used when the event associated with the objective is completed
-        if (Objective_Dict.ContainsKey(objectiveName))
+        if (Objective_Dict.ContainsKey(objectiveName) && !Objective_Dict[objectiveName].objectiveComplete)
         {
             Debug.Log(objectiveName + " is complete");
             Objective_Dict[objectiveName].objectiveComplete = true;
             UpdateDisplayedObjectives();
+            ShowObjectivePopup(objectiveName, "Objective Complete!");
 
         }
     }
@@ -93,6 +98,20 @@ public class ObjectiveManager : MonoBehaviour
         
         IsObjectivePanelActive = !IsObjectivePanelActive;
         ObjectiveUI.SetActive(IsObjectivePanelActive);
+    }
+
+    private void ShowObjectivePopup(string objectiveName, string message)
+    {
+        // Show the popup with the objective details
+        ObjectivePopup.SetActive(true);
+        ObjectivePopup.transform.GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = $"{objectiveName}: {message}";
+        Invoke("HideObjectivePopup", 5);
+    }
+
+    private void HideObjectivePopup()
+    {
+        // Hide the popup
+        ObjectivePopup.SetActive(false);
     }
 }
 

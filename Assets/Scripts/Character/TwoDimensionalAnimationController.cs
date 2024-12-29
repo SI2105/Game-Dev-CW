@@ -9,15 +9,18 @@ namespace SG{
 
     public class TwoDimensionalAnimationController : MonoBehaviour
     {
-    #region Animator Variables
+        #region Animator Variables
         private Animator animator;
         private Vector2 moveInput;
         private int VelocityZHash;
         private int VelocityXHash;
-        private int isJumpingHash;
         private int isRunningHash;
         private int isWalkingHash;
         private int isIdleHash;
+        private int isJumpingHash;
+        private int isGroundedHash;
+        private int RotationMismatchHash;
+        private int isFallingHash;
         #endregion
 
         #region Player State Variables
@@ -26,6 +29,7 @@ namespace SG{
         private bool isIdle;
         private bool isJumping;
         private bool isRunning;
+        private PlayerState _playerState;
         #endregion
 
         #region Physics and Ground Detection
@@ -34,21 +38,23 @@ namespace SG{
         private bool isGrounded;
         private bool wasGrounded;
         private Vector2 jumpMovement;
+        public float maxSlopeAngle = 45f;
         #endregion
 
         #region Input Actions
         private GameDevCW inputActions;
-        bool forwardPressed = false;
-        bool backwardPressed = false;
-        bool leftPressed = false;
-        bool rightPressed = false;
-        bool InventoryVisible = false;
-        bool PauseVisible = false;
+        private bool forwardPressed = false;
+        private bool backwardPressed = false;
+        private bool leftPressed = false;
+        private bool rightPressed = false;
+        private bool InventoryVisible = false;
+        private bool PauseVisible = false;
         #endregion
 
         #region Velocity Variables
-        float velocityZ = 0.0f;
-        float velocityX = 0.0f;
+        private float velocityZ = 0.0f;
+        private float velocityX = 0.0f;
+        public float maxDownwardSpeed = 10f;
         #endregion
 
         #region Look Input and Rotation Variables
@@ -60,58 +66,46 @@ namespace SG{
         private float targetRotation;
         private float lastTargetRotation;
         #endregion
-        #region PlayerStats Display
 
+        #region Player Stats Display
         [SerializeField] private TextMeshProUGUI PlayerStatsText;
+        private PlayerAttributesManager attributesManager;
 
         public void UpdatePlayerStats() {
             if (PlayerStatsText != null) {
                 PlayerStatsText.text = GetPlayerStatsText();
             }
-
         }
 
         public string GetPlayerStatsText() {
-
-            
             return
-                    $"<align=left>Current Level:<line-height=0>\n<align=right>{attributesManager.CurrentLevel} / {attributesManager.MaxLevel}<line-height=1em>\n" +
-
-                    $"<align=left>Current XP:<line-height=0>\n<align=right>{attributesManager.CurrentXP}<line-height=1em>\n" +
-                    $"<align=left>XP to Next Level:<line-height=0>\n<align=right> \t {attributesManager.XPToNextLevel}<line-height=1em>\n" +
-                    $"<align=left>Strength:<line-height=0>\n<align=right>{attributesManager.Strength}<line-height=1em>\n" +
-                    $"<align=left>Agility:<line-height=0>\n<align=right>{attributesManager.Agility}<line-height=1em>\n" +
-                    $"<align=left>Endurance:<line-height=0>\n<align=right>{attributesManager.Endurance}<line-height=1em>\n" +
-                    $"<align=left>Intelligence:<line-height=0>\n<align=right>{attributesManager.Intelligence}<line-height=1em>\n" +
-                    $"<align=left>Luck:<line-height=0>\n<align=right>{attributesManager.Luck}<line-height=1em>" +
-                    "\n \n" +
-               
-                    $"<align=left>Base Damage:<line-height=0>\n<align=right>{attributesManager.BaseDamage}<line-height=1em>\n" +
-                    $"<align=left>Critical Hit Chance:<line-height=0>\n<align=right>{attributesManager.CriticalHitChance}<line-height=1em>\n" +
-                    $"<align=left>Critical Hit Multiplier:<line-height=0>\n<align=right>{attributesManager.CriticalHitMultiplier}<line-height=1em>\n" +
-                    $"<align=left>Attack Speed:<line-height=0>\n<align=right>{attributesManager.AttackSpeed}<line-height=1em>\n" +
-                    $"<align=left>Armor:<line-height=0>\n<align=right>{attributesManager.Armor}<line-height=1em>\n" +
-                    $"<align=left>Block Chance:<line-height=0>\n<align=right>{attributesManager.BlockChance}<line-height=1em>\n" +
-                    $"<align=left>Dodge Chance:<line-height=0>\n<align=right>{attributesManager.DodgeChance}<line-height=1em>" +
-                    "\n \n"
-                   
-                    ;
-            
-
+                $"<align=left>Current Level:<line-height=0>\n<align=right>{attributesManager.CurrentLevel} / {attributesManager.MaxLevel}<line-height=1em>\n" +
+                $"<align=left>Current XP:<line-height=0>\n<align=right>{attributesManager.CurrentXP}<line-height=1em>\n" +
+                $"<align=left>XP to Next Level:<line-height=0>\n<align=right> \t {attributesManager.XPToNextLevel}<line-height=1em>\n" +
+                $"<align=left>Strength:<line-height=0>\n<align=right>{attributesManager.Strength}<line-height=1em>\n" +
+                $"<align=left>Agility:<line-height=0>\n<align=right>{attributesManager.Agility}<line-height=1em>\n" +
+                $"<align=left>Endurance:<line-height=0>\n<align=right>{attributesManager.Endurance}<line-height=1em>\n" +
+                $"<align=left>Intelligence:<line-height=0>\n<align=right>{attributesManager.Intelligence}<line-height=1em>\n" +
+                $"<align=left>Luck:<line-height=0>\n<align=right>{attributesManager.Luck}<line-height=1em>\n\n" +
+                $"<align=left>Base Damage:<line-height=0>\n<align=right>{attributesManager.BaseDamage}<line-height=1em>\n" +
+                $"<align=left>Critical Hit Chance:<line-height=0>\n<align=right>{attributesManager.CriticalHitChance}<line-height=1em>\n" +
+                $"<align=left>Critical Hit Multiplier:<line-height=0>\n<align=right>{attributesManager.CriticalHitMultiplier}<line-height=1em>\n" +
+                $"<align=left>Attack Speed:<line-height=0>\n<align=right>{attributesManager.AttackSpeed}<line-height=1em>\n" +
+                $"<align=left>Armor:<line-height=0>\n<align=right>{attributesManager.Armor}<line-height=1em>\n" +
+                $"<align=left>Block Chance:<line-height=0>\n<align=right>{attributesManager.BlockChance}<line-height=1em>\n" +
+                $"<align=left>Dodge Chance:<line-height=0>\n<align=right>{attributesManager.DodgeChance}<line-height=1em>\n\n";
         }
-
-
         #endregion
-
 
         #region Movement Settings
         public float acceleration = 2f;
         public float deceleration = 2f;
-
         public float maxVelocityZ = 1.0f;
         public float maxVelocityX = 1.0f;
         public float sprintMaxVelocityZ = 2.0f;
         public float sprintMaxVelocityX = 2.0f;
+        public float verticalVelocity = 0.1f;
+        public float jumpSpeed = 1.0f;
         #endregion
 
         #region Camera Settings
@@ -125,11 +119,54 @@ namespace SG{
         [SerializeField] private float smoothRotationTime = 0.05f;
         [SerializeField] private float inputSmoothTime = 0.02f;
         [SerializeField] private float mouseSensitivity = 2.0f;
+        public float RotationMismatch {get; private set;} = 0f;
+        public bool IsRotatingToTarget {get; private set;} = false;
+        public float rotateToTargetTime = 0.25f;
+
+        private float _rotateToTargetTimer = 0f;
         #endregion
-        private PlayerAttributesManager attributesManager;
-        [SerializeField]
-        GameObject pauseMenuPanel;
-        public CinemachineFreeLook freeLookCamera;
+
+        #region UI and Miscellaneous
+        [SerializeField] private GameObject pauseMenuPanel;
+        public float movingThreashold = 0.01f;
+        #endregion
+
+        #region Slope Handling
+
+        private bool IsOnSlope(out RaycastHit slopeHit) {
+            float groundCheckRadius = 0.4f;
+            if (Physics.SphereCast(transform.position + Vector3.up * groundCheckRadius, groundCheckRadius, Vector3.down, out slopeHit, 1.5f)) {
+                float angle = Vector3.Angle(slopeHit.normal, Vector3.up);
+                return angle > 0 && angle <= maxSlopeAngle;
+            }
+            slopeHit = default;
+            return false;
+        }
+
+        private void AdjustGravityOnSlope() {
+            if (IsOnSlope(out RaycastHit slopeHit)) {
+                Vector3 gravityDirection = Vector3.ProjectOnPlane(Physics.gravity, slopeHit.normal);
+                rb.AddForce(gravityDirection - Physics.gravity, ForceMode.Acceleration);
+            } else {
+                rb.AddForce(Physics.gravity, ForceMode.Acceleration);
+            }
+        }
+
+        private void PreventSliding() {
+            if (IsOnSlope(out RaycastHit slopeHit)) {
+                Vector3 projectedVelocity = Vector3.ProjectOnPlane(rb.velocity, slopeHit.normal);
+                if (projectedVelocity.magnitude > 0.05f) { // Sliding threshold
+                    rb.velocity = new Vector3(0, rb.velocity.y, 0); // Stop all sliding
+                }
+            }
+        }
+
+        private void ClampVerticalVelocity() {
+            if (rb.velocity.y < -maxDownwardSpeed) {
+                rb.velocity = new Vector3(rb.velocity.x, -maxDownwardSpeed, rb.velocity.z);
+            }
+        }
+        #endregion
 
 
         private void Awake()
@@ -155,6 +192,7 @@ namespace SG{
             inputActions.Player.Pause.performed += HandlePause;
             inputActions.Player.Pause.canceled += HandlePause;
             attributesManager = GetComponent<PlayerAttributesManager>();
+            _playerState = GetComponent<PlayerState>();
 
             if (attributesManager) {
                 Debug.Log("Inventory Manager found");
@@ -164,8 +202,6 @@ namespace SG{
                 inputActions.UI.HotBarSelector.canceled += attributesManager.InventoryManager.OnHotBarSelection;
                 UpdatePlayerStats();
             }
-            
-
         }
 
             private void HandleInventory(InputAction.CallbackContext context) {
@@ -214,6 +250,9 @@ namespace SG{
             isIdleHash = Animator.StringToHash("isIdle");
             isRunningHash = Animator.StringToHash("isRunning");
             isJumpingHash = Animator.StringToHash("isJumping");
+            isGroundedHash = Animator.StringToHash("isGrounded");
+            isFallingHash = Animator.StringToHash("isFalling");
+            RotationMismatchHash = Animator.StringToHash("rotationMismatch");
 
             if (idleTransform == null)
                 idleTransform = transform;
@@ -231,6 +270,7 @@ namespace SG{
             // HandleRotation();
             Movement();
             UpdateAnimatorParameters();
+            UpdateMovementState();
         }
 
         private void HandleJump(InputAction.CallbackContext context)
@@ -252,16 +292,18 @@ namespace SG{
                     Debug.Log("Not enough stamina to jump.");
                 }
             }
-            else if (context.canceled)
-            {
-                // Don't set isJumping to false here - let OnLand handle that
-                animator.SetBool(isJumpingHash, false);
-            }
         }
 
         private void Jump()
         {
-            rb.AddForce(new Vector3(0, jumpMovement.y), ForceMode.Impulse);
+            RaycastHit slopeHit;
+            if (IsOnSlope(out slopeHit)){
+                Vector3 slope = slopeHit.normal;
+                Vector3 jumpDir = Vector3.ProjectOnPlane(Vector3.up, slope).normalized;
+                rb.AddForce(jumpDir * 50f, ForceMode.Impulse);
+
+            }
+            rb.AddForce(new Vector3(0, 50f), ForceMode.Impulse);
         }
 
         private void OnLand()
@@ -273,6 +315,7 @@ namespace SG{
             isJumping = false;
             // Debug.Log($"Player landed. Setting isJumping to {isJumping}");
             animator.SetBool(isJumpingHash, false);
+            animator.SetBool(isFallingHash, false);
         }
 
         private void OnEnable()
@@ -289,116 +332,132 @@ namespace SG{
         /// Updates the animation state based on player input and sprint state.
         /// </summary>
 
-        private void UpdateAnimatorParameters(){
-            float speed = Mathf.Abs(rb.velocity.x);
+        private void UpdateAnimatorParameters() {
             forwardPressed = moveInput.y > 0;
             leftPressed = moveInput.x < 0;
             rightPressed = moveInput.x > 0;
             backwardPressed = moveInput.y < 0;
 
             isWalking = forwardPressed || leftPressed || rightPressed || backwardPressed;
-            bool canRun = isGrounded && isSprinting && attributesManager.CurrentStamina > 5f;
-
+            bool canRun = isSprinting && attributesManager.CurrentStamina > 5f;
             isRunning = isWalking && canRun;
             isIdle = !forwardPressed && !leftPressed && !rightPressed && !backwardPressed;
 
-            // Debug.Log($"walking {isWalking}");
             animator.SetBool(isIdleHash, isIdle);
             animator.SetBool(isWalkingHash, isWalking);
             animator.SetBool(isRunningHash, isRunning);
-            animator.SetBool(isIdleHash, isIdle);
 
-            if (isGrounded && !wasGrounded)
-            {
-                OnLand();
-                // Debug.Log("Player landed. Setting isJumping to false.");
+            if (isGrounded && !wasGrounded) {
+                OnLand(); // Reset jumping state
+            } else if (!isGrounded && wasGrounded) {
+                // No additional logic here, falling is handled by velocity check
             }
-            else if (!isGrounded && wasGrounded)
-            {
-                Debug.Log("");
-                
-            }
+
             wasGrounded = isGrounded;
+            animator.SetBool(isGroundedHash, isGrounded);
+            IsFalling();
         }
 
+        private void UpdateMovementState(){
+            bool isMoveInput = moveInput != Vector2.zero;
+            bool isMovingLateral = IsMovingLateral();
+            PlayerMovementState lateralState = isSprinting ? PlayerMovementState.Running : 
+                                               isMovingLateral || isMoveInput ? PlayerMovementState.Running : PlayerMovementState.Idling;
+
+            _playerState.SetPlayerMovementState(lateralState);
+
+            if (!isGrounded && rb.velocity.y > 0f){
+                _playerState.SetPlayerMovementState(PlayerMovementState.Jumping);
+            }
+        }
+
+        private bool IsMovingLateral(){
+            Vector3 lateralVelocity = new Vector3(velocityX, 0f, velocityZ);
+            return lateralVelocity.magnitude > 0;
+        }
         private int groundContacts = 0;
 
-        private void OnCollisionStay(Collision collision)
+        private void CheckGrounded()
         {
-
-            bool foundValidGround = false;
-            // Check if the collided object is on the ground layer
-            foreach (ContactPoint contact in collision.contacts)
-            {
-                if (contact.normal.y > 0.1f)  // Reduced threshold to be more forgiving
-                {
-                    foundValidGround = true;
-                    groundContacts++;
-                    break;  // Exit loop once we find valid ground
-                }
-            }
+            // Use a small radius for the sphere cast
+            float groundCheckRadius = 0.4f;
+            // Use a small distance for the check
+            float groundCheckDistance = 0.5f;
             
-            if (foundValidGround)
-            {
-                isGrounded = true;
-            }
-            else
-            {
-                groundContacts = 0;
-                isGrounded = false;
+            // Perform a SphereCast from slightly above the groundCheck position
+            isGrounded = Physics.SphereCast(
+                groundCheck.position + Vector3.up * groundCheckRadius, 
+                groundCheckRadius,
+                Vector3.down, 
+                out RaycastHit hit,
+                groundCheckDistance,
+                groundLayer
+            );
+        }
+
+        private void IsFalling() {
+            float raycastDistance = 20f;
+            float fallingThreshold = 0.75f;
+
+            RaycastHit hit;
+            if (Physics.Raycast(idleTransform.position, Vector3.down, out hit, raycastDistance, groundLayer)) {
+                float distanceToGround = hit.distance;
+
+                // Player is falling if they are not grounded and far from the ground
+                if (!isGrounded && distanceToGround > fallingThreshold) {
+                    animator.SetBool(isFallingHash, true);
+                }
+            } else {
+                // No ground detected, assume falling
+                animator.SetBool(isFallingHash, true);
             }
         }
 
-        private void OnCollisionExit(Collision collision)
-        {
-            groundContacts = Mathf.Max(groundContacts - 1, 0);
-            if (groundContacts == 0)
-            {
-                isGrounded = false;
-            }
-        }
+        // private void OnCollisionStay(Collision collision)
+        // {
+
+        //     bool foundValidGround = false;
+        //     // Check if the collided object is on the ground layer
+        //     foreach (ContactPoint contact in collision.contacts)
+        //     {
+        //         if (contact.normal.y > 1f)  // Reduced threshold to be more forgiving
+        //         {
+        //             foundValidGround = true;
+        //             groundContacts++;
+        //             break;  // Exit loop once we find valid ground
+        //         }
+        //     }
+            
+        //     if (foundValidGround)
+        //     {
+        //         isGrounded = true;
+        //     }
+        //     else
+        //     {
+        //         groundContacts = 0;
+        //         isGrounded = false;
+        //     }
+        // }
+
+        // private void OnCollisionExit(Collision collision)
+        // {
+        //     groundContacts = Mathf.Max(groundContacts - 1, 0);
+        //     if (groundContacts == 0)
+        //     {
+        //         isGrounded = false;
+        //     }
+        // }
+
 
         private void HandleRotation()
         {
-            if (cameraTransform == null || InventoryVisible)
-            {
-                return;
-            }
-
-            // Apply sensitivity to input
-            Vector2 sensitiveInput = lookInput * mouseSensitivity;
-
-            // Smooth input
-            smoothedLookInput = Vector2.Lerp(
-                smoothedLookInput,
-                sensitiveInput,
-                1f - Mathf.Exp(-inputSmoothTime * 60f)
-            );
-
-            // Vertical rotation (POV camera)
-            float mouseY = smoothedLookInput.y * verticalRotationSpeed * Time.deltaTime;
-            verticalRotation -= mouseY;
-
-            // Clamp vertical rotation to prevent looking too far up or down
-            verticalRotation = Mathf.Clamp(verticalRotation, -30f, 60f); // Adjust values for POV
-
-            // Apply vertical rotation to the camera
-            cameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-
-            // Horizontal rotation (player rotation)
-            float mouseX = smoothedLookInput.x * rotationSpeed * Time.deltaTime;
-            targetRotation += mouseX * 60f; // Normalize for framerate
-            float currentRotationY = Mathf.SmoothDampAngle(
-                idleTransform.eulerAngles.y,
-                targetRotation,
-                ref currentRotationVelocity,
-                smoothRotationTime
-            );
-
-            // Apply horizontal rotation to the player
-            idleTransform.rotation = Quaternion.Euler(0f, currentRotationY, 0f);
+            if (cameraTransform == null || InventoryVisible) return;
+            // Use look input for rotation
+            float mouseX = lookInput.x * rotationSpeed * Time.deltaTime;
+            targetRotation += mouseX * 60f; // Smooth rotation factor
+            transform.rotation = Quaternion.Euler(0f, targetRotation, 0f);
         }
-        
+
         private void Movement(){
             // Determine current maximum velocities based on sprinting
             float currentMaxVelocityZ = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
@@ -501,44 +560,34 @@ namespace SG{
         private void LateUpdate()
         {
             HandleRotation(); // Update camera and player rotation
+            isJumping = false;
         }
 
         private void FixedUpdate()
         {
-            HandleMovement(); // Apply movement in FixedUpdate for physics consistency
+            CheckGrounded();
+            HandleMovement();
+            AdjustGravityOnSlope();
+            ClampVerticalVelocity();
+            PreventSliding();
         }
         
         [SerializeField] private CinemachineVirtualCamera virtualCamera; // Reference to the virtual camera
 
-        private void HandleMovement()
-        {
+        private void HandleMovement() {
             if (InventoryVisible) return;
 
-            // Ensure the virtual camera is properly assigned
-            if (virtualCamera == null)
-            {
-                Debug.LogWarning("Virtual Camera is not assigned.");
-                return;
+            Vector3 moveDirection = (transform.forward * moveInput.y) + (transform.right * moveInput.x);
+            moveDirection.Normalize();
+
+            RaycastHit slopeHit;
+            if (IsOnSlope(out slopeHit)) {
+                moveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
             }
 
-            // Get the forward and right direction relative to the virtual camera
-            Transform cameraTransform = virtualCamera.transform;
-            Vector3 cameraForward = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up).normalized;
-            Vector3 cameraRight = Vector3.ProjectOnPlane(cameraTransform.right, Vector3.up).normalized;
-
-            // Calculate movement direction based on input
-            Vector3 moveDirection = (cameraForward * moveInput.y + cameraRight * moveInput.x).normalized;
-            Debug.Log($"Move Direction: {moveDirection}");
-            // Apply movement to Rigidbody
-            Vector3 targetPosition = rb.position + moveDirection * Mathf.Max(Mathf.Abs(velocityZ), Mathf.Abs(velocityX)) * Time.fixedDeltaTime;
+            float movementSpeed = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
+            Vector3 targetPosition = rb.position + moveDirection * movementSpeed * Time.fixedDeltaTime;
             rb.MovePosition(targetPosition);
-
-            // Rotate player to face the movement direction
-            if (moveDirection.magnitude > 0.01f)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
-            }
         }
 
         // Called when the Move action is performed or canceled

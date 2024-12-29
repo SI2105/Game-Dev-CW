@@ -15,6 +15,6 @@ MonoBehaviour:
   id: 1
   displayName: Silver Blade
   icon: {fileID: 434606504, guid: 938b468cd40210441a583a0877cb4045, type: 3}
-  prefab: {fileID: 1884109808244559898, guid: 78b853c25d23ca146a29bba1b9fa26a5, type: 3}
+  prefab: {fileID: 1037715513984232, guid: 259746fbc59909b4eb14377c46a80363, type: 3}
   Stackable: 0
   weaponType: 0

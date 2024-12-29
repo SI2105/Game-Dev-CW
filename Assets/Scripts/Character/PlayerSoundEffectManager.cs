@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
-
 public class PlayerSoundEffectManager : MonoBehaviour{
     public AudioClip[] footsteps;
     public AudioClip[] swordSwings;

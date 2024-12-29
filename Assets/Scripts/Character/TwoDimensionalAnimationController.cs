@@ -48,6 +48,7 @@ namespace SG{
         private bool leftPressed = false;
         private bool rightPressed = false;
         private bool InventoryVisible = false;
+        private bool objectiveVisible = false;
         private bool PauseVisible = false;
         #endregion
 
@@ -210,12 +211,29 @@ namespace SG{
 
         public void onObjective(InputAction.CallbackContext context)
         {
-            if (context.performed)
+            if(context.performed)
             {
-               //calls the method to toggle the panel directly in Objective Manager
-                attributesManager.ObjectiveManager.ToggleObjectivePanel();
+                ToggleObjective();
             }
 
+
+        }
+
+        public void ToggleObjective() {
+            objectiveVisible = !objectiveVisible;
+
+            if (objectiveVisible)
+            {
+                
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+
+            attributesManager.ObjectiveManager.ToggleObjectivePanel();
         }
         private void HandleInventory(InputAction.CallbackContext context) {
 

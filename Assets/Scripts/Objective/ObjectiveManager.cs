@@ -76,17 +76,18 @@ public class ObjectiveManager : MonoBehaviour
         //UI facing method, updates the interface with the latest Objective status. Should be called before the Objectives UI is shown to players
         foreach (Transform child in ObjectivePanel)
         {
-           Destroy(child.gameObject);   //Destroys existing state of the Objective UI, ready for update
-           
+            Destroy(child.gameObject);   //Destroys existing state of the Objective UI, ready for update
+
         }
 
         foreach (ObjectiveData objective in Objective_Dict.Values)
         {
             //For each objective, Prefab used to create UI Component
-           GameObject item = Instantiate(ObjectivePrefab, ObjectivePanel);
-           item.transform.GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = objective.objectiveName;
-           item.transform.GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().text = objective.objectiveDescription;
-            if (!objective.objectiveComplete) {
+            GameObject item = Instantiate(ObjectivePrefab, ObjectivePanel);
+            item.transform.GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = objective.objectiveName;
+            item.transform.GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().text = objective.objectiveDescription;
+            if (!objective.objectiveComplete)
+            {
                 item.transform.GetChild(3).gameObject.SetActive(false);
             }
         }

@@ -14,6 +14,7 @@ public class EnemyAIController : MonoBehaviour
 
     public EnemyPlayerSensor player_sensor;
     public EnemyWallSensor wall_sensor;
+    public EnemyLockOnSensor lockOnSensor;
 
     public EnemyAudioController audio_controller;
     //field for the enemy animator component
@@ -49,6 +50,7 @@ public class EnemyAIController : MonoBehaviour
         animator = GetComponent<Animator>();
         player_sensor = GetComponent<EnemyPlayerSensor>();
         wall_sensor=GetComponent<EnemyWallSensor>();
+        lockOnSensor=GetComponent<EnemyLockOnSensor>();
         audio_controller= GetComponent<EnemyAudioController>();
     }
 
@@ -82,14 +84,9 @@ public class EnemyAIController : MonoBehaviour
     private void AssembleBehaviourTree(){
 
         // Define Individual Nodes in BehaviourTree
-
-        //range node for attacking range
-        IsInRangeNode isInAttackingRange = new IsInRangeNode(this, playerTransform, attackingThreshold);
-
         //range node for chasing range
         canSensePlayerNode isInChasingRange = new canSensePlayerNode(this, playerTransform, senseDistance);
 
-    
         //health node
         HealthNode healthNode = new HealthNode(this, lowHealthThreshold);
 
@@ -114,8 +111,10 @@ public class EnemyAIController : MonoBehaviour
         //node for patrolling
         PatrolNode patrolNode = new PatrolNode(enemyAgent, this, animator, audio_controller);
 
-        //Define Sequence and Selector Nodes in Behaviour Tree
+        //node for locking on to player
+        LockOnNode playerLockNode = new LockOnNode(enemyAgent, this, animator, playerTransform);
 
+        //Define Sequence and Selector Nodes in Behaviour Tree
 
         //Invertor node for determing if enemy is in patrolling range
         InverterNode isInPatrollingRange = new InverterNode(isInChasingRange);
@@ -127,10 +126,7 @@ public class EnemyAIController : MonoBehaviour
         InverterNode hasAttacks1Health = new InverterNode(healthNode);
 
         //Sequence node for attacks 1
-        SequenceNode attacks1 = new SequenceNode(new List<Node> {isInAttackingRange, hasAttacks1Health, attackNode1});
-
-        //Sequence node for attacks 2
-        SequenceNode attacks2 = new SequenceNode(new List<Node> {isInAttackingRange, healthNode, attackNode2});
+        SequenceNode attacks1 = new SequenceNode(new List<Node> {isInChasingRange, hasAttacks1Health, playerLockNode});
 
         //Sequence node for death
         SequenceNode enemyDeath = new SequenceNode(new List<Node> {deathHealthNode, deathNode});
@@ -140,7 +136,7 @@ public class EnemyAIController : MonoBehaviour
 
 
         //selector node for root node of behaviour tree
-        topNode= new SelectorNode(new List<Node> {patrollingSequence, enemyDeath, block_dodge});
+        topNode= new SelectorNode(new List<Node> {patrollingSequence, attacks1, enemyDeath, block_dodge});
 
     }
     //getter for the current enemy health

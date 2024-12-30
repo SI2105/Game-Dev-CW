@@ -24,9 +24,7 @@ public class canSensePlayerNode : Node
             node_state = State.SUCCESS;
             return State.SUCCESS;
         }
-
-        Debug.LogError("The player is not detected by the sensor");
-
+        
         node_state = State.FAILURE;
         return State.FAILURE;
     }

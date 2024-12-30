@@ -47,10 +47,15 @@ public class PatrolNode : Node
         float velocityX = animator.GetFloat("velocityX");
         float velocityY = animator.GetFloat("velocityY");
 
-        velocityX = Mathf.MoveTowards(velocityX, 0.5f, Time.deltaTime * 0.1f);
-        velocityY = Mathf.MoveTowards(velocityY, 0.0f, Time.deltaTime * 0.1f);
-
-        animator.SetFloat("velocityX", velocityX);
+        if(velocityY<0.5){
+            velocityY +=Time.deltaTime * 0.1f;
+        }
+        
+        if(velocityY>0.5){
+            velocityY=0.5f;
+        }
+    
+        animator.SetFloat("velocityX", 0.0f);
         animator.SetFloat("velocityY", velocityY);
 
         // Set patrol speed

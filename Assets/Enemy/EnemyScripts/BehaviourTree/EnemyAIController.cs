@@ -12,9 +12,8 @@ public class EnemyAIController : MonoBehaviour
     private float decceleration = 10f;
     private float maxVelocity = 4.0f;
 
-    public EnemyAISensor sensor;
-
     public EnemyPlayerSensor player_sensor;
+    public EnemyWallSensor wall_sensor;
 
     public EnemyAudioController audio_controller;
     //field for the enemy animator component
@@ -48,8 +47,8 @@ public class EnemyAIController : MonoBehaviour
     private void Awake(){
         enemyAgent= GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        sensor = GetComponent<EnemyAISensor>();
         player_sensor = GetComponent<EnemyPlayerSensor>();
+        wall_sensor=GetComponent<EnemyWallSensor>();
         audio_controller= GetComponent<EnemyAudioController>();
     }
 
@@ -100,9 +99,6 @@ public class EnemyAIController : MonoBehaviour
         //node for death initation
         DieNode deathNode = new DieNode(this, enemyAgent);
 
-        //node for chasing player
-        ChaseNode chaseNode = new ChaseNode(enemyAgent, playerTransform, animator, this);
-
         //node for blocking
         BlockNode blockNode = new BlockNode(this, 0.5f);
 
@@ -116,12 +112,10 @@ public class EnemyAIController : MonoBehaviour
         Attack_2Node attackNode2 = new Attack_2Node(enemyAgent, this, animator);
 
         //node for patrolling
-        PatrolNode patrolNode = new PatrolNode(enemyAgent, this, 1f, animator, audio_controller);
+        PatrolNode patrolNode = new PatrolNode(enemyAgent, this, animator, audio_controller);
 
         //Define Sequence and Selector Nodes in Behaviour Tree
 
-        //Sequence node for chasing
-        SequenceNode chaseSequence = new SequenceNode(new List<Node> {isInChasingRange, chaseNode});
 
         //Invertor node for determing if enemy is in patrolling range
         InverterNode isInPatrollingRange = new InverterNode(isInChasingRange);
@@ -146,7 +140,7 @@ public class EnemyAIController : MonoBehaviour
 
 
         //selector node for root node of behaviour tree
-        topNode= new SelectorNode(new List<Node> {attacks1, chaseSequence,patrollingSequence, enemyDeath, block_dodge});
+        topNode= new SelectorNode(new List<Node> {patrollingSequence, enemyDeath, block_dodge});
 
     }
     //getter for the current enemy health

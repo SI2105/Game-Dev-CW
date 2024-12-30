@@ -27,10 +27,15 @@ public class ChaseNode : Node
 
     public override State Evaluate()
     {
+
+        if(!animator.GetCurrentAnimatorStateInfo(1).IsName("Fight Idle")){
+            node_state=State.FAILURE;
+            return node_state;
+        }
+
         // Roaring phase
         if (!hasRoared)
         {
-            Debug.LogWarning("Here1");
             HandleRoaring();
             node_state = State.RUNNING;
             return node_state;
@@ -43,6 +48,10 @@ public class ChaseNode : Node
             node_state = State.RUNNING;
             return node_state;
         }
+
+        // Step 1: Switch layer weights to Movement Layer
+        animator.SetLayerWeight(1, 0.0f); // Movement Layer (index 0)
+        animator.SetLayerWeight(0, 1.0f); // Attack Layer (index 1)
 
         // Chasing phase
         animator.SetBool("isChasing", true);
@@ -77,7 +86,7 @@ public class ChaseNode : Node
         }
 
         // Chase the player if in sight or during the cooldown
-        if (distance > 1.5f)
+        if (distance > 4f)
         {
             enemyAgent.speed = 2f;
             enemyAgent.isStopped = false;
@@ -153,9 +162,9 @@ public class ChaseNode : Node
         animator.SetLayerWeight(0, 0.0f);
         animator.SetLayerWeight(3, 1.0f);
         animator.SetBool("IsRoaring", true);
-        enemyAI.audio_controller.playRoar();
         if (animator.GetCurrentAnimatorStateInfo(3).IsName("Mutant Roaring"))
         {
+            enemyAI.audio_controller.playRoar();
             roaringStarted = true;
             animator.SetBool("IsRoaring", false);
         }

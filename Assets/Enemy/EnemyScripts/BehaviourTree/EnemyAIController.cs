@@ -146,7 +146,7 @@ public class EnemyAIController : MonoBehaviour
 
 
         //selector node for root node of behaviour tree
-        topNode= new SelectorNode(new List<Node> {chaseSequence,patrollingSequence, enemyDeath, block_dodge});
+        topNode= new SelectorNode(new List<Node> {attacks1, chaseSequence,patrollingSequence, enemyDeath, block_dodge});
 
     }
     //getter for the current enemy health

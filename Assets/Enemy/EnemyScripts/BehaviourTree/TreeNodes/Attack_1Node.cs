@@ -12,13 +12,13 @@ public class Attack_1Node : Node
     private float attackTimer = 0.0f; // Tracks time between attacks
     private float attackCooldown = 1.5f; // Time between attack phases
     private int currentAttackPhase = 1; // Tracks current attack animation phase
-    private float transitionSpeed = 3.0f; // Speed for reducing velocity
-    private bool isInCooldown= false;
     private bool isIdle = false; // Tracks if the enemy is in idle state
-    private bool isInAttack=true;
+    private bool isInAttack = true;
+    private bool isTurning = false;
     private Vector3 originalIdlePosition; // Tracks original idle position
     private Quaternion originalIdleRotation; // Tracks original idle rotation
     private bool positionCaptured = false; // Ensures position is captured once during idle
+    private bool positionEnemy=false;
 
     public Attack_1Node(NavMeshAgent enemyAgent, EnemyAIController enemyAI, Animator animator)
     {
@@ -29,103 +29,95 @@ public class Attack_1Node : Node
 
     public override State Evaluate()
     {
-        // Stop the agent from moving to initiate attacks
-        enemyAgent.isStopped = true;
 
-        // Step 1: Ensure velocity is reduced to 0 for the fighting idle stance
-        float currentVelocity = animator.GetFloat("velocity");
-        if (currentVelocity > 0.0f)
-        {
-            currentVelocity -= Time.deltaTime * transitionSpeed; // Gradually decrease velocity
-            animator.SetFloat("velocity", Mathf.Max(currentVelocity, 0.0f)); // Clamp to 0
-            node_state = State.RUNNING; // Wait until velocity is fully reduced
+        float distance = Vector3.Distance(enemyAgent.transform.position, enemyAI.playerTransform.position);
+
+        if(distance > 1.5f && !positionEnemy){
+            // Step 1: Switch layer weights to Movement Layer
+            animator.SetLayerWeight(0, 1.0f); // Movement Layer (index 0)
+            animator.SetLayerWeight(1, 0.0f); // Attack Layer (index 1)
+            animator.SetBool("isPatrolling", true);
+            animator.SetBool("isChasing", false);
+            enemyAgent.SetDestination(enemyAI.playerTransform.position);
+            node_state=State.RUNNING;
             return node_state;
         }
 
-        // Step 2: Switch layer weights (Attack Layer: 1.0, Movement Layer: 0.0)
+        positionEnemy=true;
+
+        if(distance>=2.5f){
+            positionEnemy=false;
+            positionCaptured=false;
+            node_state=State.RUNNING;
+            return node_state;
+        }
+
+        // Step 1: Switch layer weights to Attack Layer
         animator.SetLayerWeight(0, 0.0f); // Movement Layer (index 0)
         animator.SetLayerWeight(1, 1.0f); // Attack Layer (index 1)
 
+        enemyAgent.ResetPath();
+       
+
+        // Capture original position and rotation during idle stance (only once)
+        if (!positionCaptured)
+        {
+            // Calculate the direction to the player
+            Vector3 toPlayer = (enemyAI.playerTransform.position - enemyAI.enemyTransform.position).normalized;
+
+            // Set the rotation to face the player
+            Quaternion lookRotation = Quaternion.LookRotation(toPlayer, Vector3.up);
+            enemyAI.enemyTransform.rotation = lookRotation;
+
+            // Capture the position and rotation
+            originalIdlePosition = enemyAI.enemyTransform.position;
+            originalIdleRotation = enemyAI.enemyTransform.rotation;
+            positionCaptured = true; // Ensure position is captured only once
+        }
+
+        // Idle phase
         if (isIdle)
         {
-            // Idle phase: Set AttackPhase to 0 and wait for the cooldown to complete
-            if (attackTimer == 0.0f)
-            {
-                animator.SetInteger("AttackPhase", 0); // Enter idle state exactly once
+            if(!animator.GetCurrentAnimatorStateInfo(1).IsName("Fight Idle")){
+                animator.SetInteger("AttackPhase", 0); // Reset to idle animation
             }
-
-            // Capture original position and rotation during idle stance (only once)
-            if (!positionCaptured)
-            {
-                originalIdlePosition = enemyAI.enemyTransform.position;
-                originalIdleRotation = enemyAI.enemyTransform.rotation;
-                positionCaptured = true; // Ensure position is captured only once
-            }
-
-        
-              // Check if the Animator is transitioning to another state
-            if (animator.IsInTransition(1))
-            {
-                currentAttackPhase++; // Increment attack phase
-                if (currentAttackPhase > 5) // Loop back to phase 1
-                    {
-                        currentAttackPhase = 1;
-                    }
-                isIdle = false;
-                attackTimer += Time.deltaTime;
-                isInCooldown=true;
+            else{
+                isInAttack=true;
             }
         }
 
-       if (isInCooldown)
+        //Attack Phase
+        if (isInAttack)
         {
-            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(1);
-
-            if (stateInfo.IsName("Fight Idle"))
-            {
-                // Gradually restore position and rotation
+            if(animator.GetCurrentAnimatorStateInfo(1).IsName("Fight Idle")){
+                 // Gradually restore position and rotation
                 enemyAI.enemyTransform.position = Vector3.Lerp(
                     enemyAI.enemyTransform.position,
                     originalIdlePosition,
-                    Time.deltaTime * transitionSpeed
+                    Time.deltaTime * 2.0f
                 );
 
                 enemyAI.enemyTransform.rotation = Quaternion.Slerp(
                     enemyAI.enemyTransform.rotation,
                     originalIdleRotation,
-                    Time.deltaTime * transitionSpeed
+                    Time.deltaTime * 2.0f
                 );
-            }
+                
+                
+                // Attack phase: Trigger the current attack animation
+                animator.SetInteger("AttackPhase", currentAttackPhase);
 
-            // Increment the cooldown timer
-            attackTimer += Time.deltaTime;
-
-            if (attackTimer >= attackCooldown)
-            {
-                // Cooldown complete, prepare for next attack
-                attackTimer = 0.0f; // Reset timer
-                isInAttack = true;
-                isInCooldown = false;
-            }
-        }
-
-
-        if(isInAttack)
-        {
-            // Attack phase: Trigger the current attack animation
-            animator.SetInteger("AttackPhase", currentAttackPhase);
-
-            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(1);
-            if (!stateInfo.IsName("Fight Idle"))
-            {
                 // Transitioning: Attack animation is complete
                 isIdle = true;
                 isInAttack = false;
+                currentAttackPhase++; // Move to the next attack phase
+                if (currentAttackPhase > 5) // Loop back to phase 1
+                    {
+                        currentAttackPhase = 1;
+                    }
             }
-          
         }
 
-        // Set the node state to running and return it
         node_state = State.RUNNING;
         return node_state;
     }

@@ -54,9 +54,10 @@ namespace SlimUI.ModernMenu{
 		private float sliderValueXSensitivity = 0.0f;
 		private float sliderValueYSensitivity = 0.0f;
 		private float sliderValueSmoothing = 0.0f;
-		
+
 
 		public void  Start (){
+			var settingsManager = SettingsManager.Instance;
 			// check difficulty
 			if(PlayerPrefs.GetInt("NormalDifficulty") == 1){
 				difficultynormaltextLINE.gameObject.SetActive(true);
@@ -218,8 +219,21 @@ namespace SlimUI.ModernMenu{
 		}
 
 		public void MusicSlider (){
-			//PlayerPrefs.SetFloat("MusicVolume", sliderValue);
-			PlayerPrefs.SetFloat("MusicVolume", musicSlider.GetComponent<Slider>().value);
+			float volume = musicSlider.GetComponent<Slider>().value;
+			PlayerPrefs.SetFloat("MusicVolume", volume);
+			PlayerPrefs.Save(); // Ensure the value is saved immediately
+
+			if (SettingsManager.Instance != null)
+			{
+				SettingsManager.Instance.SetMusicVolume(volume);
+			}
+
+			// Update the audio source volume in the main menu
+			AudioSource audioSource = GetComponent<AudioSource>();
+			if (audioSource != null)
+			{
+				audioSource.volume = volume;
+			}
 		}
 
 		public void SensitivityXSlider (){

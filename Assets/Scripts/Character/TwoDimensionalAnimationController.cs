@@ -129,9 +129,14 @@ namespace SG{
         [SerializeField]
         GameObject pauseMenuPanel;
         [SerializeField] private KeyBindings keyBindings;
+        private SettingsManager settingsManager;
+
         private void Awake()
         {
+            settingsManager = SettingsManager.Instance;
             inputActions = InputManager.Instance.inputActions;
+
+            // settingsManager.LoadAllSettings();
 
             // Subscribe to the Move action's performed and canceled events
             inputActions.Player.Move.performed += HandleMove;

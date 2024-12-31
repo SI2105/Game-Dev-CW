@@ -244,6 +244,7 @@ namespace SG{
                 Cursor.visible = true;
             }
             else {
+                
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }

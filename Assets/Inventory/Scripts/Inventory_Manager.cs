@@ -205,13 +205,6 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void ToggleInventory() {
-        InventoryPanel.SetActive(false);
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-    }
-
 
     public void OnClick(InputAction.CallbackContext context)
     {
@@ -309,7 +302,7 @@ public class InventoryManager : MonoBehaviour
         SlotClass slot = Contains(item);
         if (slot != null && slot.GetItem().Stackable)
         {
-            slot.AddQuantity(1);
+            slot.AddQuantity(quantity);
         }
         else {
 
@@ -322,14 +315,7 @@ public class InventoryManager : MonoBehaviour
                     break;
                 }
             }
-            //if (Items.Count < slots.Length) {
-            //    Items.Add(new SlotClass(item, 1));
 
-            //}
-            //else
-            //{
-            //    return false;
-            //}
 
         }
         

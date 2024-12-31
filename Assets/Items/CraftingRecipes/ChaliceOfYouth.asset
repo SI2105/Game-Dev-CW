@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputItems:
   - item: {fileID: 11400000, guid: cac625fbed5fcd249980d68e8125b878, type: 2}
-    quantity: 5
+    quantity: 100
   - item: {fileID: 11400000, guid: bfb72ed5dba5368469b92c0544a004d8, type: 2}
     quantity: 2
   outputItem:

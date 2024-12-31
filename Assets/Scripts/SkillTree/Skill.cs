@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,6 +25,9 @@ public class Skill : MonoBehaviour
 
     [SerializeField]private SkillTreeManager skillTreeManager;
 
+    //Event For SkillUnlock
+    public static event Action<SkillName> OnSkillUnlocked;
+
     void Start()
     {
         skillButton = transform.GetComponent<Button>(); 
@@ -44,6 +48,10 @@ public class Skill : MonoBehaviour
             
             isUnlocked = true;
             skillTreeManager.SpendSkillPoints(cost);
+
+            //Trigger the even when the skill is unlocked
+
+            OnSkillUnlocked?.Invoke(skillName);
             UpdateUI();
         }
     }

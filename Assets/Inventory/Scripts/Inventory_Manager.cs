@@ -72,7 +72,7 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    
+
     #endregion
     public ItemClass SelectedItem
     {

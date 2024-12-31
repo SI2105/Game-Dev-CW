@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e951926ef5bdb4eb696edd465ec911, type: 3}
+  m_Name: Glowing Mushroom
+  m_EditorClassIdentifier: 
+  id: 10
+  displayName: Glow Mushroom
+  icon: {fileID: -727925519, guid: 94b812cd64a29a04b853de52ae8fc854, type: 3}
+  prefab: {fileID: 0}
+  Stackable: 1

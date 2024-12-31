@@ -23,7 +23,14 @@ namespace SG
             get => objectiveManager;
             set => objectiveManager = value;
         }
-        
+
+        #endregion
+
+        #region SkillTree
+        [SerializeField] private SkillTreeManager skillTreeManager;
+        public SkillTreeManager SkillTreeManager { get => skillTreeManager; 
+            set => skillTreeManager = value; 
+        }
         #endregion
 
         public float MaxHealth { get; set; } = 100f;

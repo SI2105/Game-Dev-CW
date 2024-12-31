@@ -51,15 +51,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Jump",
-                    "type": "Button",
-                    "id": "289d9a59-12a2-4796-82b4-90d3b3dba6ef",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Inventory",
                     "type": "Button",
                     "id": "73d6ad4b-5da7-4cc0-9314-2f53826638ae",
@@ -105,6 +96,42 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "DodgeForward",
+                    "type": "Button",
+                    "id": "e3249ef0-88f5-4657-a903-3b2d3737fdc6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "DodgeBackward",
+                    "type": "Button",
+                    "id": "5ab09de0-cfda-45a6-bf65-50fbaf13d08d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "DodgeLeft",
+                    "type": "Button",
+                    "id": "f3691684-bf42-4364-bca3-adf90d86fbb9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "DodgeRight",
+                    "type": "Button",
+                    "id": "f5c685d9-cf23-484f-9efe-9bfdbb8f9a8d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Interact",
                     "type": "Button",
                     "id": "9adc8979-08eb-4a06-9f95-7b25c3baeea9",
@@ -117,6 +144,15 @@
                     "name": "Objective",
                     "type": "Button",
                     "id": "8741246a-e639-4644-a4f5-084734bafa26",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "LockOn",
+                    "type": "Button",
+                    "id": "53d94e7a-b266-46b4-8f54-26fa7cac85fd",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -335,17 +371,6 @@
                 },
                 {
                     "name": "",
-                    "id": "05521498-24b1-4899-bd19-b534f094a8a6",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "d744cd3a-e3e0-4274-88c5-96fddfa0058c",
                     "path": "<Keyboard>/e",
                     "interactions": "",
@@ -442,6 +467,149 @@
                     "action": "Objective",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6bd65a2e-f341-4219-9faa-b386da14fd8e",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "LockOn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "DodgeForward",
+                    "id": "ade56789-eee6-4d9b-92eb-b7e464ca610d",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DodgeForward",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "cbfae47b-9e5d-4281-a4a1-2bf8c68b0ed8",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DodgeForward",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "d328a377-3e1f-4f89-890d-4c12aadeb462",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DodgeForward",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "DodgeBackward",
+                    "id": "6f6d6fca-4ec9-4e53-bf30-4c844e8b365a",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DodgeBackward",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "0c9e4c77-c282-49ae-87d3-c733a10d4976",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DodgeBackward",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "e47b12a7-20e2-4c5a-998e-6d88cacadc61",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DodgeBackward",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "DodgeLeft",
+                    "id": "00888f59-6608-4184-9eee-b00cdb728b80",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DodgeLeft",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "5aeb0256-fe75-47c7-9da2-5793894f51c1",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DodgeLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "fc91b1b5-78f8-4290-8a69-7d7f4dd0ef51",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DodgeLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "DodgeRight",
+                    "id": "f8716bbc-fcfa-49a3-a59b-3514593f59e1",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DodgeRight",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "6a8cfc0f-8d22-4240-8a72-a76acfdf15fc",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DodgeRight",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "a8173716-2313-4a6b-a8b8-7f48d39ed61b",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DodgeRight",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         },

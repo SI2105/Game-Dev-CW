@@ -10,6 +10,7 @@ public abstract class ItemClass : ScriptableObject
     public Sprite icon;
     public GameObject prefab;
     public bool Stackable;
+    public float damage;
 
     public abstract ItemClass GetItem();
     public abstract WeaponClass GetWeapon();

@@ -177,6 +177,7 @@ namespace SG{
         #endregion
 
         private PlayerLockOn playerLockOn;
+        public CinemachineCameraSwitcher cameraSwitcher;
 
         private void Awake()
         {
@@ -319,6 +320,8 @@ namespace SG{
             if (cameraTransform == null && Camera.main != null)
                 cameraTransform = Camera.main.transform;
 
+            cameraSwitcher = FindObjectOfType<CinemachineCameraSwitcher>();
+
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
@@ -413,7 +416,7 @@ namespace SG{
                 if (directionToTarget != Vector3.zero)
                 {
                     Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-                    idleTransform.rotation = Quaternion.Slerp(idleTransform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
                 }
             }
             else
@@ -421,7 +424,7 @@ namespace SG{
                 // Normal rotation when not locked on
                 float mouseX = lookInput.x * rotationSpeed * Time.deltaTime;
                 targetRotation += mouseX * 60f;
-                idleTransform.rotation = Quaternion.Euler(0f, targetRotation, 0f);
+                transform.rotation = Quaternion.Euler(0f, targetRotation, 0f);
             }
         }
 
@@ -620,33 +623,101 @@ namespace SG{
                 }
             }
         }
+
+        [SerializeField] private float dodgeDistance = 0.5f; // Distance to move during a dodge
+        [SerializeField] private float dodgeDuration = 0.5f; // Time it takes to complete the dodge
+        [SerializeField] private float dodgeForce = 0.4f; // Force applied for dodges
+        [SerializeField] private float dodgeStaminaCost = 10f;
+        [SerializeField] private float dodgeCooldown = 0.2f;
+       private bool canDodge = true; // Tracks whether the player is allowed to dodge right now
+
+        private void HandleDodge(Vector3 direction, string animationHash)
+        {
+            // 1. Check if player can dodge at all
+            if (!canDodge)
+            {
+                Debug.Log("Dodge is on cooldown!");
+                return;
+            }
+
+            // 2. Check stamina
+            if (attributesManager.CurrentStamina < dodgeStaminaCost)
+            {
+                Debug.Log("Not enough stamina to dodge!");
+                return;
+            }
+
+            // 3. Player can dodge here
+            attributesManager.UseStamina(dodgeStaminaCost);
+
+            // 4. Mark that we’re now in dodge cooldown
+            canDodge = false;
+
+            // 5. Trigger dodge animation
+            SetDodgeState(direction, animationHash, true);
+
+            // 6. Perform the dodge
+            StartCoroutine(DodgeRoutine(direction, animationHash));
+        }
+
+        private IEnumerator DodgeRoutine(Vector3 direction, string animationHash)
+        {
+            // Optional small delay before movement
+            yield return new WaitForSeconds(0.1f);
+
+            Vector3 startPosition = rb.position;
+            Vector3 targetPosition = CalculateFinalPosition(startPosition, direction, dodgeDistance);
+            float elapsedTime = 0f;
+
+            while (elapsedTime < dodgeDuration)
+            {
+                rb.MovePosition(Vector3.Lerp(startPosition, targetPosition, elapsedTime / dodgeDuration));
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            // Ensure the final position is exact
+            rb.MovePosition(targetPosition);
+
+            // Reset dodge state
+            SetDodgeState(direction, animationHash, false);
+
+            // 7. After the dodge completes, wait for the remaining cooldown
+            yield return new WaitForSeconds(dodgeCooldown);
+
+            // 8. Re-enable dodging
+            canDodge = true;
+        }
+
+        private Vector3 CalculateFinalPosition(Vector3 startPosition, Vector3 direction, float distance)
+        {
+            Vector3 targetPosition = startPosition + direction.normalized * distance;
+
+            // Optional: use raycast for obstacles
+            if (Physics.Raycast(startPosition, direction, out RaycastHit hit, distance))
+            {
+                targetPosition = hit.point - direction.normalized * 0.1f;
+            }
+
+            return targetPosition;
+        }
+
+        private void SetDodgeState(Vector3 direction, string animationHash, bool state)
+        {
+            if (direction == transform.forward)      isDodgingForward  = state;
+            if (direction == -transform.forward)     isDodgingBackward = state;
+            if (direction == transform.right)        isDodgingRight    = state;
+            if (direction == -transform.right)       isDodgingLeft     = state;
+
+            animator.SetBool(animationHash, state);
+        }
+
+        // Individual dodge handlers
         private void HandleDodgeForward(InputAction.CallbackContext ctx)
         {
             if (ctx.performed)
             {
-                isDodgingForward = true;
-                animator.SetBool(isDodgingForwardHash, isDodgingForward);
-                ResetDodgeState("Forward"); // Reset state after dodge animation
-            }
-        }
-
-        private void HandleDodgeRight(InputAction.CallbackContext context)
-        {
-            if (context.performed)
-            {
-                isDodgingRight = true;
-                animator.SetBool(isDodgingRightHash, isDodgingRight);
-                ResetDodgeState("Right"); // Reset state after dodge animation
-            }
-        }
-
-        private void HandleDodgeLeft(InputAction.CallbackContext context)
-        {
-            if (context.performed)
-            {
-                isDodgingLeft = true;
-                animator.SetBool(isDodgingLeftHash, isDodgingLeft);
-                ResetDodgeState("Left"); // Reset state after dodge animation
+                HandleDodge(transform.forward, "isDodgingForward");
             }
         }
 
@@ -654,43 +725,24 @@ namespace SG{
         {
             if (ctx.performed)
             {
-                isDodgingBackward = true;
-                animator.SetBool(isDodgingBackwardHash, isDodgingBackward);
-                ResetDodgeState("Backward"); // Reset state after dodge animation
+                HandleDodge(-transform.forward, "isDodgingBackward");
             }
         }
 
-        private void ResetDodgeState(string direction)
+        private void HandleDodgeLeft(InputAction.CallbackContext ctx)
         {
-            float dodgeAnimationDuration = 0.5f; // Replace with actual dodge animation length
-
-            StartCoroutine(ResetDodgeCoroutine(direction, dodgeAnimationDuration));
-        }
-
-        private IEnumerator ResetDodgeCoroutine(string direction, float delay)
-        {
-            yield return new WaitForSeconds(delay);
-
-            switch (direction)
+            if (ctx.performed)
             {
-                case "Forward":
-                    isDodgingForward = false;
-                    animator.SetBool(isDodgingForwardHash, isDodgingForward);
-                    break;
-                case "Right":
-                    isDodgingRight = false;
-                    animator.SetBool(isDodgingRightHash, isDodgingRight);
-                    break;
-                case "Left":
-                    isDodgingLeft = false;
-                    animator.SetBool(isDodgingLeftHash, isDodgingLeft);
-                    break;
-                case "Backward":
-                    isDodgingBackward = false;
-                    animator.SetBool(isDodgingBackwardHash, isDodgingBackward);
-                    break;
+                HandleDodge(-transform.right, "isDodgingLeft");
             }
         }
 
+        private void HandleDodgeRight(InputAction.CallbackContext ctx)
+        {
+            if (ctx.performed)
+            {
+                HandleDodge(transform.right, "isDodgingRight");
+            }
+        }
         }
     }

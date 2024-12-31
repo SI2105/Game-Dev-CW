@@ -25,6 +25,7 @@ namespace SG{
 
         [SerializeField] private float comboResetTime = 1f;
         [SerializeField] private float comboWindowTime = 0.4f;
+        private PlayerState _playerState;
         private int staminaUsageCount = 0;
         private bool isBlocking = false; 
 
@@ -59,6 +60,8 @@ namespace SG{
             inputActions.Player.Block.performed += HandleBlockAndHeal;
             inputActions.Player.Block.canceled += HandleBlockAndHeal;
             inputActions.Player.SpinAttack.performed += HandleSpinAttack;
+
+            _playerState = GetComponent<PlayerState>();
 
 
             isBlockingHash = Animator.StringToHash("isBlocking");
@@ -104,7 +107,7 @@ namespace SG{
                 Debug.LogWarning("No valid item equipped.");
             }
         }
-
+        
         private void HandleBlockAndHeal(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -204,6 +207,12 @@ namespace SG{
                     ResetComboInstantly();
                 }
             }
+
+            // Check if player is no longer attacking and update state
+            if (!animator.GetBool(isAttackingHash) && !isComboActive && !_playerState.IsInState(PlayerAttackState.Idling))
+            {
+                _playerState.SetPlayerAttackState(PlayerAttackState.Idling);
+            }
         }
 
 
@@ -219,11 +228,14 @@ namespace SG{
             bool canAttackNow = !stateInfo.IsName("Attack") ||
                                 (stateInfo.normalizedTime > (1 - comboWindowTime) &&
                                 stateInfo.normalizedTime < 1.0f);
-            
-            print(canAttackNow + "can attack now");
+
+            print(canAttackNow + " can attack now");
 
             if (canAttackNow)
             {
+                // Update player state to Attacking
+                _playerState.SetPlayerAttackState(PlayerAttackState.Attacking);
+
                 Hit();
                 attributesManager.LevelUp();
                 PerformCombo();
@@ -236,6 +248,7 @@ namespace SG{
             }
         }
 
+        
         public void PerformCombo()
         {
             if (isSpinAttackActive)
@@ -253,13 +266,16 @@ namespace SG{
                     if (currentComboStep < 2) // Adjust to your maximum combo step
                     {
                         currentComboStep++;
-                        
+
                         staminaUsageCount++; // Increment stamina usage count
                         Debug.Log($"Combo Step Incremented: {currentComboStep}, Stamina Usage: {staminaUsageCount}");
                         animator.SetInteger(comboIndexHash, currentComboStep);
                         animator.SetTrigger(attackTriggerHash);
                         animator.SetBool(isAttackingHash, true);
                         animator.SetBool(isPlayingActionHash, true);
+
+                        // Update player state to Attacking
+                        _playerState.SetPlayerAttackState(PlayerAttackState.Attacking);
 
                         // Reset the combo timer
                         comboTimer = 0f;
@@ -276,6 +292,9 @@ namespace SG{
                     animator.SetTrigger(attackTriggerHash);
                     animator.SetBool(isAttackingHash, false);
                     animator.SetBool(isPlayingActionHash, false);
+
+                    // Update player state to Attacking
+                    _playerState.SetPlayerAttackState(PlayerAttackState.Attacking);
 
                     // Reset the combo timer
                     comboTimer = 0f;

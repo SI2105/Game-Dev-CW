@@ -178,6 +178,41 @@ namespace SG{
 
         private PlayerLockOn playerLockOn;
 
+
+        #region Skills
+
+        private bool isSkillTreeVisible = false;
+
+        public void HandleSkills(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                ToggleSkilltree();
+            }
+
+
+        }
+        public void ToggleSkilltree()
+        {
+            isSkillTreeVisible = !isSkillTreeVisible;
+
+            if (isSkillTreeVisible)
+            {
+
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else
+            {
+
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+
+            attributesManager.SkillTreeManager.ToggleSkillTree();
+        }
+
+        #endregion
         private void Awake()
         {
             inputActions = new GameDevCW();
@@ -218,6 +253,8 @@ namespace SG{
                 inputActions.UI.HotBarSelector.canceled += attributesManager.InventoryManager.OnHotBarSelection;
                 inputActions.Player.Objective.performed += onObjective;
                 inputActions.Player.Objective.canceled += onObjective;
+                inputActions.UI.Skills.performed += HandleSkills;
+                inputActions.UI.Skills.canceled += HandleSkills;
 
                 UpdatePlayerStats();
             }
@@ -239,7 +276,7 @@ namespace SG{
 
             if (objectiveVisible)
             {
-                
+
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }

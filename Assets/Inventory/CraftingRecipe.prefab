@@ -169,7 +169,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 200, y: 158.8881}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7588913189471149007
 CanvasRenderer:
@@ -262,7 +262,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: -2.9022756}
+  m_margin: {x: 0, y: -2.5925884, z: 0, w: -2.9022756}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -296,8 +296,8 @@ RectTransform:
   m_GameObject: {fileID: 2657737196399086585}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.3179686, y: 1.1859375, z: 1.4375}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 4.044565, y: 2.0693126, z: 2.5082579}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6678054639590688379}
   m_Father: {fileID: 594788049853302672}
@@ -424,7 +424,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 200, y: 88.8885}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8812067164349448347
 CanvasRenderer:
@@ -695,11 +695,11 @@ MonoBehaviour:
     m_Left: 5
     m_Right: 5
     m_Top: 5
-    m_Bottom: 5
+    m_Bottom: 15
   m_ChildAlignment: 4
-  m_Spacing: 5
+  m_Spacing: 15
   m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
+  m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0

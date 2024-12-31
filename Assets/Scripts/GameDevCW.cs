@@ -73,15 +73,6 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Jump"",
-                    ""type"": ""Button"",
-                    ""id"": ""289d9a59-12a2-4796-82b4-90d3b3dba6ef"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Inventory"",
                     ""type"": ""Button"",
                     ""id"": ""73d6ad4b-5da7-4cc0-9314-2f53826638ae"",
@@ -127,6 +118,42 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""DodgeForward"",
+                    ""type"": ""Button"",
+                    ""id"": ""e3249ef0-88f5-4657-a903-3b2d3737fdc6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DodgeBackward"",
+                    ""type"": ""Button"",
+                    ""id"": ""5ab09de0-cfda-45a6-bf65-50fbaf13d08d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DodgeLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""f3691684-bf42-4364-bca3-adf90d86fbb9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DodgeRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""f5c685d9-cf23-484f-9efe-9bfdbb8f9a8d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Interact"",
                     ""type"": ""Button"",
                     ""id"": ""9adc8979-08eb-4a06-9f95-7b25c3baeea9"",
@@ -139,6 +166,15 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""name"": ""Objective"",
                     ""type"": ""Button"",
                     ""id"": ""8741246a-e639-4644-a4f5-084734bafa26"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LockOn"",
+                    ""type"": ""Button"",
+                    ""id"": ""53d94e7a-b266-46b4-8f54-26fa7cac85fd"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -357,17 +393,6 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""05521498-24b1-4899-bd19-b534f094a8a6"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Jump"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""d744cd3a-e3e0-4274-88c5-96fddfa0058c"",
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
@@ -464,6 +489,149 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""action"": ""Objective"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6bd65a2e-f341-4219-9faa-b386da14fd8e"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""LockOn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""DodgeForward"",
+                    ""id"": ""ade56789-eee6-4d9b-92eb-b7e464ca610d"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DodgeForward"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""cbfae47b-9e5d-4281-a4a1-2bf8c68b0ed8"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DodgeForward"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""d328a377-3e1f-4f89-890d-4c12aadeb462"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DodgeForward"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""DodgeBackward"",
+                    ""id"": ""6f6d6fca-4ec9-4e53-bf30-4c844e8b365a"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DodgeBackward"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""0c9e4c77-c282-49ae-87d3-c733a10d4976"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DodgeBackward"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""e47b12a7-20e2-4c5a-998e-6d88cacadc61"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DodgeBackward"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""DodgeLeft"",
+                    ""id"": ""00888f59-6608-4184-9eee-b00cdb728b80"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DodgeLeft"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""5aeb0256-fe75-47c7-9da2-5793894f51c1"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DodgeLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""fc91b1b5-78f8-4290-8a69-7d7f4dd0ef51"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DodgeLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""DodgeRight"",
+                    ""id"": ""f8716bbc-fcfa-49a3-a59b-3514593f59e1"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DodgeRight"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""6a8cfc0f-8d22-4240-8a72-a76acfdf15fc"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DodgeRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""a8173716-2313-4a6b-a8b8-7f48d39ed61b"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DodgeRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -565,6 +733,15 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""name"": ""HotBarSelector"",
                     ""type"": ""Button"",
                     ""id"": ""1aa3da67-48b3-4c24-a855-97339b4ddd4c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Skills"",
+                    ""type"": ""Button"",
+                    ""id"": ""a7515e71-7ce7-4696-acb1-a71a941c35ae"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -1044,6 +1221,17 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""action"": ""HotBarSelector"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f231ac33-4437-40b0-a619-00e6df04a761"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Skills"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -1118,14 +1306,18 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         m_Player_Fire = m_Player.FindAction("Fire", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
-        m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Inventory = m_Player.FindAction("Inventory", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_ToggleCamera = m_Player.FindAction("ToggleCamera", throwIfNotFound: true);
         m_Player_Block = m_Player.FindAction("Block", throwIfNotFound: true);
         m_Player_SpinAttack = m_Player.FindAction("SpinAttack", throwIfNotFound: true);
+        m_Player_DodgeForward = m_Player.FindAction("DodgeForward", throwIfNotFound: true);
+        m_Player_DodgeBackward = m_Player.FindAction("DodgeBackward", throwIfNotFound: true);
+        m_Player_DodgeLeft = m_Player.FindAction("DodgeLeft", throwIfNotFound: true);
+        m_Player_DodgeRight = m_Player.FindAction("DodgeRight", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_Objective = m_Player.FindAction("Objective", throwIfNotFound: true);
+        m_Player_LockOn = m_Player.FindAction("LockOn", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1139,6 +1331,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         m_UI_HotBarSelector = m_UI.FindAction("HotBarSelector", throwIfNotFound: true);
+        m_UI_Skills = m_UI.FindAction("Skills", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1205,14 +1398,18 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Fire;
     private readonly InputAction m_Player_Sprint;
     private readonly InputAction m_Player_Pause;
-    private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Inventory;
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_ToggleCamera;
     private readonly InputAction m_Player_Block;
     private readonly InputAction m_Player_SpinAttack;
+    private readonly InputAction m_Player_DodgeForward;
+    private readonly InputAction m_Player_DodgeBackward;
+    private readonly InputAction m_Player_DodgeLeft;
+    private readonly InputAction m_Player_DodgeRight;
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_Objective;
+    private readonly InputAction m_Player_LockOn;
     public struct PlayerActions
     {
         private @GameDevCW m_Wrapper;
@@ -1222,14 +1419,18 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         public InputAction @Fire => m_Wrapper.m_Player_Fire;
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
-        public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Inventory => m_Wrapper.m_Player_Inventory;
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @ToggleCamera => m_Wrapper.m_Player_ToggleCamera;
         public InputAction @Block => m_Wrapper.m_Player_Block;
         public InputAction @SpinAttack => m_Wrapper.m_Player_SpinAttack;
+        public InputAction @DodgeForward => m_Wrapper.m_Player_DodgeForward;
+        public InputAction @DodgeBackward => m_Wrapper.m_Player_DodgeBackward;
+        public InputAction @DodgeLeft => m_Wrapper.m_Player_DodgeLeft;
+        public InputAction @DodgeRight => m_Wrapper.m_Player_DodgeRight;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @Objective => m_Wrapper.m_Player_Objective;
+        public InputAction @LockOn => m_Wrapper.m_Player_LockOn;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1254,9 +1455,6 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
-            @Jump.started += instance.OnJump;
-            @Jump.performed += instance.OnJump;
-            @Jump.canceled += instance.OnJump;
             @Inventory.started += instance.OnInventory;
             @Inventory.performed += instance.OnInventory;
             @Inventory.canceled += instance.OnInventory;
@@ -1272,12 +1470,27 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @SpinAttack.started += instance.OnSpinAttack;
             @SpinAttack.performed += instance.OnSpinAttack;
             @SpinAttack.canceled += instance.OnSpinAttack;
+            @DodgeForward.started += instance.OnDodgeForward;
+            @DodgeForward.performed += instance.OnDodgeForward;
+            @DodgeForward.canceled += instance.OnDodgeForward;
+            @DodgeBackward.started += instance.OnDodgeBackward;
+            @DodgeBackward.performed += instance.OnDodgeBackward;
+            @DodgeBackward.canceled += instance.OnDodgeBackward;
+            @DodgeLeft.started += instance.OnDodgeLeft;
+            @DodgeLeft.performed += instance.OnDodgeLeft;
+            @DodgeLeft.canceled += instance.OnDodgeLeft;
+            @DodgeRight.started += instance.OnDodgeRight;
+            @DodgeRight.performed += instance.OnDodgeRight;
+            @DodgeRight.canceled += instance.OnDodgeRight;
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
             @Objective.started += instance.OnObjective;
             @Objective.performed += instance.OnObjective;
             @Objective.canceled += instance.OnObjective;
+            @LockOn.started += instance.OnLockOn;
+            @LockOn.performed += instance.OnLockOn;
+            @LockOn.canceled += instance.OnLockOn;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1297,9 +1510,6 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
-            @Jump.started -= instance.OnJump;
-            @Jump.performed -= instance.OnJump;
-            @Jump.canceled -= instance.OnJump;
             @Inventory.started -= instance.OnInventory;
             @Inventory.performed -= instance.OnInventory;
             @Inventory.canceled -= instance.OnInventory;
@@ -1315,12 +1525,27 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @SpinAttack.started -= instance.OnSpinAttack;
             @SpinAttack.performed -= instance.OnSpinAttack;
             @SpinAttack.canceled -= instance.OnSpinAttack;
+            @DodgeForward.started -= instance.OnDodgeForward;
+            @DodgeForward.performed -= instance.OnDodgeForward;
+            @DodgeForward.canceled -= instance.OnDodgeForward;
+            @DodgeBackward.started -= instance.OnDodgeBackward;
+            @DodgeBackward.performed -= instance.OnDodgeBackward;
+            @DodgeBackward.canceled -= instance.OnDodgeBackward;
+            @DodgeLeft.started -= instance.OnDodgeLeft;
+            @DodgeLeft.performed -= instance.OnDodgeLeft;
+            @DodgeLeft.canceled -= instance.OnDodgeLeft;
+            @DodgeRight.started -= instance.OnDodgeRight;
+            @DodgeRight.performed -= instance.OnDodgeRight;
+            @DodgeRight.canceled -= instance.OnDodgeRight;
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
             @Objective.started -= instance.OnObjective;
             @Objective.performed -= instance.OnObjective;
             @Objective.canceled -= instance.OnObjective;
+            @LockOn.started -= instance.OnLockOn;
+            @LockOn.performed -= instance.OnLockOn;
+            @LockOn.canceled -= instance.OnLockOn;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1353,6 +1578,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_TrackedDevicePosition;
     private readonly InputAction m_UI_TrackedDeviceOrientation;
     private readonly InputAction m_UI_HotBarSelector;
+    private readonly InputAction m_UI_Skills;
     public struct UIActions
     {
         private @GameDevCW m_Wrapper;
@@ -1368,6 +1594,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         public InputAction @TrackedDevicePosition => m_Wrapper.m_UI_TrackedDevicePosition;
         public InputAction @TrackedDeviceOrientation => m_Wrapper.m_UI_TrackedDeviceOrientation;
         public InputAction @HotBarSelector => m_Wrapper.m_UI_HotBarSelector;
+        public InputAction @Skills => m_Wrapper.m_UI_Skills;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1410,6 +1637,9 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @HotBarSelector.started += instance.OnHotBarSelector;
             @HotBarSelector.performed += instance.OnHotBarSelector;
             @HotBarSelector.canceled += instance.OnHotBarSelector;
+            @Skills.started += instance.OnSkills;
+            @Skills.performed += instance.OnSkills;
+            @Skills.canceled += instance.OnSkills;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -1447,6 +1677,9 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @HotBarSelector.started -= instance.OnHotBarSelector;
             @HotBarSelector.performed -= instance.OnHotBarSelector;
             @HotBarSelector.canceled -= instance.OnHotBarSelector;
+            @Skills.started -= instance.OnSkills;
+            @Skills.performed -= instance.OnSkills;
+            @Skills.canceled -= instance.OnSkills;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -1516,14 +1749,18 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         void OnFire(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
-        void OnJump(InputAction.CallbackContext context);
         void OnInventory(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnToggleCamera(InputAction.CallbackContext context);
         void OnBlock(InputAction.CallbackContext context);
         void OnSpinAttack(InputAction.CallbackContext context);
+        void OnDodgeForward(InputAction.CallbackContext context);
+        void OnDodgeBackward(InputAction.CallbackContext context);
+        void OnDodgeLeft(InputAction.CallbackContext context);
+        void OnDodgeRight(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnObjective(InputAction.CallbackContext context);
+        void OnLockOn(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
@@ -1538,5 +1775,6 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         void OnTrackedDevicePosition(InputAction.CallbackContext context);
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
         void OnHotBarSelector(InputAction.CallbackContext context);
+        void OnSkills(InputAction.CallbackContext context);
     }
 }

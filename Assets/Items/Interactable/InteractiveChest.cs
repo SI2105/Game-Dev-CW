@@ -18,24 +18,30 @@ public class InteractiveChest : MonoBehaviour
     public InventoryManager Inventory;
     private Button collectAllButton;
     private bool Looted;
+    private float RareItemDropChance;
+    private Button CloseButton;
     // Called when the object is interacted with
     public void Start()
     {
+        
         Looted = false;
-        ChestPanel = GameObject.Find("ChestPanel");
-        ItemsContainer = GameObject.Find("ItemsContainer");
+        RareItemDropChance = 0.0f;
+        //ChestPanel = GameObject.Find("ChestPanel");
+        //ItemsContainer = GameObject.Find("ItemsContainer");
         Inventory = GameObject.Find("Inventory").GetComponent<InventoryManager>();
         collectAllButton = ChestPanel.transform.GetChild(2).GetComponent<Button>();
         collectAllButton.onClick.AddListener(CollectAll);
+        CloseButton = ChestPanel.transform.GetChild(3).gameObject.GetComponent<Button>();
+        CloseButton.onClick.AddListener(CloseChest);
         ChestPanel.SetActive(false);
 
         System.Random random = new System.Random();
         int itemCount = random.Next(1, 5); // Random number of items between 1 and 4
-
         for (int i = 0; i < itemCount; i++)
         {
             ItemClass item = PossibleItems[random.Next(PossibleItems.Length)];
             int quantity = 1;
+
 
             // Check if the item is stackable
             if (item.Stackable)
@@ -45,7 +51,7 @@ public class InteractiveChest : MonoBehaviour
             // Make weapons very rare
             else if (item is WeaponClass)
             {
-                if (random.NextDouble() > 0.05) // 5% chance to get a weapon, to make it rare
+                if (random.NextDouble() > RareItemDropChance) // 5% chance to get a weapon, to make it rare
                 {
                     continue; // Skip this iteration if the weapon is not selected
                 }
@@ -53,6 +59,8 @@ public class InteractiveChest : MonoBehaviour
 
             Items.Add(new SlotClass(item, quantity));
         }
+
+
     }
     public void Interact()
     {
@@ -69,6 +77,7 @@ public class InteractiveChest : MonoBehaviour
     // Opens the chest
     public void OpenChest()
     {
+       
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         Debug.Log($"{chestName} opened.");
@@ -115,11 +124,21 @@ public class InteractiveChest : MonoBehaviour
             ChestItem.transform.GetChild(1).GetComponent<Image>().sprite = item.GetItem().icon;
             ChestItem.transform.GetChild(2).GetComponent<TMPro.TextMeshProUGUI>().text = item.GetItem().displayName;
             ChestItem.transform.GetChild(3).GetComponent<TMPro.TextMeshProUGUI>().text = item.GetQuantity().ToString();
-            ChestItem.transform.GetChild(4).GetComponent<Button>().onClick.AddListener(() => { 
+            ChestItem.transform.GetChild(4).GetComponent<Button>().onClick.AddListener(() => {
                 Inventory.Add(item.GetItem(), item.GetQuantity());
                 Items.Remove(item);
+                
+                
                 RefreshChest();
             }); //Button has a Listener added that add Item to Inventory, Removes from Chest and Refreshes the Chest once complete.
+
+            if (item.GetItem() is ConsumableClass consumable && consumable.IsPotion && Inventory.FullForPotions())
+            {
+                
+                ChestItem.transform.GetChild(4).GetComponent<Button>().interactable = false;
+                ChestItem.transform.GetChild(4).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = "Inventory Full";
+
+            }
         }
 
         if (Items.Count == 0)
@@ -135,9 +154,15 @@ public class InteractiveChest : MonoBehaviour
         foreach (SlotClass item in Items)
         {
             Inventory.Add(item.GetItem(), item.GetQuantity());
+            Items.Remove(item);
         }
-        Items.Clear();
+        
         RefreshChest();
         
+    }
+
+    public void SetRareItemDrop(float chance)
+    {
+        RareItemDropChance = chance;
     }
 }

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e951926ef5bdb4eb696edd465ec911, type: 3}
+  m_Name: Empty Flask
+  m_EditorClassIdentifier: 
+  id: 15
+  displayName: Empty Flask
+  icon: {fileID: -1479519100, guid: 254b1409480d9cb4d8765d18a499dc68, type: 3}
+  prefab: {fileID: 0}
+  Stackable: 1

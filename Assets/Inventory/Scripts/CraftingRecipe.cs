@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +9,9 @@ public class CraftingRecipe : ScriptableObject
     [Header("Crafting Recipe")]
     public SlotClass[] inputItems;
     public SlotClass outputItem;
- 
- 
+
+
+
     public bool CanCraft(InventoryManager inventory)
     {
  
@@ -48,6 +50,6 @@ public class CraftingRecipe : ScriptableObject
         }
  
         inventory.Add(outputItem.GetItem(), outputItem.GetQuantity());
- 
+        ObjectiveManager.Instance.SetEventComplete( "Craft " + outputItem.GetItem().displayName);
     }
 }

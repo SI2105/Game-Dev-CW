@@ -12,9 +12,17 @@ namespace SG
         [Header("Player Reference")]
         private PlayerAttributesManager attributesManager;
 
+        private Vector3 initialHealthBarPosition; // Store the initial position
+
         private void Awake()
         {
             attributesManager = GetComponentInParent<PlayerAttributesManager>();
+            
+            // Store the initial position of the health bar
+            if (healthBar != null)
+            {
+                initialHealthBarPosition = healthBar.GetComponent<RectTransform>().position;
+            }
         }
 
         private void OnEnable()
@@ -42,6 +50,7 @@ namespace SG
 
         private void UpdateHealthUI(float currentHealth, float maxHealth)
         {
+            healthBar.maxValue = maxHealth;
             healthBar.value = currentHealth;
         }
     }

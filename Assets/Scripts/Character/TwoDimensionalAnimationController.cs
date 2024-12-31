@@ -9,15 +9,22 @@ namespace SG{
 
     public class TwoDimensionalAnimationController : MonoBehaviour
     {
-    #region Animator Variables
+        #region Animator Variables
         private Animator animator;
         private Vector2 moveInput;
         private int VelocityZHash;
         private int VelocityXHash;
-        private int isJumpingHash;
         private int isRunningHash;
         private int isWalkingHash;
         private int isIdleHash;
+        private int isJumpingHash;
+        private int isGroundedHash;
+        private int RotationMismatchHash;
+        private int isFallingHash;
+        private int isDodgingBackwardHash;
+        private int isDodgingForwardHash;
+        private int isDodgingLeftHash;
+        private int isDodgingRightHash;
         #endregion
 
         #region Player State Variables
@@ -26,6 +33,11 @@ namespace SG{
         private bool isIdle;
         private bool isJumping;
         private bool isRunning;
+        private bool isDodgingForward;
+        private bool isDodgingLeft;
+        private bool isDodgingRight;
+        private bool isDodgingBackward;
+        private PlayerState _playerState;
         #endregion
 
         #region Physics and Ground Detection
@@ -34,21 +46,24 @@ namespace SG{
         private bool isGrounded;
         private bool wasGrounded;
         private Vector2 jumpMovement;
+        public float maxSlopeAngle = 45f;
         #endregion
 
         #region Input Actions
         private GameDevCW inputActions;
-        bool forwardPressed = false;
-        bool backwardPressed = false;
-        bool leftPressed = false;
-        bool rightPressed = false;
-        bool InventoryVisible = false;
-        bool PauseVisible = false;
+        private bool forwardPressed = false;
+        private bool backwardPressed = false;
+        private bool leftPressed = false;
+        private bool rightPressed = false;
+        private bool InventoryVisible = false;
+        private bool objectiveVisible = false;
+        private bool PauseVisible = false;
         #endregion
 
         #region Velocity Variables
-        float velocityZ = 0.0f;
-        float velocityX = 0.0f;
+        private float velocityZ = 0.0f;
+        private float velocityX = 0.0f;
+        public float maxDownwardSpeed = 10f;
         #endregion
 
         #region Look Input and Rotation Variables
@@ -60,64 +75,52 @@ namespace SG{
         private float targetRotation;
         private float lastTargetRotation;
         #endregion
-        #region PlayerStats Display
 
+        #region Player Stats Display
         [SerializeField] private TextMeshProUGUI PlayerStatsText;
+        private PlayerAttributesManager attributesManager;
 
         public void UpdatePlayerStats() {
             if (PlayerStatsText != null) {
                 PlayerStatsText.text = GetPlayerStatsText();
             }
-
         }
 
         public string GetPlayerStatsText() {
-
-            
             return
-                    $"<align=left>Current Level:<line-height=0>\n<align=right>{attributesManager.CurrentLevel} / {attributesManager.MaxLevel}<line-height=1em>\n" +
-
-                    $"<align=left>Current XP:<line-height=0>\n<align=right>{attributesManager.CurrentXP}<line-height=1em>\n" +
-                    $"<align=left>XP to Next Level:<line-height=0>\n<align=right> \t {attributesManager.XPToNextLevel}<line-height=1em>\n" +
-                    $"<align=left>Strength:<line-height=0>\n<align=right>{attributesManager.Strength}<line-height=1em>\n" +
-                    $"<align=left>Agility:<line-height=0>\n<align=right>{attributesManager.Agility}<line-height=1em>\n" +
-                    $"<align=left>Endurance:<line-height=0>\n<align=right>{attributesManager.Endurance}<line-height=1em>\n" +
-                    $"<align=left>Intelligence:<line-height=0>\n<align=right>{attributesManager.Intelligence}<line-height=1em>\n" +
-                    $"<align=left>Luck:<line-height=0>\n<align=right>{attributesManager.Luck}<line-height=1em>" +
-                    "\n \n" +
-               
-                    $"<align=left>Base Damage:<line-height=0>\n<align=right>{attributesManager.BaseDamage}<line-height=1em>\n" +
-                    $"<align=left>Critical Hit Chance:<line-height=0>\n<align=right>{attributesManager.CriticalHitChance}<line-height=1em>\n" +
-                    $"<align=left>Critical Hit Multiplier:<line-height=0>\n<align=right>{attributesManager.CriticalHitMultiplier}<line-height=1em>\n" +
-                    $"<align=left>Attack Speed:<line-height=0>\n<align=right>{attributesManager.AttackSpeed}<line-height=1em>\n" +
-                    $"<align=left>Armor:<line-height=0>\n<align=right>{attributesManager.Armor}<line-height=1em>\n" +
-                    $"<align=left>Block Chance:<line-height=0>\n<align=right>{attributesManager.BlockChance}<line-height=1em>\n" +
-                    $"<align=left>Dodge Chance:<line-height=0>\n<align=right>{attributesManager.DodgeChance}<line-height=1em>" +
-                    "\n \n"
-                   
-                    ;
-            
-
+                $"<align=left>Current Level:<line-height=0>\n<align=right>{attributesManager.CurrentLevel} / {attributesManager.MaxLevel}<line-height=1em>\n" +
+                $"<align=left>Current XP:<line-height=0>\n<align=right>{attributesManager.CurrentXP}<line-height=1em>\n" +
+                $"<align=left>XP to Next Level:<line-height=0>\n<align=right> \t {attributesManager.XPToNextLevel}<line-height=1em>\n" +
+                $"<align=left>Strength:<line-height=0>\n<align=right>{attributesManager.Strength}<line-height=1em>\n" +
+                $"<align=left>Agility:<line-height=0>\n<align=right>{attributesManager.Agility}<line-height=1em>\n" +
+                $"<align=left>Endurance:<line-height=0>\n<align=right>{attributesManager.Endurance}<line-height=1em>\n" +
+                $"<align=left>Intelligence:<line-height=0>\n<align=right>{attributesManager.Intelligence}<line-height=1em>\n" +
+                $"<align=left>Base Damage:<line-height=0>\n<align=right>{attributesManager.BaseDamage}<line-height=1em>\n" +
+                $"<align=left>Critical Hit Chance:<line-height=0>\n<align=right>{attributesManager.CriticalHitChance}<line-height=1em>\n" +
+                $"<align=left>Critical Hit Multiplier:<line-height=0>\n<align=right>{attributesManager.CriticalHitMultiplier}<line-height=1em>\n" +
+                $"<align=left>Attack Speed:<line-height=0>\n<align=right>{attributesManager.AttackSpeed}<line-height=1em>\n" +
+                $"<align=left>Armor:<line-height=0>\n<align=right>{attributesManager.Armor}<line-height=1em>\n" +
+                $"<align=left>Block Chance:<line-height=0>\n<align=right>{attributesManager.BlockChance}<line-height=1em>\n" +
+                $"<align=left>Dodge Chance:<line-height=0>\n<align=right>{attributesManager.DodgeChance}<line-height=1em>\n\n";
         }
-
-
         #endregion
-
 
         #region Movement Settings
         public float acceleration = 2f;
         public float deceleration = 2f;
-
         public float maxVelocityZ = 1.0f;
         public float maxVelocityX = 1.0f;
         public float sprintMaxVelocityZ = 2.0f;
         public float sprintMaxVelocityX = 2.0f;
+        public float verticalVelocity = 0.1f;
+        public float jumpSpeed = 1.0f;
         #endregion
 
         #region Camera Settings
         [Header("References")]
         [SerializeField] private Transform idleTransform;
         [SerializeField] private Transform cameraTransform;
+        public CinemachineVirtualCamera mainVC;
 
         [Header("Rotation Settings")]
         [SerializeField] private float rotationSpeed = 10f;
@@ -125,12 +128,55 @@ namespace SG{
         [SerializeField] private float smoothRotationTime = 0.05f;
         [SerializeField] private float inputSmoothTime = 0.02f;
         [SerializeField] private float mouseSensitivity = 2.0f;
+        public float RotationMismatch {get; private set;} = 0f;
+        public bool IsRotatingToTarget {get; private set;} = false;
+        public float rotateToTargetTime = 0.25f;
+        private float _rotateToTargetTimer = 0f;
         #endregion
-        private PlayerAttributesManager attributesManager;
-        [SerializeField]
-        GameObject pauseMenuPanel;
-        public CinemachineFreeLook freeLookCamera;
 
+        #region UI and Miscellaneous
+        [SerializeField] private GameObject pauseMenuPanel;
+        public float movingThreashold = 0.01f;
+        #endregion
+
+        #region Slope Handling
+
+        private bool IsOnSlope(out RaycastHit slopeHit) {
+            float groundCheckRadius = 0.4f;
+            if (Physics.SphereCast(transform.position + Vector3.up * groundCheckRadius, groundCheckRadius, Vector3.down, out slopeHit, 1.5f)) {
+                float angle = Vector3.Angle(slopeHit.normal, Vector3.up);
+                return angle > 0 && angle <= maxSlopeAngle;
+            }
+            slopeHit = default;
+            return false;
+        }
+
+        private void AdjustGravityOnSlope() {
+            if (IsOnSlope(out RaycastHit slopeHit)) {
+                Vector3 gravityDirection = Vector3.ProjectOnPlane(Physics.gravity, slopeHit.normal);
+                rb.AddForce(gravityDirection - Physics.gravity, ForceMode.Acceleration);
+            } else {
+                rb.AddForce(Physics.gravity, ForceMode.Acceleration);
+            }
+        }
+
+        private void PreventSliding() {
+            if (IsOnSlope(out RaycastHit slopeHit)) {
+                Vector3 projectedVelocity = Vector3.ProjectOnPlane(rb.velocity, slopeHit.normal);
+                if (projectedVelocity.magnitude > 0.05f) { // Sliding threshold
+                    rb.velocity = new Vector3(0, rb.velocity.y, 0); // Stop all sliding
+                }
+            }
+        }
+
+        private void ClampVerticalVelocity() {
+            if (rb.velocity.y < -maxDownwardSpeed) {
+                rb.velocity = new Vector3(rb.velocity.x, -maxDownwardSpeed, rb.velocity.z);
+            }
+        }
+        #endregion
+
+        private PlayerLockOn playerLockOn;
 
         private void Awake()
         {
@@ -143,9 +189,6 @@ namespace SG{
             inputActions.Player.Look.performed += HandleLook;
             inputActions.Player.Look.canceled += HandleLook;
 
-            inputActions.Player.Jump.performed += HandleJump;
-            inputActions.Player.Jump.canceled += HandleJump;
-
             // Subscribe to the Sprint action's performed and canceled events
             inputActions.Player.Sprint.performed += ctx => isSprinting = true;
             inputActions.Player.Sprint.canceled += ctx => isSprinting = false;
@@ -154,7 +197,18 @@ namespace SG{
             inputActions.Player.Inventory.canceled += HandleInventory;
             inputActions.Player.Pause.performed += HandlePause;
             inputActions.Player.Pause.canceled += HandlePause;
+
+            inputActions.Player.LockOn.performed += HandleLockOn;
+            inputActions.Player.LockOn.canceled += HandleLockOn;
+
+            inputActions.Player.DodgeForward.performed += HandleDodgeForward;
+            inputActions.Player.DodgeBackward.performed += HandleDodgeBackward;
+            inputActions.Player.DodgeLeft.performed += HandleDodgeLeft;
+            inputActions.Player.DodgeRight.performed += HandleDodgeRight;
+
             attributesManager = GetComponent<PlayerAttributesManager>();
+            _playerState = GetComponent<PlayerState>();
+            playerLockOn = GetComponent<PlayerLockOn>();
 
             if (attributesManager) {
                 Debug.Log("Inventory Manager found");
@@ -162,18 +216,55 @@ namespace SG{
                 inputActions.UI.HotBarSelector.performed += attributesManager.InventoryManager.OnHotBarSelection;
                 inputActions.UI.Click.canceled += attributesManager.InventoryManager.OnClick;
                 inputActions.UI.HotBarSelector.canceled += attributesManager.InventoryManager.OnHotBarSelection;
+                inputActions.Player.Objective.performed += onObjective;
+                inputActions.Player.Objective.canceled += onObjective;
+
                 UpdatePlayerStats();
             }
-            
+        }
+
+
+        public void onObjective(InputAction.CallbackContext context)
+        {
+            if(context.performed)
+            {
+                ToggleObjective();
+            }
+
 
         }
 
-            private void HandleInventory(InputAction.CallbackContext context) {
+        public void ToggleObjective() {
+            objectiveVisible = !objectiveVisible;
+
+            if (objectiveVisible)
+            {
+                
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else {
+                
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+
+            attributesManager.ObjectiveManager.ToggleObjectivePanel();
+        }
+        private void HandleInventory(InputAction.CallbackContext context) {
 
             if (context.performed) {
 
                 ToggleInventory();
 
+            }
+        }
+
+        private void HandleLockOn(InputAction.CallbackContext context) {
+            if (context.performed) {
+                playerLockOn.LockOn();
+            } else {
+                playerLockOn.LockOn();
             }
         }
 
@@ -214,6 +305,13 @@ namespace SG{
             isIdleHash = Animator.StringToHash("isIdle");
             isRunningHash = Animator.StringToHash("isRunning");
             isJumpingHash = Animator.StringToHash("isJumping");
+            isGroundedHash = Animator.StringToHash("isGrounded");
+            isFallingHash = Animator.StringToHash("isFalling");
+            RotationMismatchHash = Animator.StringToHash("rotationMismatch");
+            isDodgingBackwardHash = Animator.StringToHash("isDodgingBackward");
+            isDodgingForwardHash = Animator.StringToHash("isDodgingForward");
+            isDodgingLeftHash = Animator.StringToHash("isDodgingLeft");
+            isDodgingRightHash = Animator.StringToHash("isDodgingRight");
 
             if (idleTransform == null)
                 idleTransform = transform;
@@ -230,49 +328,9 @@ namespace SG{
             
             // HandleRotation();
             Movement();
+            HandleMovement();
             UpdateAnimatorParameters();
-        }
-
-        private void HandleJump(InputAction.CallbackContext context)
-        {
-            if (context.performed && isGrounded)
-            {
-                // Check if the player has enough stamina to jump
-                float jumpStaminaCost = 5f; // Define the stamina cost for jumping
-                if (attributesManager.UseStamina(jumpStaminaCost))
-                {
-                    // Player can jump
-                    isJumping = true;
-                    Jump();
-                    animator.SetBool(isJumpingHash, isJumping);
-                }
-                else
-                {
-                    // Not enough stamina to jump
-                    Debug.Log("Not enough stamina to jump.");
-                }
-            }
-            else if (context.canceled)
-            {
-                // Don't set isJumping to false here - let OnLand handle that
-                animator.SetBool(isJumpingHash, false);
-            }
-        }
-
-        private void Jump()
-        {
-            rb.AddForce(new Vector3(0, jumpMovement.y), ForceMode.Impulse);
-        }
-
-        private void OnLand()
-        {
-            if (!isGrounded)
-                return;
-
-            // Reset jumping state
-            isJumping = false;
-            // Debug.Log($"Player landed. Setting isJumping to {isJumping}");
-            animator.SetBool(isJumpingHash, false);
+            UpdateMovementState();
         }
 
         private void OnEnable()
@@ -289,116 +347,84 @@ namespace SG{
         /// Updates the animation state based on player input and sprint state.
         /// </summary>
 
-        private void UpdateAnimatorParameters(){
-            float speed = Mathf.Abs(rb.velocity.x);
+        private void UpdateAnimatorParameters() {
             forwardPressed = moveInput.y > 0;
             leftPressed = moveInput.x < 0;
             rightPressed = moveInput.x > 0;
             backwardPressed = moveInput.y < 0;
 
             isWalking = forwardPressed || leftPressed || rightPressed || backwardPressed;
-            bool canRun = isGrounded && isSprinting && attributesManager.CurrentStamina > 5f;
-
+            bool canRun = isSprinting && attributesManager.CurrentStamina > 5f;
             isRunning = isWalking && canRun;
             isIdle = !forwardPressed && !leftPressed && !rightPressed && !backwardPressed;
 
-            // Debug.Log($"walking {isWalking}");
             animator.SetBool(isIdleHash, isIdle);
             animator.SetBool(isWalkingHash, isWalking);
             animator.SetBool(isRunningHash, isRunning);
-            animator.SetBool(isIdleHash, isIdle);
-
-            if (isGrounded && !wasGrounded)
-            {
-                OnLand();
-                // Debug.Log("Player landed. Setting isJumping to false.");
-            }
-            else if (!isGrounded && wasGrounded)
-            {
-                Debug.Log("");
-                
-            }
-            wasGrounded = isGrounded;
         }
 
+        private void UpdateMovementState(){
+            bool isMoveInput = moveInput != Vector2.zero;
+            bool isMovingLateral = IsMovingLateral();
+            PlayerMovementState lateralState = isSprinting ? PlayerMovementState.Running : 
+                                               isMovingLateral || isMoveInput ? PlayerMovementState.Running : PlayerMovementState.Idling;
+
+            _playerState.SetPlayerMovementState(lateralState);
+
+            if (!isGrounded && rb.velocity.y > 0f){
+                _playerState.SetPlayerMovementState(PlayerMovementState.Jumping);
+            }
+        }
+
+        private bool IsMovingLateral(){
+            Vector3 lateralVelocity = new Vector3(velocityX, 0f, velocityZ);
+            return lateralVelocity.magnitude > 0;
+        }
         private int groundContacts = 0;
 
-        private void OnCollisionStay(Collision collision)
+        private void CheckGrounded()
         {
-
-            bool foundValidGround = false;
-            // Check if the collided object is on the ground layer
-            foreach (ContactPoint contact in collision.contacts)
-            {
-                if (contact.normal.y > 0.1f)  // Reduced threshold to be more forgiving
-                {
-                    foundValidGround = true;
-                    groundContacts++;
-                    break;  // Exit loop once we find valid ground
-                }
-            }
+            // Use a small radius for the sphere cast
+            float groundCheckRadius = 0.4f;
+            // Use a small distance for the check
+            float groundCheckDistance = 0.5f;
             
-            if (foundValidGround)
-            {
-                isGrounded = true;
-            }
-            else
-            {
-                groundContacts = 0;
-                isGrounded = false;
-            }
-        }
-
-        private void OnCollisionExit(Collision collision)
-        {
-            groundContacts = Mathf.Max(groundContacts - 1, 0);
-            if (groundContacts == 0)
-            {
-                isGrounded = false;
-            }
+            // Perform a SphereCast from slightly above the groundCheck position
+            isGrounded = Physics.SphereCast(
+                groundCheck.position + Vector3.up * groundCheckRadius, 
+                groundCheckRadius,
+                Vector3.down, 
+                out RaycastHit hit,
+                groundCheckDistance,
+                groundLayer
+            );
         }
 
         private void HandleRotation()
         {
-            if (cameraTransform == null || InventoryVisible)
+            if (cameraTransform == null || InventoryVisible) return;
+
+            if (playerLockOn != null && playerLockOn.IsTargetLocked && playerLockOn.CurrentTarget != null)
             {
-                return;
+                // When locked on, align player and camera with the target
+                Vector3 directionToTarget = playerLockOn.CurrentTarget.transform.position - idleTransform.position;
+                directionToTarget.y = 0; // Keep rotation on horizontal plane
+
+                if (directionToTarget != Vector3.zero)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+                    idleTransform.rotation = Quaternion.Slerp(idleTransform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                }
             }
-
-            // Apply sensitivity to input
-            Vector2 sensitiveInput = lookInput * mouseSensitivity;
-
-            // Smooth input
-            smoothedLookInput = Vector2.Lerp(
-                smoothedLookInput,
-                sensitiveInput,
-                1f - Mathf.Exp(-inputSmoothTime * 60f)
-            );
-
-            // Vertical rotation (POV camera)
-            float mouseY = smoothedLookInput.y * verticalRotationSpeed * Time.deltaTime;
-            verticalRotation -= mouseY;
-
-            // Clamp vertical rotation to prevent looking too far up or down
-            verticalRotation = Mathf.Clamp(verticalRotation, -30f, 60f); // Adjust values for POV
-
-            // Apply vertical rotation to the camera
-            cameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-
-            // Horizontal rotation (player rotation)
-            float mouseX = smoothedLookInput.x * rotationSpeed * Time.deltaTime;
-            targetRotation += mouseX * 60f; // Normalize for framerate
-            float currentRotationY = Mathf.SmoothDampAngle(
-                idleTransform.eulerAngles.y,
-                targetRotation,
-                ref currentRotationVelocity,
-                smoothRotationTime
-            );
-
-            // Apply horizontal rotation to the player
-            idleTransform.rotation = Quaternion.Euler(0f, currentRotationY, 0f);
+            else
+            {
+                // Normal rotation when not locked on
+                float mouseX = lookInput.x * rotationSpeed * Time.deltaTime;
+                targetRotation += mouseX * 60f;
+                idleTransform.rotation = Quaternion.Euler(0f, targetRotation, 0f);
+            }
         }
-        
+
         private void Movement(){
             // Determine current maximum velocities based on sprinting
             float currentMaxVelocityZ = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
@@ -505,40 +531,46 @@ namespace SG{
 
         private void FixedUpdate()
         {
-            HandleMovement(); // Apply movement in FixedUpdate for physics consistency
+            CheckGrounded();
+            ClampVerticalVelocity();
+            PreventSliding();
         }
         
         [SerializeField] private CinemachineVirtualCamera virtualCamera; // Reference to the virtual camera
 
-        private void HandleMovement()
-        {
+        private void HandleMovement() {
             if (InventoryVisible) return;
 
-            // Ensure the virtual camera is properly assigned
-            if (virtualCamera == null)
-            {
-                Debug.LogWarning("Virtual Camera is not assigned.");
-                return;
+            Vector3 moveDirection;
+            
+            // Check if we have an active lock-on target
+            if (playerLockOn != null && playerLockOn.IsTargetLocked && playerLockOn.CurrentTarget != null) {
+                // Get direction to target
+                Vector3 targetDirection = (playerLockOn.CurrentTarget.transform.position - transform.position).normalized;
+                targetDirection.y = 0; // Keep movement on the horizontal plane
+                
+                // Calculate movement direction relative to target
+                Vector3 forward = targetDirection;
+                Vector3 right = Vector3.Cross(Vector3.up, forward);
+                
+                // Combine input with target-relative directions
+                moveDirection = (forward * moveInput.y) + (right * moveInput.x);
+                moveDirection.Normalize();
+            } else {
+                // Regular movement using player's transform when not locked on
+                moveDirection = (transform.forward * moveInput.y) + (transform.right * moveInput.x);
+                moveDirection.Normalize();
             }
 
-            // Get the forward and right direction relative to the virtual camera
-            Transform cameraTransform = virtualCamera.transform;
-            Vector3 cameraForward = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up).normalized;
-            Vector3 cameraRight = Vector3.ProjectOnPlane(cameraTransform.right, Vector3.up).normalized;
+            // Handle slope movement
+            RaycastHit slopeHit;
+            if (IsOnSlope(out slopeHit)) {
+                moveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
+            }
 
-            // Calculate movement direction based on input
-            Vector3 moveDirection = (cameraForward * moveInput.y + cameraRight * moveInput.x).normalized;
-            Debug.Log($"Move Direction: {moveDirection}");
-            // Apply movement to Rigidbody
-            Vector3 targetPosition = rb.position + moveDirection * Mathf.Max(Mathf.Abs(velocityZ), Mathf.Abs(velocityX)) * Time.fixedDeltaTime;
+            float movementSpeed = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
+            Vector3 targetPosition = rb.position + moveDirection * movementSpeed * Time.deltaTime;
             rb.MovePosition(targetPosition);
-
-            // Rotate player to face the movement direction
-            if (moveDirection.magnitude > 0.01f)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
-            }
         }
 
         // Called when the Move action is performed or canceled
@@ -588,5 +620,77 @@ namespace SG{
                 }
             }
         }
+        private void HandleDodgeForward(InputAction.CallbackContext ctx)
+        {
+            if (ctx.performed)
+            {
+                isDodgingForward = true;
+                animator.SetBool(isDodgingForwardHash, isDodgingForward);
+                ResetDodgeState("Forward"); // Reset state after dodge animation
+            }
+        }
+
+        private void HandleDodgeRight(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                isDodgingRight = true;
+                animator.SetBool(isDodgingRightHash, isDodgingRight);
+                ResetDodgeState("Right"); // Reset state after dodge animation
+            }
+        }
+
+        private void HandleDodgeLeft(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                isDodgingLeft = true;
+                animator.SetBool(isDodgingLeftHash, isDodgingLeft);
+                ResetDodgeState("Left"); // Reset state after dodge animation
+            }
+        }
+
+        private void HandleDodgeBackward(InputAction.CallbackContext ctx)
+        {
+            if (ctx.performed)
+            {
+                isDodgingBackward = true;
+                animator.SetBool(isDodgingBackwardHash, isDodgingBackward);
+                ResetDodgeState("Backward"); // Reset state after dodge animation
+            }
+        }
+
+        private void ResetDodgeState(string direction)
+        {
+            float dodgeAnimationDuration = 0.5f; // Replace with actual dodge animation length
+
+            StartCoroutine(ResetDodgeCoroutine(direction, dodgeAnimationDuration));
+        }
+
+        private IEnumerator ResetDodgeCoroutine(string direction, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            switch (direction)
+            {
+                case "Forward":
+                    isDodgingForward = false;
+                    animator.SetBool(isDodgingForwardHash, isDodgingForward);
+                    break;
+                case "Right":
+                    isDodgingRight = false;
+                    animator.SetBool(isDodgingRightHash, isDodgingRight);
+                    break;
+                case "Left":
+                    isDodgingLeft = false;
+                    animator.SetBool(isDodgingLeftHash, isDodgingLeft);
+                    break;
+                case "Backward":
+                    isDodgingBackward = false;
+                    animator.SetBool(isDodgingBackwardHash, isDodgingBackward);
+                    break;
+            }
+        }
+
+        }
     }
-}

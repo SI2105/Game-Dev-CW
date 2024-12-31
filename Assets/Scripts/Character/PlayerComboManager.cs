@@ -1,161 +1,367 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class PlayerComboManager : MonoBehaviour
-{
-    private Animator animator;
-    private float comboTimer = 0f;
-    private int currentComboStep = 0;
-    private bool isComboActive = false;
-    private GameDevCW inputActions;
+namespace SG{
 
-    [SerializeField] private float comboResetTime = 1f;
-    [SerializeField] private float comboWindowTime = 0.3f;
-
-    // Input queuing variables
-    private bool hasQueuedAttack = false;
-    private float queueTimer = 0f;
-    [SerializeField] private float maxQueueTime = 0.5f; // How long to remember queued input
-
-    // Camera manager reference
-    [Header("Camera Settings")]
-    [SerializeField] private CameraManager cameraManager; // Reference to CameraManager
-    [SerializeField] private Cinemachine.CinemachineVirtualCamera attackCamera; // Attack camera
-
-    private void Awake()
+    public class PlayerComboManager : MonoBehaviour
     {
-        animator = GetComponent<Animator>();
-        inputActions = new GameDevCW();
-        inputActions.Player.Attack.performed += _ => QueueAttack();
-    }
+        private Animator animator;
+        private float comboTimer = 0f;
+        private int currentComboStep = 0;
+        private bool isComboActive = false;
+        private bool isSpinAttackActive = false;
 
-    private void Update()
-    {
-        if (isComboActive)
+        private GameDevCW inputActions;
+
+        // hashes
+        private static int isBlockingHash;
+        private static int BlockHash;
+        private static int spinningAttackHash;
+        private static int comboResetTriggerHash;
+        private static int attackTriggerHash;
+        private static int comboIndexHash;
+        private static int isPlayingActionHash;
+        private static int isAttackingHash;
+
+        [SerializeField] private float comboResetTime = 1f;
+        [SerializeField] private float comboWindowTime = 0.4f;
+        private int staminaUsageCount = 0;
+        private bool isBlocking = false; 
+
+        // Input queuing variables
+        private bool hasQueuedAttack = false;
+        private float queueTimer = 0f;
+        [SerializeField] private float maxQueueTime = 0.9f; // How long to remember queued input
+
+        // Camera manager reference
+        [Header("Camera Settings")]
+        [SerializeField] private CameraManager cameraManager; // Reference to CameraManager
+        [SerializeField] private Cinemachine.CinemachineVirtualCamera defaultCamera; // Default camera
+        [SerializeField] private Cinemachine.CinemachineVirtualCamera attackCamera; // Attack camera
+
+        // Stamina
+        [Header("Stamina Settings")]
+        [SerializeField] private PlayerAttributesManager attributesManager; // Reference to AttributesManager
+        private TwoDimensionalAnimationController playerController;
+        private PlayerEquipmentManager playerEquipmentManager;
+        [SerializeField] private float staminaCostPerAttack = 10f;
+        [SerializeField] private float staminaCostSpinAttack = 20f;
+
+        private void Awake()
         {
-            comboTimer += Time.deltaTime;
-            if (comboTimer > comboResetTime)
-            {
-                ResetCombo();
-            }
+            animator = GetComponent<Animator>();
+            inputActions = new GameDevCW();
+            attributesManager = GetComponent<PlayerAttributesManager>();
+            playerEquipmentManager = GetComponent<PlayerEquipmentManager>();
+            playerController = GetComponent<TwoDimensionalAnimationController>();
+
+            inputActions.Player.Attack.performed += _ => QueueAttack();
+            inputActions.Player.Block.performed += HandleBlockAndHeal;
+            inputActions.Player.Block.canceled += HandleBlockAndHeal;
+            inputActions.Player.SpinAttack.performed += HandleSpinAttack;
+
+
+            isBlockingHash = Animator.StringToHash("isBlocking");
+            BlockHash = Animator.StringToHash("Block");
+            spinningAttackHash = Animator.StringToHash("isSpinningAttack");
+            comboResetTriggerHash = Animator.StringToHash("ResetCombo");
+            attackTriggerHash = Animator.StringToHash("Attack");
+            comboIndexHash = Animator.StringToHash("ComboIndex");
+            isPlayingActionHash = Animator.StringToHash("isPlayingAction");
+            isAttackingHash = Animator.StringToHash("isAttacking");
         }
 
-        // Handle queued attacks
-        if (hasQueuedAttack)
+        private object EquippedItem(){
+            return playerEquipmentManager.TrackEquippedItem<object>();
+        }
+
+        private void Hit()
         {
-            queueTimer += Time.deltaTime;
-            if (queueTimer > maxQueueTime)
+            object equippedItem = EquippedItem();
+
+            if (equippedItem is WeaponClass weapon)
             {
-                // Clear the queue if we've waited too long
-                hasQueuedAttack = false;
-                queueTimer = 0f;
+                float weaponDamage = weapon.damage;
+                WeaponCollisionHandler collisionHandler = playerEquipmentManager.rightHandWeaponModel.GetComponent<WeaponCollisionHandler>();
+
+                if (collisionHandler != null)
+                {
+                    collisionHandler.SetTemporaryDamage(weaponDamage);
+                    Debug.Log($"Weapon collider ready with damage: {weaponDamage}");
+                }
+                else
+                {
+                    Debug.LogWarning("WeaponCollisionHandler not found on equipped weapon model.");
+                }
+            }
+            else if (equippedItem is ConsumableClass consumable)
+            {
+                float consumableDamage = consumable.damage;
+                Debug.Log($"Using consumable with damage: {consumableDamage}");
             }
             else
             {
-                // Check if we can now perform the queued attack
-                AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                bool canAttackNow = !stateInfo.IsName("Attack") ||
-                                  (stateInfo.normalizedTime > (1 - comboWindowTime) &&
-                                   stateInfo.normalizedTime < 1.0f);
+                Debug.LogWarning("No valid item equipped.");
+            }
+        }
 
-                if (canAttackNow)
+        private void HandleBlockAndHeal(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                // Track the currently equipped item
+                object equippedItem = playerEquipmentManager.TrackEquippedItem<object>();
+
+                if (playerEquipmentManager.IsEquippedItemHeal() && equippedItem is ConsumableClass consumable)
                 {
-                    PerformCombo();
-                    hasQueuedAttack = false;
-                    queueTimer = 0f;
+                    // Handle healing logic
+                    Debug.Log($"Using consumable: {consumable.name}");
+
+                    animator.SetBool(isPlayingActionHash, true); // Prevent other actions during healing
+                    animator.SetTrigger("HealTrigger");
+                }
+                else if (equippedItem is WeaponClass weapon)
+                {
+                    // Handle blocking logic
+                    Debug.Log($"Blocking with weapon: {weapon.name}");
+                    isBlocking = true;
+
+                    // Update animator for blocking
+                    animator.SetBool(BlockHash, true);
+                    animator.SetBool(isBlockingHash, true);
+                }
+            }
+            else if (context.canceled)
+            {
+                // Reset blocking and action states when the context is canceled
+                isBlocking = false;
+                animator.SetBool(BlockHash, false);
+                animator.SetBool(isBlockingHash, false);
+
+                // Stop healing and other playing actions
+                animator.SetBool(isPlayingActionHash, false);
+            }
+        }
+
+
+        private void HandleSpinAttack(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                if (attributesManager.UseStamina(staminaCostSpinAttack))
+                {
+                    print("Spin Attack Triggered");
+                    isSpinAttackActive = true;
+                    animator.SetBool(isPlayingActionHash, true);
+                    animator.SetBool(spinningAttackHash, true);
+                    animator.SetBool(isAttackingHash, true);
+                    
+                    // Activate the attack camera and sync transforms
+                    CameraOn();
+                }
+                else
+                {
+                    animator.SetBool(isPlayingActionHash, false);
+                    animator.SetBool(isAttackingHash, false);
+                    Debug.Log("Not enough stamina for spin attack.");
                 }
             }
         }
-    }
 
-    private void QueueAttack()
-    {
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        bool canAttackNow = !stateInfo.IsName("Attack") ||
-                           (stateInfo.normalizedTime > (1 - comboWindowTime) &&
-                            stateInfo.normalizedTime < 1.0f);
-
-        if (canAttackNow)
+        private void Update()
         {
-            // If we can attack now, do it immediately
-            PerformCombo();
-        }
-        else if (currentComboStep < 3)
-        {
-            // Queue the attack for later
-            hasQueuedAttack = true;
-            queueTimer = 0f;
-            Debug.Log("Attack Queued");
-        }
-    }
-
-    public void PerformCombo()
-    {
-        if (isComboActive)
-        {
-            if (currentComboStep < 3)
+            // Manage queued attacks
+            if (hasQueuedAttack)
             {
-                currentComboStep++;
-                Debug.Log($"Combo Step Incremented: {currentComboStep}");
-                animator.SetInteger("ComboIndex", currentComboStep);
-                animator.SetTrigger("Attack");
-                comboTimer = 0f;
+                queueTimer += Time.deltaTime;
+                if (queueTimer > maxQueueTime)
+                {
+                    hasQueuedAttack = false;
+                    queueTimer = 0f;
+                }
+                else
+                {
+                    AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                    bool canAttackNow = !stateInfo.IsName("Attack") ||
+                                        (stateInfo.normalizedTime > (1 - comboWindowTime) &&
+                                        stateInfo.normalizedTime < 1.0f);
+
+                    if (canAttackNow)
+                    {
+                        PerformCombo();
+                        hasQueuedAttack = false;
+                        queueTimer = 0f;
+                    }
+                }
+            }
+
+            // Manage combo timer
+            if (isComboActive)
+            {
+                comboTimer += Time.deltaTime;
+                if (comboTimer > comboResetTime)
+                {
+                    ResetComboInstantly();
+                }
             }
         }
-        else
-        {
-            isComboActive = true;
-            currentComboStep = 1;
-            Debug.Log($"Combo Started: {currentComboStep}");
-            animator.SetInteger("ComboIndex", currentComboStep);
-            animator.SetTrigger("Attack");
-            comboTimer = 0f;
 
-            // Switch to the attack camera when the combo starts
-            if (cameraManager != null && attackCamera != null)
+
+        private void QueueAttack()
+        {
+            if (isSpinAttackActive)
+            {
+                Debug.Log("Normal attack blocked due to spin attack.");
+                return;
+            }
+
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            bool canAttackNow = !stateInfo.IsName("Attack") ||
+                                (stateInfo.normalizedTime > (1 - comboWindowTime) &&
+                                stateInfo.normalizedTime < 1.0f);
+            
+            print(canAttackNow + "can attack now");
+
+            if (canAttackNow)
+            {
+                Hit();
+                attributesManager.LevelUp();
+                PerformCombo();
+            }
+            else if (currentComboStep < 3)
+            {
+                hasQueuedAttack = true;
+                queueTimer = 0f;
+                Debug.Log("Attack Queued");
+            }
+        }
+
+        public void PerformCombo()
+        {
+            if (isSpinAttackActive)
+            {
+                Debug.Log("Combo attack blocked due to spin attack.");
+                return;
+            }
+
+            // Check if stamina can be used for the current combo step
+            if (staminaUsageCount < 2 && attributesManager.UseStamina(staminaCostPerAttack))
+            {
+                if (isComboActive)
+                {
+                    // Continue combo within the valid range
+                    if (currentComboStep < 2) // Adjust to your maximum combo step
+                    {
+                        currentComboStep++;
+                        
+                        staminaUsageCount++; // Increment stamina usage count
+                        Debug.Log($"Combo Step Incremented: {currentComboStep}, Stamina Usage: {staminaUsageCount}");
+                        animator.SetInteger(comboIndexHash, currentComboStep);
+                        animator.SetTrigger(attackTriggerHash);
+                        animator.SetBool(isAttackingHash, true);
+                        animator.SetBool(isPlayingActionHash, true);
+
+                        // Reset the combo timer
+                        comboTimer = 0f;
+                    }
+                }
+                else
+                {
+                    // Start a new combo
+                    isComboActive = true;
+                    currentComboStep = 1;
+                    staminaUsageCount++; // Increment stamina usage count
+                    Debug.Log($"Combo Started: {currentComboStep}, Stamina Usage: {staminaUsageCount}");
+                    animator.SetInteger(comboIndexHash, currentComboStep);
+                    animator.SetTrigger(attackTriggerHash);
+                    animator.SetBool(isAttackingHash, false);
+                    animator.SetBool(isPlayingActionHash, false);
+
+                    // Reset the combo timer
+                    comboTimer = 0f;
+                }
+            }
+            else
+            {
+                Debug.Log("Not enough stamina to perform attack or max combo stamina limit reached.");
+            }
+        }
+
+
+
+        private void ResetComboInstantly()
+        {
+            if (isBlocking)
+            {
+                Debug.Log("Combo reset skipped due to active block.");
+                return; // Do not reset the combo while blocking
+            }
+            Debug.Log("Resetting Combo Instantly");
+            isComboActive = false;
+            currentComboStep = 0;
+            comboTimer = 0f; // Reset the combo timer
+            hasQueuedAttack = false;
+            queueTimer = 0f;
+            staminaUsageCount = 0; // Reset stamina usage count
+
+            // Reset animator parameters
+            animator.SetInteger(comboIndexHash, 0);
+            animator.ResetTrigger(attackTriggerHash);
+            animator.SetTrigger(comboResetTriggerHash);
+            animator.SetBool(isAttackingHash, false);
+        }
+
+
+
+        private void OnEnable()
+        {
+            inputActions.Enable();
+        }
+
+        private void OnDisable()
+        {
+            inputActions.Disable();
+        }
+
+        public void CameraOn()
+        {
+            Debug.Log("Attack camera activated.");
+            if (cameraManager != null && attackCamera != null && defaultCamera != null)
             {
                 cameraManager.SetActiveCamera(attackCamera);
+                SyncCameraWithActiveOne(attackCamera, defaultCamera);
+            }
+            else
+            {
+                Debug.LogWarning("CameraManager or cameras are not assigned.");
             }
         }
 
-        CancelInvoke(nameof(ResetCombo));
-        Invoke(nameof(ResetCombo), comboResetTime);
-    }
-
-    private void ResetCombo()
-    {
-        Debug.Log("Resetting Combo");
-        isComboActive = false;
-        currentComboStep = 0;
-        comboTimer = 0f;
-        hasQueuedAttack = false; // Clear any queued attacks when resetting
-        queueTimer = 0f;
-        animator.SetInteger("ComboIndex", 0);
-        animator.ResetTrigger("Attack");
-        animator.SetTrigger("ResetCombo");
-
-        // Switch back to the default camera
-        if (cameraManager != null)
+        public void CameraOff()
         {
-            cameraManager.SetDefaultCamera();
+            Debug.Log("Switched back to default camera.");
+            if (cameraManager != null && defaultCamera != null && attackCamera != null)
+            {
+                cameraManager.SetDefaultCamera();
+                SyncCameraWithActiveOne(defaultCamera, attackCamera);
+            }
+            else
+            {
+                Debug.LogWarning("CameraManager or cameras are not assigned.");
+            }
+            isSpinAttackActive = false;
+            animator.SetBool(spinningAttackHash, false);
         }
-    }
 
-    public void OnAttackAnimationComplete()
-    {
-        Debug.Log("Attack Animation Complete");
-        if (!isComboActive || currentComboStep >= 3)
+        public void SyncCameraWithActiveOne(Cinemachine.CinemachineVirtualCamera activeCamera, Cinemachine.CinemachineVirtualCamera otherCamera)
         {
-            ResetCombo();
+            if (activeCamera != null && otherCamera != null)
+            {
+                // Sync Follow and LookAt targets dynamically
+                otherCamera.Follow = activeCamera.Follow;
+                otherCamera.LookAt = activeCamera.LookAt;
+            }
         }
-    }
 
-    private void OnEnable()
-    {
-        inputActions.Enable();
-    }
-
-    private void OnDisable()
-    {
-        inputActions.Disable();
     }
 }

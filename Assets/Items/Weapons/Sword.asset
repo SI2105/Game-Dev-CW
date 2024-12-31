@@ -17,4 +17,5 @@ MonoBehaviour:
   icon: {fileID: 434606504, guid: 938b468cd40210441a583a0877cb4045, type: 3}
   prefab: {fileID: 1037715513984232, guid: 259746fbc59909b4eb14377c46a80363, type: 3}
   Stackable: 0
+  damage: 20
   weaponType: 0

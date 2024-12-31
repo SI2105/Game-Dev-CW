@@ -65,9 +65,16 @@ public class PlayerSelector : MonoBehaviour
         if (Physics.Raycast(ray, out hit, maxRaycastDistance))
         {
             InteractiveChest chest = hit.collider.GetComponent<InteractiveChest>();
+            
             if (chest != null)
             {
                 chest.OnSelect();
+            }
+            
+            collectible = hit.collider.GetComponent<Collectible>();
+            if (collectible != null)
+            {
+                collectible.OnSelect();
             }
         }
     }

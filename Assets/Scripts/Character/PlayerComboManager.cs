@@ -47,6 +47,7 @@ namespace SG{
         private PlayerEquipmentManager playerEquipmentManager;
         [SerializeField] private float staminaCostPerAttack = 10f;
         [SerializeField] private float staminaCostSpinAttack = 20f;
+        private PlayerLockOn playerLockOn;
 
         private void Awake()
         {
@@ -62,7 +63,7 @@ namespace SG{
             inputActions.Player.SpinAttack.performed += HandleSpinAttack;
 
             _playerState = GetComponent<PlayerState>();
-
+            playerLockOn = GetComponent<PlayerLockOn>();
 
             isBlockingHash = Animator.StringToHash("isBlocking");
             BlockHash = Animator.StringToHash("Block");
@@ -328,6 +329,8 @@ namespace SG{
             animator.ResetTrigger(attackTriggerHash);
             animator.SetTrigger(comboResetTriggerHash);
             animator.SetBool(isAttackingHash, false);
+            animator.SetBool(isPlayingActionHash, false);
+
         }
 
 
@@ -341,9 +344,12 @@ namespace SG{
         {
             inputActions.Disable();
         }
-
         public void CameraOn()
         {
+            // If the player is locking on, do nothing
+            if (playerLockOn != null && playerLockOn.IsTargetLocked)
+                return;
+
             Debug.Log("Attack camera activated.");
             if (cameraManager != null && attackCamera != null && defaultCamera != null)
             {
@@ -358,6 +364,10 @@ namespace SG{
 
         public void CameraOff()
         {
+            // If the player is locking on, do nothing
+            if (playerLockOn != null && playerLockOn.IsTargetLocked)
+                return;
+
             Debug.Log("Switched back to default camera.");
             if (cameraManager != null && defaultCamera != null && attackCamera != null)
             {
@@ -368,9 +378,12 @@ namespace SG{
             {
                 Debug.LogWarning("CameraManager or cameras are not assigned.");
             }
+            
             isSpinAttackActive = false;
             animator.SetBool(spinningAttackHash, false);
         }
+
+
 
         public void SyncCameraWithActiveOne(Cinemachine.CinemachineVirtualCamera activeCamera, Cinemachine.CinemachineVirtualCamera otherCamera)
         {

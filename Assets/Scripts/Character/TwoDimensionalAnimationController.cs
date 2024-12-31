@@ -744,5 +744,5 @@ namespace SG{
                 HandleDodge(transform.right, "isDodgingRight");
             }
         }
-        }
     }
+}

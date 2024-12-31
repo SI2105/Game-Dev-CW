@@ -10,7 +10,6 @@ public class Skill : MonoBehaviour
         Carry2,
         Carry3,
         Carry5,
-        RareItemDrop,
         PowerUpAction,
         ChestBumpAction,
         TwoHandClubComboAction,

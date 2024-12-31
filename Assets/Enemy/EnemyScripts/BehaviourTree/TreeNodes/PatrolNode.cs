@@ -24,12 +24,12 @@ public class PatrolNode : Node
     public override State Evaluate()
     {
         // Roaring phase
-        if (isRoaring)
-        {
-            HandleRoaring();
+        if(enemyAI.isRoaring){
             node_state = State.RUNNING;
             return node_state;
         }
+
+        animator.SetBool("IsPlayingAction", false);
 
         // Randomly decide to roar
         if (Time.time - lastRoarTime >= roarCooldown && Random.Range(0, 100) < 2) // 2% chance to roar if cooldown has passed
@@ -39,9 +39,6 @@ public class PatrolNode : Node
             node_state = State.RUNNING;
             return node_state;
         }
-
-        // Adjust layer weights for patrolling
-        animator.SetLayerWeight(0, 1.0f); // Movement Layer
 
         // Gradually adjust velocityX and velocityY
         float velocityX = animator.GetFloat("velocityX");
@@ -100,27 +97,10 @@ public class PatrolNode : Node
 
     private void StartRoaring()
     {
+        animator.SetBool("IsPlayingAction", true);
         enemyAgent.ResetPath();
-        animator.SetLayerWeight(0, 0.0f); // Movement Layer
-        animator.SetLayerWeight(1, 1.0f); // Roaring Layer
         animator.SetBool("IsRoaring", true);
-        isRoaring = true;
+        enemyAI.isRoaring = true;
         audio_controller.playRoar();
-    }
-
-    private void HandleRoaring()
-    {
-        if (animator.GetCurrentAnimatorStateInfo(1).IsName("Mutant Roaring"))
-        {
-            animator.SetBool("IsRoaring", false);
-        }
-
-        if (animator.GetBool("IsRoaring")==false && animator.GetCurrentAnimatorStateInfo(1).IsName("Not Roaring"))
-        {
-            isRoaring=false;
-            audio_controller.stopSound();
-            animator.SetLayerWeight(0, 1.0f); // Movement Layer
-            animator.SetLayerWeight(1, 0.0f); // Roaring Layer
-        }
     }
 }

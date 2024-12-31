@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
-public class EnemyLockOnSensor : MonoBehaviour
+public class EnemyAttackSensor : MonoBehaviour
 {
     public float distance;
     public float angle;
@@ -47,6 +46,10 @@ public class EnemyLockOnSensor : MonoBehaviour
         Vector3 dest = obj.transform.position;
         Vector3 direction=dest-origin;
 
+        // if(direction.y<0 || direction.y> height){
+        //     return false;
+        // }
+
         direction.y = 0;
 
         float deltaAngle = Vector3.Angle(direction, transform.forward);
@@ -57,16 +60,8 @@ public class EnemyLockOnSensor : MonoBehaviour
         origin.y +=height/2;
         dest.y = origin.y;
 
-        if (Physics.Linecast(origin, dest, occlusionLayers))
-        {
-            // Draw the line in red if the linecast hits something
-            Debug.DrawLine(origin, dest, Color.red, 0.1f);
+        if(Physics.Linecast(origin, dest, occlusionLayers)){
             return false;
-        }
-        else
-        {
-            // Draw the line in green if the linecast does not hit anything
-            Debug.DrawLine(origin, dest, Color.green, 0.1f);
         }
 
         return true;
@@ -168,11 +163,6 @@ public class EnemyLockOnSensor : MonoBehaviour
 
             for(int i=0; i<count; i++){
                 Gizmos.DrawSphere(colliders[i].transform.position, 0.2f);
-            }
-
-            Gizmos.color=Color.green;
-            foreach(var obj in objects){
-                Gizmos.DrawSphere(obj.transform.position, 0.2f);
             }
 
         }

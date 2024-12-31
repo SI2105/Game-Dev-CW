@@ -15,6 +15,9 @@ public class EnemyAIController : MonoBehaviour
     public EnemyPlayerSensor player_sensor;
     public EnemyWallSensor wall_sensor;
     public EnemyLockOnSensor lockOnSensor;
+    public EnemyAttackSensor attackSensor;
+
+    public bool isRoaring;
 
     public EnemyAudioController audio_controller;
     //field for the enemy animator component
@@ -51,6 +54,7 @@ public class EnemyAIController : MonoBehaviour
         player_sensor = GetComponent<EnemyPlayerSensor>();
         wall_sensor=GetComponent<EnemyWallSensor>();
         lockOnSensor=GetComponent<EnemyLockOnSensor>();
+        attackSensor=GetComponent<EnemyAttackSensor>();
         audio_controller= GetComponent<EnemyAudioController>();
     }
 
@@ -126,7 +130,7 @@ public class EnemyAIController : MonoBehaviour
         InverterNode hasAttacks1Health = new InverterNode(healthNode);
 
         //Sequence node for attacks 1
-        SequenceNode attacks1 = new SequenceNode(new List<Node> {isInChasingRange, hasAttacks1Health, playerLockNode});
+        SequenceNode attacks1 = new SequenceNode(new List<Node> {isInChasingRange, hasAttacks1Health, playerLockNode, attackNode1});
 
         //Sequence node for death
         SequenceNode enemyDeath = new SequenceNode(new List<Node> {deathHealthNode, deathNode});
@@ -166,6 +170,20 @@ public class EnemyAIController : MonoBehaviour
         if(enemyCurrentHealth<0.0f){
             enemyCurrentHealth=0.0f;
         }
+    }
+
+    private void stopRoaring(){
+        animator.SetBool("IsRoaring", false);
+        audio_controller.stopSound();
+        isRoaring=false;
+    }
+
+    private void stopSurge(){
+        animator.SetBool("Surge", false);
+    }
+
+    private void stopAttack(){
+        animator.SetBool("AttackLeft", false);
     }
 
     //method for initiating the death of the enemy

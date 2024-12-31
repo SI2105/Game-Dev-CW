@@ -21,11 +21,18 @@ public class LockOnNode : Node
     public override State Evaluate()
     {
 
+        animator.SetBool("IsPlayingAction", false);
+      
         // Check if locked on
         if (enemyAI.lockOnSensor.objects.Count > 0)
         {
                 enemyAgent.isStopped=true;
-                Debug.LogError("Locked On");
+                float velocityX = animator.GetFloat("velocityX");
+                float velocityY = animator.GetFloat("velocityY");
+                velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
+                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
+                animator.SetFloat("velocityX", velocityX);
+                animator.SetFloat("velocityY", velocityY);
                 node_state = State.SUCCESS;
                 return node_state;
         }
@@ -50,49 +57,46 @@ public class LockOnNode : Node
             animator.SetFloat("velocityY", velocityY);
             animator.SetFloat("velocityX", velocityX);
 
-            node_state = State.RUNNING;
+            node_state = State.FAILURE;
         }
         else
         {
-            enemyAgent.isStopped = true;
             // Lock on logic
             Vector3 directionToPlayer = (player.position - enemyAgent.transform.position).normalized;
-            float dotProduct = Vector3.Dot(enemyAgent.transform.right, directionToPlayer);
+            float angleToPlayer = Vector3.SignedAngle(enemyAgent.transform.forward, directionToPlayer, Vector3.up);
 
-            if (dotProduct < -0.1f) // Player is on the left
+            if (Mathf.Abs(angleToPlayer) > 5f) // If not facing the player (within a tolerance of 5 degrees)
             {
-                Debug.LogError("Player is on the left");
-                // Strafe left
-                float velocityX = animator.GetFloat("velocityX");
-                float velocityY = animator.GetFloat("velocityY");
-
-                velocityX = Mathf.Lerp(velocityX, -0.5f, Time.deltaTime * 2f);
-                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
-
-                animator.SetFloat("velocityX", velocityX);
-                animator.SetFloat("velocityY", velocityY);
-
                 RotateTowardsPlayer(directionToPlayer);
+                
+                if (angleToPlayer < 0) // Player is on the left
+                {
+                    Debug.LogError("Strafing left");
+                    float velocityX = animator.GetFloat("velocityX");
+                    float velocityY = animator.GetFloat("velocityY");
+
+                    velocityX = Mathf.Lerp(velocityX, -0.5f, Time.deltaTime * 2f);
+                    velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
+
+                    animator.SetFloat("velocityX", velocityX);
+                    animator.SetFloat("velocityY", velocityY);
+                }
+                else // Player is on the right
+                {
+                    Debug.LogError("Strafing right");
+                    float velocityX = animator.GetFloat("velocityX");
+                    float velocityY = animator.GetFloat("velocityY");
+
+                    velocityX = Mathf.Lerp(velocityX, 0.5f, Time.deltaTime * 2f);
+                    velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
+
+                    animator.SetFloat("velocityX", velocityX);
+                    animator.SetFloat("velocityY", velocityY);
+                }
             }
-            else if (dotProduct > 0.1f) // Player is on the right
+            else // Player is directly in front
             {
-                Debug.LogError("Player is on the right");
-                // Strafe right
-                float velocityX = animator.GetFloat("velocityX");
-                float velocityY = animator.GetFloat("velocityY");
-
-                velocityX = Mathf.Lerp(velocityX, 0.5f, Time.deltaTime * 2f);
-                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
-
-                animator.SetFloat("velocityX", velocityX);
-                animator.SetFloat("velocityY", velocityY);
-
-                RotateTowardsPlayer(directionToPlayer);
-            }
-            else // Player is in front but possibly obscured
-            {
-                Debug.LogError("Player is hiding behind wall");
-                // Stop and become idle
+                Debug.LogError("Player in front");
                 enemyAgent.isStopped = true;
 
                 float velocityX = animator.GetFloat("velocityX");
@@ -104,7 +108,8 @@ public class LockOnNode : Node
                 animator.SetFloat("velocityX", velocityX);
                 animator.SetFloat("velocityY", velocityY);
             }
-            node_state = State.RUNNING;
+
+            node_state = State.FAILURE;
         }
 
         return node_state;

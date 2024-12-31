@@ -50,49 +50,6 @@ public class InventoryManager : MonoBehaviour
 
     public ItemClass selectedItem;
 
-    private int NumOfPotion;
-    private int MaxNumOfPotion;
-
-    public int numOfPotion
-    {
-        get => NumOfPotion;
-        set => NumOfPotion = value;
-    }
-
-    public int maxNumOfPotion
-    {
-        get => MaxNumOfPotion;
-        set => MaxNumOfPotion = value;
-    }
-
-    private void OnEnable()
-    {
-
-        Skill.OnSkillUnlocked += OnSkillUnlocked;
-    }
-
-    private void OnDisable()
-    {
-        Skill.OnSkillUnlocked -= OnSkillUnlocked;
-    }
-
-    private void OnSkillUnlocked(Skill.SkillName skillName) {
-
-        if (skillName == Skill.SkillName.Carry2)
-        {
-            SetMaxNumOfPotion(2);
-        }
-        else if (skillName == Skill.SkillName.Carry3)
-        {
-            SetMaxNumOfPotion(3);
-        }
-        else if (skillName == Skill.SkillName.Carry5)
-        {
-            SetMaxNumOfPotion(5);
-        }
-
-        PopulateCraftingPanel();    
-    }
 
     #region Crafting
     [SerializeField] private GameObject craftingContainer;
@@ -107,25 +64,15 @@ public class InventoryManager : MonoBehaviour
 
         foreach (CraftingRecipe recipe in craftingRecipes)
         {
-           
             GameObject recipeItem = Instantiate(craftingRecipeItem, craftingContainer.transform);
             recipeItem.transform.GetChild(0).GetComponent<Image>().sprite = recipe.outputItem.GetItem().icon;
             recipeItem.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = recipe.outputItem.GetItem().displayName;
             recipeItem.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = recipe.getInputAsString();  
-            if(recipe.OutputIsPotion() && FullForPotions())
-            {
-                recipeItem.transform.GetChild(3).GetComponent<Button>().interactable = false;
-               
-            }
-            else
-            {
-                recipeItem.transform.GetChild(3).GetComponent<Button>().interactable = true;
-            }
             recipeItem.transform.GetChild(3).GetComponent<Button>().onClick.AddListener(() => Craft(recipe));
         }
     }
 
-
+    
     #endregion
     public ItemClass SelectedItem
     {
@@ -202,21 +149,7 @@ public class InventoryManager : MonoBehaviour
             Remove(item);
         }
         RefreshInterface();
-        MaxNumOfPotion = 1;
 
-        for(int i = 0; i < Items.Length; i++)
-        {
-            if (Items[i].GetItem() != null && Items[i].GetItem() is ConsumableClass)
-            {
-                ConsumableClass ToCheck = (ConsumableClass)Items[i].GetItem();
-                if (ToCheck.IsPotion && NumOfPotion < MaxNumOfPotion)
-                {
-                    NumOfPotion += Items[i].GetQuantity();
-                }
-               
-                
-            }
-        }
     }
     private void Update()
     {
@@ -367,18 +300,6 @@ public class InventoryManager : MonoBehaviour
     public bool Add(ItemClass item, int quantity) {
         //Items.Add(item);
         SlotClass slot = Contains(item);
-        if (item is ConsumableClass)
-        {
-            ConsumableClass ToCheck = (ConsumableClass)item;
-            if (ToCheck.IsPotion && NumOfPotion < MaxNumOfPotion)
-            {
-                NumOfPotion += quantity;
-            }
-            else if (ToCheck.IsPotion && NumOfPotion >= MaxNumOfPotion)
-            {
-                return false;
-            }
-        }
         if (slot != null && slot.GetItem().Stackable)
         {
             slot.AddQuantity(quantity);
@@ -575,22 +496,6 @@ public class InventoryManager : MonoBehaviour
         RefreshInterface();
         return true;
 
-    }
-
-    public void SetMaxNumOfPotion(int num)
-    {
-        MaxNumOfPotion = num;
-    }
-    public void AddPotion(int num)
-    {
-        NumOfPotion += num;
-    }
-    public void RemovePotion(int num) { 
-        NumOfPotion -= num;
-    }
-
-    public bool FullForPotions() { 
-        return NumOfPotion >= MaxNumOfPotion;
     }
 
 

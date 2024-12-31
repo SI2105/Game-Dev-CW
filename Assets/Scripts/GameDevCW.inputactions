@@ -715,15 +715,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "Skills",
-                    "type": "Button",
-                    "id": "a7515e71-7ce7-4696-acb1-a71a941c35ae",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1197,17 +1188,6 @@
                     "processors": "Scale(factor=5)",
                     "groups": "",
                     "action": "HotBarSelector",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f231ac33-4437-40b0-a619-00e6df04a761",
-                    "path": "<Keyboard>/c",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Skills",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

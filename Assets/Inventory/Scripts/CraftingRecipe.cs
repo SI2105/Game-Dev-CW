@@ -15,8 +15,7 @@ public class CraftingRecipe : ScriptableObject
     public bool CanCraft(InventoryManager inventory)
     {
  
-        
-        if (inventory.isFull() || (OutputIsPotion()) && inventory.FullForPotions()){ 
+        if (inventory.isFull()){ 
             return false;
         }
         for (int i = 0; i < inputItems.Length; i++)
@@ -52,9 +51,5 @@ public class CraftingRecipe : ScriptableObject
  
         inventory.Add(outputItem.GetItem(), outputItem.GetQuantity());
         ObjectiveManager.Instance.SetEventComplete( "Craft " + outputItem.GetItem().displayName);
-    }
-
-    public bool OutputIsPotion() { 
-        return outputItem.GetItem() is ConsumableClass && ((ConsumableClass)outputItem.GetItem()).IsPotion;
     }
 }

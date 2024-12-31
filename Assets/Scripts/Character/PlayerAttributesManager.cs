@@ -23,43 +23,7 @@ namespace SG
             get => objectiveManager;
             set => objectiveManager = value;
         }
-
-        #endregion
-
-        #region SkillTree
-        [SerializeField] private SkillTreeManager skillTreeManager;
-        public SkillTreeManager SkillTreeManager { get => skillTreeManager; 
-            set => skillTreeManager = value; 
-        }
-
-        //void OnEnable()
-        //{
-        //    Skill.OnSkillUnlocked += HandleSkillUnlocked;
-        //}
-
-        //void OnDisable()
-        //{
-        //    Skill.OnSkillUnlocked -= HandleSkillUnlocked;
-        //}
-
-        //private void HandleSkillUnlocked(Skill.SkillName skillName)
-        //{
-        //    Debug.Log("HandleSkil");
-        //    if (skillName == Skill.SkillName.Carry2)
-        //    {
-        //        InventoryManager.maxNumOfPotion = 2;
-               
-        //    }
-        //    else if (skillName == Skill.SkillName.Carry3)
-        //    {
-        //        InventoryManager.maxNumOfPotion = 3;
-        //    }
-        //    else if (skillName == Skill.SkillName.Carry5)
-        //    {
-        //        InventoryManager.maxNumOfPotion = 5;
-        //    }
-        //    Debug.Log("MaxPotions: " + InventoryManager.maxNumOfPotion);
-        //}
+        
         #endregion
 
         public float MaxHealth { get; set; } = 100f;

@@ -2,19 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerState : MonoBehaviour{
+public class PlayerState : MonoBehaviour
+{
     [field: SerializeField] public PlayerMovementState CurrentPlayerMovementState { get; private set; } = PlayerMovementState.Idling;
-    public void SetPlayerMovementState(PlayerMovementState playerMovementState){
+    [field: SerializeField] public PlayerAttackState CurrentPlayerAttackState { get; private set; } = PlayerAttackState.Idling;
+
+    public void SetPlayerMovementState(PlayerMovementState playerMovementState)
+    {
         CurrentPlayerMovementState = playerMovementState;
     }
 
-    public bool InGroundedState(){
+    public void SetPlayerAttackState(PlayerAttackState playerAttackState)
+    {
+        CurrentPlayerAttackState = playerAttackState;
+    }
+
+    public bool InGroundedState()
+    {
         return CurrentPlayerMovementState == PlayerMovementState.Idling ||
-                CurrentPlayerMovementState == PlayerMovementState.Walking ||
-                CurrentPlayerMovementState == PlayerMovementState.Running ||
-                CurrentPlayerMovementState == PlayerMovementState.Strafing;
+               CurrentPlayerMovementState == PlayerMovementState.Walking ||
+               CurrentPlayerMovementState == PlayerMovementState.Running ||
+               CurrentPlayerMovementState == PlayerMovementState.Strafing;
+    }
+
+    public bool IsInState(PlayerAttackState state)
+    {
+        // Use the correct property name
+        return CurrentPlayerAttackState == state;
     }
 }
+
+
+
+
 
 public enum PlayerMovementState{
     Idling = 0,
@@ -22,4 +42,10 @@ public enum PlayerMovementState{
     Running = 2,
     Jumping = 5,
     Strafing = 6,
+    Attacking = 7,
+}
+
+public enum PlayerAttackState{
+    Idling = 0,
+    Attacking = 1
 }

@@ -21,6 +21,10 @@ namespace SG{
         private int isGroundedHash;
         private int RotationMismatchHash;
         private int isFallingHash;
+        private int isDodgingBackwardHash;
+        private int isDodgingForwardHash;
+        private int isDodgingLeftHash;
+        private int isDodgingRightHash;
         #endregion
 
         #region Player State Variables
@@ -29,6 +33,10 @@ namespace SG{
         private bool isIdle;
         private bool isJumping;
         private bool isRunning;
+        private bool isDodgingForward;
+        private bool isDodgingLeft;
+        private bool isDodgingRight;
+        private bool isDodgingBackward;
         private PlayerState _playerState;
         #endregion
 
@@ -87,7 +95,6 @@ namespace SG{
                 $"<align=left>Agility:<line-height=0>\n<align=right>{attributesManager.Agility}<line-height=1em>\n" +
                 $"<align=left>Endurance:<line-height=0>\n<align=right>{attributesManager.Endurance}<line-height=1em>\n" +
                 $"<align=left>Intelligence:<line-height=0>\n<align=right>{attributesManager.Intelligence}<line-height=1em>\n" +
-                $"<align=left>Luck:<line-height=0>\n<align=right>{attributesManager.Luck}<line-height=1em>\n\n" +
                 $"<align=left>Base Damage:<line-height=0>\n<align=right>{attributesManager.BaseDamage}<line-height=1em>\n" +
                 $"<align=left>Critical Hit Chance:<line-height=0>\n<align=right>{attributesManager.CriticalHitChance}<line-height=1em>\n" +
                 $"<align=left>Critical Hit Multiplier:<line-height=0>\n<align=right>{attributesManager.CriticalHitMultiplier}<line-height=1em>\n" +
@@ -113,6 +120,7 @@ namespace SG{
         [Header("References")]
         [SerializeField] private Transform idleTransform;
         [SerializeField] private Transform cameraTransform;
+        public CinemachineVirtualCamera mainVC;
 
         [Header("Rotation Settings")]
         [SerializeField] private float rotationSpeed = 10f;
@@ -123,7 +131,6 @@ namespace SG{
         public float RotationMismatch {get; private set;} = 0f;
         public bool IsRotatingToTarget {get; private set;} = false;
         public float rotateToTargetTime = 0.25f;
-
         private float _rotateToTargetTimer = 0f;
         #endregion
 
@@ -168,6 +175,8 @@ namespace SG{
             }
         }
         #endregion
+
+        private PlayerLockOn playerLockOn;
 
 
         #region Skills
@@ -215,9 +224,6 @@ namespace SG{
             inputActions.Player.Look.performed += HandleLook;
             inputActions.Player.Look.canceled += HandleLook;
 
-            inputActions.Player.Jump.performed += HandleJump;
-            inputActions.Player.Jump.canceled += HandleJump;
-
             // Subscribe to the Sprint action's performed and canceled events
             inputActions.Player.Sprint.performed += ctx => isSprinting = true;
             inputActions.Player.Sprint.canceled += ctx => isSprinting = false;
@@ -226,8 +232,18 @@ namespace SG{
             inputActions.Player.Inventory.canceled += HandleInventory;
             inputActions.Player.Pause.performed += HandlePause;
             inputActions.Player.Pause.canceled += HandlePause;
+
+            inputActions.Player.LockOn.performed += HandleLockOn;
+            inputActions.Player.LockOn.canceled += HandleLockOn;
+
+            inputActions.Player.DodgeForward.performed += HandleDodgeForward;
+            inputActions.Player.DodgeBackward.performed += HandleDodgeBackward;
+            inputActions.Player.DodgeLeft.performed += HandleDodgeLeft;
+            inputActions.Player.DodgeRight.performed += HandleDodgeRight;
+
             attributesManager = GetComponent<PlayerAttributesManager>();
             _playerState = GetComponent<PlayerState>();
+            playerLockOn = GetComponent<PlayerLockOn>();
 
             if (attributesManager) {
                 Debug.Log("Inventory Manager found");
@@ -281,6 +297,14 @@ namespace SG{
             }
         }
 
+        private void HandleLockOn(InputAction.CallbackContext context) {
+            if (context.performed) {
+                playerLockOn.LockOn();
+            } else {
+                playerLockOn.LockOn();
+            }
+        }
+
         private void ToggleInventory()
         {
             InventoryVisible = !InventoryVisible;
@@ -321,6 +345,10 @@ namespace SG{
             isGroundedHash = Animator.StringToHash("isGrounded");
             isFallingHash = Animator.StringToHash("isFalling");
             RotationMismatchHash = Animator.StringToHash("rotationMismatch");
+            isDodgingBackwardHash = Animator.StringToHash("isDodgingBackward");
+            isDodgingForwardHash = Animator.StringToHash("isDodgingForward");
+            isDodgingLeftHash = Animator.StringToHash("isDodgingLeft");
+            isDodgingRightHash = Animator.StringToHash("isDodgingRight");
 
             if (idleTransform == null)
                 idleTransform = transform;
@@ -337,53 +365,9 @@ namespace SG{
             
             // HandleRotation();
             Movement();
+            HandleMovement();
             UpdateAnimatorParameters();
             UpdateMovementState();
-        }
-
-        private void HandleJump(InputAction.CallbackContext context)
-        {
-            if (context.performed && isGrounded)
-            {
-                // Check if the player has enough stamina to jump
-                float jumpStaminaCost = 5f; // Define the stamina cost for jumping
-                if (attributesManager.UseStamina(jumpStaminaCost))
-                {
-                    // Player can jump
-                    isJumping = true;
-                    Jump();
-                    animator.SetBool(isJumpingHash, isJumping);
-                }
-                else
-                {
-                    // Not enough stamina to jump
-                    Debug.Log("Not enough stamina to jump.");
-                }
-            }
-        }
-
-        private void Jump()
-        {
-            RaycastHit slopeHit;
-            if (IsOnSlope(out slopeHit)){
-                Vector3 slope = slopeHit.normal;
-                Vector3 jumpDir = Vector3.ProjectOnPlane(Vector3.up, slope).normalized;
-                rb.AddForce(jumpDir * 50f, ForceMode.Impulse);
-
-            }
-            rb.AddForce(new Vector3(0, 50f), ForceMode.Impulse);
-        }
-
-        private void OnLand()
-        {
-            if (!isGrounded)
-                return;
-
-            // Reset jumping state
-            isJumping = false;
-            // Debug.Log($"Player landed. Setting isJumping to {isJumping}");
-            animator.SetBool(isJumpingHash, false);
-            animator.SetBool(isFallingHash, false);
         }
 
         private void OnEnable()
@@ -414,16 +398,6 @@ namespace SG{
             animator.SetBool(isIdleHash, isIdle);
             animator.SetBool(isWalkingHash, isWalking);
             animator.SetBool(isRunningHash, isRunning);
-
-            if (isGrounded && !wasGrounded) {
-                OnLand(); // Reset jumping state
-            } else if (!isGrounded && wasGrounded) {
-                // No additional logic here, falling is handled by velocity check
-            }
-
-            wasGrounded = isGrounded;
-            animator.SetBool(isGroundedHash, isGrounded);
-            IsFalling();
         }
 
         private void UpdateMovementState(){
@@ -463,67 +437,29 @@ namespace SG{
             );
         }
 
-        private void IsFalling() {
-            float raycastDistance = 20f;
-            float fallingThreshold = 0.75f;
-
-            RaycastHit hit;
-            if (Physics.Raycast(idleTransform.position, Vector3.down, out hit, raycastDistance, groundLayer)) {
-                float distanceToGround = hit.distance;
-
-                // Player is falling if they are not grounded and far from the ground
-                if (!isGrounded && distanceToGround > fallingThreshold) {
-                    animator.SetBool(isFallingHash, true);
-                }
-            } else {
-                // No ground detected, assume falling
-                animator.SetBool(isFallingHash, true);
-            }
-        }
-
-        // private void OnCollisionStay(Collision collision)
-        // {
-
-        //     bool foundValidGround = false;
-        //     // Check if the collided object is on the ground layer
-        //     foreach (ContactPoint contact in collision.contacts)
-        //     {
-        //         if (contact.normal.y > 1f)  // Reduced threshold to be more forgiving
-        //         {
-        //             foundValidGround = true;
-        //             groundContacts++;
-        //             break;  // Exit loop once we find valid ground
-        //         }
-        //     }
-            
-        //     if (foundValidGround)
-        //     {
-        //         isGrounded = true;
-        //     }
-        //     else
-        //     {
-        //         groundContacts = 0;
-        //         isGrounded = false;
-        //     }
-        // }
-
-        // private void OnCollisionExit(Collision collision)
-        // {
-        //     groundContacts = Mathf.Max(groundContacts - 1, 0);
-        //     if (groundContacts == 0)
-        //     {
-        //         isGrounded = false;
-        //     }
-        // }
-
-
         private void HandleRotation()
         {
             if (cameraTransform == null || InventoryVisible) return;
-            // Use look input for rotation
-            float mouseX = lookInput.x * rotationSpeed * Time.deltaTime;
-            targetRotation += mouseX * 60f; // Smooth rotation factor
-            transform.rotation = Quaternion.Euler(0f, targetRotation, 0f);
+
+            if (playerLockOn != null && playerLockOn.IsTargetLocked && playerLockOn.CurrentTarget != null)
+            {
+                // When locked on, align player and camera with the target
+                Vector3 directionToTarget = playerLockOn.CurrentTarget.transform.position - idleTransform.position;
+                directionToTarget.y = 0; // Keep rotation on horizontal plane
+
+                if (directionToTarget != Vector3.zero)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+                    idleTransform.rotation = Quaternion.Slerp(idleTransform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                }
+            }
+            else
+            {
+                // Normal rotation when not locked on
+                float mouseX = lookInput.x * rotationSpeed * Time.deltaTime;
+                targetRotation += mouseX * 60f;
+                idleTransform.rotation = Quaternion.Euler(0f, targetRotation, 0f);
+            }
         }
 
         private void Movement(){
@@ -628,14 +564,11 @@ namespace SG{
         private void LateUpdate()
         {
             HandleRotation(); // Update camera and player rotation
-            isJumping = false;
         }
 
         private void FixedUpdate()
         {
             CheckGrounded();
-            HandleMovement();
-            AdjustGravityOnSlope();
             ClampVerticalVelocity();
             PreventSliding();
         }
@@ -645,16 +578,35 @@ namespace SG{
         private void HandleMovement() {
             if (InventoryVisible) return;
 
-            Vector3 moveDirection = (transform.forward * moveInput.y) + (transform.right * moveInput.x);
-            moveDirection.Normalize();
+            Vector3 moveDirection;
+            
+            // Check if we have an active lock-on target
+            if (playerLockOn != null && playerLockOn.IsTargetLocked && playerLockOn.CurrentTarget != null) {
+                // Get direction to target
+                Vector3 targetDirection = (playerLockOn.CurrentTarget.transform.position - transform.position).normalized;
+                targetDirection.y = 0; // Keep movement on the horizontal plane
+                
+                // Calculate movement direction relative to target
+                Vector3 forward = targetDirection;
+                Vector3 right = Vector3.Cross(Vector3.up, forward);
+                
+                // Combine input with target-relative directions
+                moveDirection = (forward * moveInput.y) + (right * moveInput.x);
+                moveDirection.Normalize();
+            } else {
+                // Regular movement using player's transform when not locked on
+                moveDirection = (transform.forward * moveInput.y) + (transform.right * moveInput.x);
+                moveDirection.Normalize();
+            }
 
+            // Handle slope movement
             RaycastHit slopeHit;
             if (IsOnSlope(out slopeHit)) {
                 moveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
             }
 
             float movementSpeed = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
-            Vector3 targetPosition = rb.position + moveDirection * movementSpeed * Time.fixedDeltaTime;
+            Vector3 targetPosition = rb.position + moveDirection * movementSpeed * Time.deltaTime;
             rb.MovePosition(targetPosition);
         }
 
@@ -705,5 +657,77 @@ namespace SG{
                 }
             }
         }
+        private void HandleDodgeForward(InputAction.CallbackContext ctx)
+        {
+            if (ctx.performed)
+            {
+                isDodgingForward = true;
+                animator.SetBool(isDodgingForwardHash, isDodgingForward);
+                ResetDodgeState("Forward"); // Reset state after dodge animation
+            }
+        }
+
+        private void HandleDodgeRight(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                isDodgingRight = true;
+                animator.SetBool(isDodgingRightHash, isDodgingRight);
+                ResetDodgeState("Right"); // Reset state after dodge animation
+            }
+        }
+
+        private void HandleDodgeLeft(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                isDodgingLeft = true;
+                animator.SetBool(isDodgingLeftHash, isDodgingLeft);
+                ResetDodgeState("Left"); // Reset state after dodge animation
+            }
+        }
+
+        private void HandleDodgeBackward(InputAction.CallbackContext ctx)
+        {
+            if (ctx.performed)
+            {
+                isDodgingBackward = true;
+                animator.SetBool(isDodgingBackwardHash, isDodgingBackward);
+                ResetDodgeState("Backward"); // Reset state after dodge animation
+            }
+        }
+
+        private void ResetDodgeState(string direction)
+        {
+            float dodgeAnimationDuration = 0.5f; // Replace with actual dodge animation length
+
+            StartCoroutine(ResetDodgeCoroutine(direction, dodgeAnimationDuration));
+        }
+
+        private IEnumerator ResetDodgeCoroutine(string direction, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            switch (direction)
+            {
+                case "Forward":
+                    isDodgingForward = false;
+                    animator.SetBool(isDodgingForwardHash, isDodgingForward);
+                    break;
+                case "Right":
+                    isDodgingRight = false;
+                    animator.SetBool(isDodgingRightHash, isDodgingRight);
+                    break;
+                case "Left":
+                    isDodgingLeft = false;
+                    animator.SetBool(isDodgingLeftHash, isDodgingLeft);
+                    break;
+                case "Backward":
+                    isDodgingBackward = false;
+                    animator.SetBool(isDodgingBackwardHash, isDodgingBackward);
+                    break;
+            }
+        }
+
+        }
     }
-}

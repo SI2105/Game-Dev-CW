@@ -240,6 +240,69 @@ namespace SG
             }
             Debug.Log("Starting health recovery process now.");
         }
+
+        public void GainExperience(float xp)
+        {
+            if (CurrentLevel >= MaxLevel)
+            {
+                Debug.Log("Player has reached the maximum level.");
+                return;
+            }
+
+            CurrentXP += xp;
+            Debug.Log($"Gained {xp} XP. Current XP: {CurrentXP}/{XPToNextLevel}");
+
+            while (CurrentXP >= XPToNextLevel && CurrentLevel < MaxLevel)
+            {
+                LevelUp();
+            }
+        }
+        public void LevelUp()
+        {
+            CurrentXP -= XPToNextLevel;
+            CurrentLevel++;
+            XPToNextLevel *= 1.2f; // Increase XP required for the next level (adjust multiplier as needed)
+
+            // Boost attributes on level-up
+            Strength += 2f;
+            Agility += 1.5f;
+            Endurance += 2f;
+            Intelligence += 1f;
+
+            // Regenerate health and stamina on level-up
+            CurrentHealth = MaxHealth;
+            CurrentStamina = MaxStamina;
+
+            // Recalculate derived attributes
+            RecalculateAttributes();
+
+            Debug.Log($"Leveled up! Current Level: {CurrentLevel}. XP for next level: {XPToNextLevel}");
+        }
+
+
+        private void RecalculateAttributes()
+        {
+            float previousMaxStamina = MaxStamina;
+
+            // Recalculate max attributes
+            MaxHealth = 100f + Strength * 5f;
+            MaxStamina = 100f + Endurance * 10f; // Stamina scales with Endurance
+            BaseDamage = 15f + Strength * 2f;
+
+            // Adjust current stamina proportionally
+            if (previousMaxStamina > 0)
+            {
+                CurrentStamina = (CurrentStamina / previousMaxStamina) * MaxStamina;
+            }
+            else
+            {
+                CurrentStamina = MaxStamina;
+            }
+
+            Debug.Log("Attributes recalculated based on level and stats.");
+        }
+
+
         #region Exploration and Survival Attributes
         public float TorchFuel { get; set; } = 100f;
         public float MaxTorchFuel { get; set; } = 100f;
@@ -269,7 +332,6 @@ namespace SG
         public float Agility { get; set; } = 8f;
         public float Endurance { get; set; } = 12f;
         public float Intelligence { get; set; } = 5f;
-        public float Luck { get; set; } = 3f;
         #endregion
 
         #region Dungeon-Crawling Specific Attributes

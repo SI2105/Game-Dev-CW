@@ -10,11 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c4e951926ef5bdb4eb696edd465ec911, type: 3}
-  m_Name: Health Potion
+  m_Name: Chalice Of Youth
   m_EditorClassIdentifier: 
-  id: 2
-  displayName: Health Exlixir
-  icon: {fileID: 1833180537, guid: efe8b13bbb0a0664fbbd7891ec6def78, type: 3}
-  prefab: {fileID: 1000012970591572, guid: 7cafb89b5a0f61f479d0a748962abbbc, type: 3}
+  id: 8
+  displayName: Chalice Of Youth
+  icon: {fileID: -995416766, guid: ad857d4fc0adf4b4c91cd36896a23cbe, type: 3}
+  prefab: {fileID: 0}
   Stackable: 1
-  IsPotion: 1

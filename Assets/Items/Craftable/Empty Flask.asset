@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c4e951926ef5bdb4eb696edd465ec911, type: 3}
-  m_Name: Shield Potion
+  m_Name: Empty Flask
   m_EditorClassIdentifier: 
-  id: 3
-  displayName: Exlixir Of Protection
-  icon: {fileID: 1203010639, guid: 982e9a0d3c1372d4a9bd1ee278811acc, type: 3}
-  prefab: {fileID: 1000013317980782, guid: 2cf6690298568294cb6b655c0a3aeb87, type: 3}
+  id: 15
+  displayName: Empty Flask
+  icon: {fileID: -1479519100, guid: 254b1409480d9cb4d8765d18a499dc68, type: 3}
+  prefab: {fileID: 0}
   Stackable: 1

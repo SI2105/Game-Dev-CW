@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c4e951926ef5bdb4eb696edd465ec911, type: 3}
-  m_Name: Health Potion
+  m_Name: Elixir Of Protection
   m_EditorClassIdentifier: 
-  id: 2
-  displayName: Health Exlixir
-  icon: {fileID: 1833180537, guid: efe8b13bbb0a0664fbbd7891ec6def78, type: 3}
-  prefab: {fileID: 1000012970591572, guid: 7cafb89b5a0f61f479d0a748962abbbc, type: 3}
+  id: 3
+  displayName: Elixir Of Protection
+  icon: {fileID: 1203010639, guid: 982e9a0d3c1372d4a9bd1ee278811acc, type: 3}
+  prefab: {fileID: 1000013317980782, guid: 2cf6690298568294cb6b655c0a3aeb87, type: 3}
   Stackable: 1
   IsPotion: 1

@@ -130,6 +130,7 @@ namespace SG{
         GameObject pauseMenuPanel;
         [SerializeField] private KeyBindings keyBindings;
         private SettingsManager settingsManager;
+        private string currentDifficulty;
 
         private void Awake()
         {
@@ -219,14 +220,72 @@ namespace SG{
             isRunningHash = Animator.StringToHash("isRunning");
             isJumpingHash = Animator.StringToHash("isJumping");
 
-            if (idleTransform == null)
-                idleTransform = transform;
-                        
-            if (cameraTransform == null && Camera.main != null)
-                cameraTransform = Camera.main.transform;
+                if (idleTransform == null)
+                    idleTransform = transform;
+                            
+                if (cameraTransform == null && Camera.main != null)
+                    cameraTransform = Camera.main.transform;
 
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                
+                LoadGameDifficulty();
+                SetGameParametersBasedOnDifficulty();
+            }
+
+        private void LoadGameDifficulty()
+        {
+            if (PlayerPrefs.GetInt("EasyDifficulty") == 1)
+            {
+                currentDifficulty = "Easy";
+            }
+            else if (PlayerPrefs.GetInt("NormalDifficulty") == 1)
+            {
+                currentDifficulty = "Normal";
+            }
+            else if (PlayerPrefs.GetInt("AdvancedDifficulty") == 1)
+            {
+                currentDifficulty = "Advanced";
+            }
+            else if (PlayerPrefs.GetInt("HardCoreDifficulty") == 1)
+            {
+                currentDifficulty = "Hardcore";
+            }
+            else
+            {
+                currentDifficulty = "Unknown"; // Default or fallback value
+            }
+        }
+
+        private void SetGameParametersBasedOnDifficulty()
+        {
+            switch (currentDifficulty)
+            {
+                case "Easy":
+                    Debug.Log("Setting game parameters for Easy difficulty...");
+                    // Set parameters for Easy difficulty
+                    break;
+
+                case "Normal":
+                    Debug.Log("Setting game parameters for Normal difficulty...");
+                    // Set parameters for Normal difficulty
+                    break;
+
+                case "Advanced":
+                    Debug.Log("Setting game parameters for Advanced difficulty...");
+                    // Set parameters for Advanced difficulty
+                    break;
+
+                case "Hardcore":
+                    Debug.Log("Setting game parameters for Hardcore difficulty...");
+                    // Set parameters for Hardcore difficulty
+                    break;
+
+                default:
+                    Debug.LogWarning("No valid difficulty found. Default settings applied.");
+                    // Apply default or fallback parameters
+                    break;
+            }
         }
 
         private void Update()

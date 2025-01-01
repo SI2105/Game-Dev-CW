@@ -19,7 +19,10 @@ namespace SG
         public int TextureQuality { get; private set; } // 0: Low, 1: Medium, 2: High
 
         // Game Settings
+        public bool IsEasyDifficulty { get; private set; }
         public bool IsNormalDifficulty { get; private set; }
+        public bool IsAdvancedDifficulty { get; private set; }
+        public bool IsHardcoreDifficulty { get; private set; }
         
         // Control Settings
         public float MouseSensitivityX { get; private set; }
@@ -137,11 +140,17 @@ namespace SG
             ApplySettings();
         }
 
-        public void SetDifficulty(bool isNormal)
+        public void SetDifficulty(string difficulty)
         {
-            IsNormalDifficulty = isNormal;
-            PlayerPrefs.SetInt("NormalDifficulty", isNormal ? 1 : 0);
-            PlayerPrefs.SetInt("HardCoreDifficulty", isNormal ? 0 : 1);
+            IsEasyDifficulty = difficulty == "Easy";
+            IsNormalDifficulty = difficulty == "Normal";
+            IsAdvancedDifficulty = difficulty == "Advanced";
+            IsHardcoreDifficulty = difficulty == "Hardcore";
+
+            PlayerPrefs.SetInt("EasyDifficulty", IsEasyDifficulty ? 1 : 0);
+            PlayerPrefs.SetInt("NormalDifficulty", IsNormalDifficulty ? 1 : 0);
+            PlayerPrefs.SetInt("AdvancedDifficulty", IsAdvancedDifficulty ? 1 : 0);
+            PlayerPrefs.SetInt("HardCoreDifficulty", IsHardcoreDifficulty ? 1 : 0);
         }
     }
 }

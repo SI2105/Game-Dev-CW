@@ -325,6 +325,7 @@ namespace SlimUI.ModernMenu{
 			PlayerPrefs.SetInt("NormalDifficulty",1);
 			PlayerPrefs.SetInt("AdvancedDifficulty",0);
 			PlayerPrefs.SetInt("HardCoreDifficulty",0);
+			PlayerPrefs.Save();
 		}
 
 		public void HardcoreDifficulty (){
@@ -336,6 +337,7 @@ namespace SlimUI.ModernMenu{
 			PlayerPrefs.SetInt("NormalDifficulty",0);
 			PlayerPrefs.SetInt("AdvancedDifficulty",0);
 			PlayerPrefs.SetInt("HardCoreDifficulty",1);
+			PlayerPrefs.Save();
 		}
 
 		public void EasyDifficulty (){
@@ -347,6 +349,7 @@ namespace SlimUI.ModernMenu{
 			PlayerPrefs.SetInt("NormalDifficulty",0);
 			PlayerPrefs.SetInt("AdvancedDifficulty",0);
 			PlayerPrefs.SetInt("HardCoreDifficulty",0);
+			PlayerPrefs.Save();
 		}
 
 		public void AdvancedDifficulty (){
@@ -358,6 +361,7 @@ namespace SlimUI.ModernMenu{
 			PlayerPrefs.SetInt("NormalDifficulty",0);
 			PlayerPrefs.SetInt("AdvancedDifficulty",1);
 			PlayerPrefs.SetInt("HardCoreDifficulty",0);
+			PlayerPrefs.Save();
 		}
 
 		public void ShadowsOff (){

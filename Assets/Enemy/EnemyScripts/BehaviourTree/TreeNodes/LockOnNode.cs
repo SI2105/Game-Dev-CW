@@ -20,24 +20,43 @@ public class LockOnNode : Node
 
     public override State Evaluate()
     {
-
-        animator.SetBool("IsPlayingAction", false);
-      
-        // Check if locked on
-        if (enemyAI.lockOnSensor.objects.Count > 0)
-        {
-                enemyAgent.isStopped=true;
-                float velocityX = animator.GetFloat("velocityX");
-                float velocityY = animator.GetFloat("velocityY");
-                velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
-                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
-                animator.SetFloat("velocityX", velocityX);
-                animator.SetFloat("velocityY", velocityY);
-                node_state = State.SUCCESS;
-                return node_state;
+        if(animator.GetBool("enemyHit")==true){
+            enemyAgent.isStopped = true;
+            return State.FAILURE;
+        }
+        
+        if(enemyAI.isAttacking==true){
+            return State.FAILURE;
         }
 
+        // Check if locked on
+        if (enemyAI.lockOnSensor.objects.Count > 0)
+        {       
+                if(!enemyAI.isWalkingToPlayer){
+                    enemyAgent.isStopped=true;
+                }
+                // Gradually adjust animation parameters to idle
+                float velocityX = animator.GetFloat("velocityX");
+                float velocityY = animator.GetFloat("velocityY");
 
+                velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
+                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
+
+                animator.SetFloat("velocityX", velocityX);
+                animator.SetFloat("velocityY", velocityY);
+
+                if(animator.GetFloat("velocityX") < 0.01f && animator.GetFloat("velocityY") < 0.01f){
+                    node_state = State.SUCCESS;
+                    return node_state;
+                }
+                else{
+                    node_state=State.FAILURE;
+                    return node_state;
+                }
+                
+        }
+
+        animator.SetBool("IsPlayingAction", false);
         float distanceToPlayer = Vector3.Distance(enemyAgent.transform.position, player.position);
 
         if (distanceToPlayer > 4f)
@@ -61,56 +80,100 @@ public class LockOnNode : Node
         }
         else
         {
+            enemyAgent.isStopped = true;
+
             // Lock on logic
             Vector3 directionToPlayer = (player.position - enemyAgent.transform.position).normalized;
-            float angleToPlayer = Vector3.SignedAngle(enemyAgent.transform.forward, directionToPlayer, Vector3.up);
 
-            if (Mathf.Abs(angleToPlayer) > 5f) // If not facing the player (within a tolerance of 5 degrees)
+            // Directions to check for obstacles
+            Vector3 leftDirection = -enemyAgent.transform.right;
+            Vector3 rightDirection = enemyAgent.transform.right;
+
+            bool isObjectOnLeft = IsObjectOnSide(leftDirection);
+            bool isObjectOnRight = IsObjectOnSide(rightDirection);
+
+            RotateTowardsPlayer(directionToPlayer);
+
+            // Determine if the player is on the left or right (relative to the enemy)
+            if (player.position.x > enemyAgent.transform.position.x) // Player is on the left
             {
-                RotateTowardsPlayer(directionToPlayer);
-                
-                if (angleToPlayer < 0) // Player is on the left
+                if (isObjectOnLeft) // Obstacle on the left
                 {
-                    Debug.LogError("Strafing left");
+                    Debug.LogError("Obstacle on the left, strafing right and moving forward");
+
                     float velocityX = animator.GetFloat("velocityX");
                     float velocityY = animator.GetFloat("velocityY");
 
+                    // Strafe right and move forward (along z-axis)
+                    velocityX = Mathf.Lerp(velocityX, 0.5f, Time.deltaTime * 2f);
+                    velocityY = Mathf.Lerp(velocityY, 0.5f, Time.deltaTime * 2f);
+
+                    animator.SetFloat("velocityX", velocityX);
+                    animator.SetFloat("velocityY", velocityY);
+
+                    // Move right and forward
+                    Vector3 moveDirection = rightDirection + enemyAgent.transform.forward;
+                    enemyAgent.transform.position += moveDirection.normalized * Time.deltaTime * 2f;
+                }
+                else // No obstacle on the left, strafe left
+                {
+                    Debug.LogError("Strafing left");
+
+                    float velocityX = animator.GetFloat("velocityX");
+                    float velocityY = animator.GetFloat("velocityY");
+
+                    // Gradually adjust animation parameters
                     velocityX = Mathf.Lerp(velocityX, -0.5f, Time.deltaTime * 2f);
                     velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
 
                     animator.SetFloat("velocityX", velocityX);
                     animator.SetFloat("velocityY", velocityY);
+
+                   enemyAgent.transform.position = new Vector3(enemyAgent.transform.position.x +(Time.deltaTime * 1f),enemyAgent.transform.position.y, enemyAgent.transform.position.z); 
                 }
-                else // Player is on the right
+            }
+            else // Player is on the right
+            {
+                if (isObjectOnRight) // Obstacle on the right
                 {
-                    Debug.LogError("Strafing right");
+                    Debug.LogError("Obstacle on the right, strafing left and moving forward");
+
                     float velocityX = animator.GetFloat("velocityX");
                     float velocityY = animator.GetFloat("velocityY");
 
+                    // Strafe left and move forward (along z-axis)
+                    velocityX = Mathf.Lerp(velocityX, -0.5f, Time.deltaTime * 2f);
+                    velocityY = Mathf.Lerp(velocityY, 0.5f, Time.deltaTime * 2f);
+
+                    animator.SetFloat("velocityX", velocityX);
+                    animator.SetFloat("velocityY", velocityY);
+
+                    // Move left and forward
+                    Vector3 moveDirection = leftDirection + enemyAgent.transform.forward;
+                    enemyAgent.transform.position += moveDirection.normalized * Time.deltaTime * 2f;
+                }
+                else // No obstacle on the right, strafe right
+                {
+                    Debug.LogError("Strafing right");
+
+                    float velocityX = animator.GetFloat("velocityX");
+                    float velocityY = animator.GetFloat("velocityY");
+
+                    // Gradually adjust animation parameters
                     velocityX = Mathf.Lerp(velocityX, 0.5f, Time.deltaTime * 2f);
                     velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
 
                     animator.SetFloat("velocityX", velocityX);
                     animator.SetFloat("velocityY", velocityY);
+
+                    // Move right
+                    enemyAgent.transform.position = new Vector3(enemyAgent.transform.position.x -(Time.deltaTime * 1f),enemyAgent.transform.position.y, enemyAgent.transform.position.z); 
                 }
             }
-            else // Player is directly in front
-            {
-                Debug.LogError("Player in front");
-                enemyAgent.isStopped = true;
-
-                float velocityX = animator.GetFloat("velocityX");
-                float velocityY = animator.GetFloat("velocityY");
-
-                velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
-                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
-
-                animator.SetFloat("velocityX", velocityX);
-                animator.SetFloat("velocityY", velocityY);
-            }
-
-            node_state = State.FAILURE;
         }
+
+        
+        node_state = State.FAILURE;
 
         return node_state;
     }
@@ -120,4 +183,21 @@ public class LockOnNode : Node
         Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
         enemyAgent.transform.rotation = Quaternion.Lerp(enemyAgent.transform.rotation, targetRotation, Time.deltaTime * 5f);
     }
+
+    // Function to detect if there's an obstacle on the left or right
+    bool IsObjectOnSide(Vector3 direction)
+    {
+        RaycastHit hit;
+        float sideCheckDistance = 1.5f; // Adjust as needed for the distance to check
+        Vector3 origin = enemyAgent.transform.position + Vector3.up * 0.5f; // Offset origin to avoid ground collision
+
+        // Perform the raycast in the given direction
+        if (Physics.Raycast(origin, direction, out hit, sideCheckDistance))
+        {
+            Debug.Log($"Object detected on side: {hit.collider.name}");
+            return true; // Object detected
+        }
+        return false; // No object detected
+    }
+
 }

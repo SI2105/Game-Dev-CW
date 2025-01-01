@@ -11,11 +11,14 @@ public class EnemyAIController : MonoBehaviour
     private float acceleration = 3f;
     private float decceleration = 10f;
     private float maxVelocity = 4.0f;
-
+    public bool isAttacking{get;set;}
+    public bool isWalkingToPlayer{get;set;}
     public EnemyPlayerSensor player_sensor;
     public EnemyWallSensor wall_sensor;
     public EnemyLockOnSensor lockOnSensor;
     public EnemyAttackSensor attackSensor;
+    
+    public bool shouldDodge{get;set;}
 
     public bool isRoaring;
 
@@ -26,7 +29,7 @@ public class EnemyAIController : MonoBehaviour
     public Transform enemyTransform;
 
     //float variable for the current enemy health
-    private float enemyCurrentHealth;
+    [SerializeField] private float enemyCurrentHealth;
 
     //threshold for when enemy should start chasing player
     [SerializeField] private float chasingThreshold;
@@ -118,6 +121,9 @@ public class EnemyAIController : MonoBehaviour
         //node for locking on to player
         LockOnNode playerLockNode = new LockOnNode(enemyAgent, this, animator, playerTransform);
 
+        //node for getting a reaction
+        DamagedNode damagedNode = new DamagedNode(this, animator, enemyAgent);
+
         //Define Sequence and Selector Nodes in Behaviour Tree
 
         //Invertor node for determing if enemy is in patrolling range
@@ -138,11 +144,10 @@ public class EnemyAIController : MonoBehaviour
         //selector node for blocking/dodging
         SelectorNode block_dodge = new SelectorNode(new List<Node> {blockNode, dodgeNode});
 
-
         //selector node for root node of behaviour tree
-        topNode= new SelectorNode(new List<Node> {patrollingSequence, attacks1, enemyDeath, block_dodge});
-
+        topNode= new SelectorNode(new List<Node> {damagedNode, patrollingSequence, attacks1, enemyDeath, block_dodge});
     }
+
     //getter for the current enemy health
     public float getHealth(){
         return enemyCurrentHealth;
@@ -178,13 +183,23 @@ public class EnemyAIController : MonoBehaviour
         isRoaring=false;
     }
 
+    private void stopReaction(){
+        animator.SetBool("enemyHit", false);
+        shouldDodge=true;
+    }
+
     private void stopSurge(){
         animator.SetBool("Surge", false);
     }
 
     private void stopAttack(){
-        animator.SetBool("AttackLeft", false);
+        isAttacking=false;
     }
+
+    private void stopDodge(){
+        animator.SetInteger("DodgeIndex", -1);
+    }
+
 
     //method for initiating the death of the enemy
     public bool Die(){

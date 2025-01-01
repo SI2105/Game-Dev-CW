@@ -37,6 +37,7 @@ public class EnemyLockOnSensor : MonoBehaviour
         for(int i=0; i<count; ++i){
             GameObject obj = colliders[i].gameObject;
             if(isInSight(obj)){
+    
                 objects.Add(obj);
             }
         }
@@ -50,8 +51,8 @@ public class EnemyLockOnSensor : MonoBehaviour
         direction.y = 0;
 
         float deltaAngle = Vector3.Angle(direction, transform.forward);
+
         if(deltaAngle>angle){
-            
             return false;
         }
 
@@ -60,7 +61,7 @@ public class EnemyLockOnSensor : MonoBehaviour
 
         if (Physics.Linecast(origin, dest, occlusionLayers))
         {
-            
+            Debug.LogError("Physics collision");
             return false;
         }
        

@@ -49,13 +49,15 @@ public class EnemyAttackSensor : MonoBehaviour
 
         direction.y = 0;
 
+        origin.y +=height/2;
+        dest.y = origin.y;
+
         float deltaAngle = Vector3.Angle(direction, transform.forward);
+
         if(deltaAngle>angle){
             return false;
         }
 
-        origin.y +=height/2;
-        dest.y = origin.y;
 
         if(Physics.Linecast(origin, dest, occlusionLayers)){
             return false;

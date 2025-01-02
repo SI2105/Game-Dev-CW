@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SG
+namespace SlimUI.ModernMenu
 {
     public class SettingsManager : MonoBehaviour
     {

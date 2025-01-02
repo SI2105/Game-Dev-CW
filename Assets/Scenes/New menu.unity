@@ -12592,13 +12592,14 @@ MonoBehaviour:
   texturemedtextLINE: {fileID: 2002588177}
   texturehightextLINE: {fileID: 1985421308}
   cameraeffectstext: {fileID: 0}
-  showhudtext: {fileID: 0}
-  tooltipstext: {fileID: 0}
+  difficultyeasyttext: {fileID: 0}
+  difficultyeasytextLINE: {fileID: 0}
   difficultynormaltext: {fileID: 0}
   difficultynormaltextLINE: {fileID: 928704097}
+  difficultyadvancedtext: {fileID: 0}
+  difficultyadvancedtextLINE: {fileID: 0}
   difficultyhardcoretext: {fileID: 0}
   difficultyhardcoretextLINE: {fileID: 1574980}
-  invertmousetext: {fileID: 0}
   musicSlider: {fileID: 1141395588}
   sensitivityXSlider: {fileID: 1864367670}
   sensitivityYSlider: {fileID: 2007247448}
@@ -13698,6 +13699,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 936445377}
   m_CullTransparentMesh: 0
+--- !u!1 &953363481
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 953363482}
+  - component: {fileID: 953363483}
+  m_Layer: 0
+  m_Name: SettingsManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &953363482
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 953363481}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 25.095665, y: 2.3744757, z: -28.636086}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &953363483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 953363481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dddf0aa67d6d4c2dae1f27687942d51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &957393811
 GameObject:
   m_ObjectHideFlags: 0
@@ -31921,3 +31966,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 696634603}
   - {fileID: 1495623665}
+  - {fileID: 953363482}

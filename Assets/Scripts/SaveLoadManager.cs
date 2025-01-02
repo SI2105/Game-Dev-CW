@@ -46,7 +46,7 @@ namespace SG
         public float Agility;
         public float Endurance;
         public float Intelligence;
-        public float Luck;
+        // public float Luck;
 
         // Exploration and Dungeon Attributes
         public float VisionRange;
@@ -104,7 +104,7 @@ namespace SG
                 Agility = player.Agility,
                 Endurance = player.Endurance,
                 Intelligence = player.Intelligence,
-                Luck = player.Luck,
+                // Luck = player.Luck,
                 VisionRange = player.VisionRange,
                 Hunger = player.Hunger,
                 MaxHunger = player.MaxHunger,
@@ -184,7 +184,7 @@ namespace SG
             player.Agility = data.Agility;
             player.Endurance = data.Endurance;
             player.Intelligence = data.Intelligence;
-            player.Luck = data.Luck;
+            // player.Luck = data.Luck;
             player.VisionRange = data.VisionRange;
             player.Hunger = data.Hunger;
             player.MaxHunger = data.MaxHunger;

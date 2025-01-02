@@ -54,11 +54,11 @@ namespace SG{
                     interactableNameUI.text = "";
                 }
 
-                Collectible collectible = hit.collider.GetComponent<Collectible>();
+                CollectibleComponent collectible = hit.collider.GetComponent<CollectibleComponent>();
                 if (collectible != null)
                 {
                     // Display the name of the interactable chest on the UI
-                    interactableNameUI.text = collectible.displayName;
+                    interactableNameUI.text = collectible.collectibleItem.displayName;
                 }
                 else
                 {
@@ -86,7 +86,7 @@ namespace SG{
                     chest.OnSelect();
                 }
                 
-                Collectible collectible = hit.collider.GetComponent<Collectible>();
+                CollectibleComponent collectible = hit.collider.GetComponent<CollectibleComponent>();
                 if (collectible != null)
                 {
                     playerAttributesManager.InventoryManager.Add(collectible.GetCollectible(), 1);

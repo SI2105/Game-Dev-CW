@@ -45,6 +45,7 @@ namespace SG
 
         private void UpdateStaminaUI(float currentStamina, float maxStamina)
         {
+            staminaBar.maxValue = maxStamina;
             staminaBar.value = currentStamina;
         }
 

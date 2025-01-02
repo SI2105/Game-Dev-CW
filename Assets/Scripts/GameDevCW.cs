@@ -737,6 +737,15 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Skills"",
+                    ""type"": ""Button"",
+                    ""id"": ""a7515e71-7ce7-4696-acb1-a71a941c35ae"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1212,6 +1221,17 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""action"": ""HotBarSelector"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f231ac33-4437-40b0-a619-00e6df04a761"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Skills"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -1311,6 +1331,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         m_UI_HotBarSelector = m_UI.FindAction("HotBarSelector", throwIfNotFound: true);
+        m_UI_Skills = m_UI.FindAction("Skills", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1557,6 +1578,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_TrackedDevicePosition;
     private readonly InputAction m_UI_TrackedDeviceOrientation;
     private readonly InputAction m_UI_HotBarSelector;
+    private readonly InputAction m_UI_Skills;
     public struct UIActions
     {
         private @GameDevCW m_Wrapper;
@@ -1572,6 +1594,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         public InputAction @TrackedDevicePosition => m_Wrapper.m_UI_TrackedDevicePosition;
         public InputAction @TrackedDeviceOrientation => m_Wrapper.m_UI_TrackedDeviceOrientation;
         public InputAction @HotBarSelector => m_Wrapper.m_UI_HotBarSelector;
+        public InputAction @Skills => m_Wrapper.m_UI_Skills;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1614,6 +1637,9 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @HotBarSelector.started += instance.OnHotBarSelector;
             @HotBarSelector.performed += instance.OnHotBarSelector;
             @HotBarSelector.canceled += instance.OnHotBarSelector;
+            @Skills.started += instance.OnSkills;
+            @Skills.performed += instance.OnSkills;
+            @Skills.canceled += instance.OnSkills;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -1651,6 +1677,9 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @HotBarSelector.started -= instance.OnHotBarSelector;
             @HotBarSelector.performed -= instance.OnHotBarSelector;
             @HotBarSelector.canceled -= instance.OnHotBarSelector;
+            @Skills.started -= instance.OnSkills;
+            @Skills.performed -= instance.OnSkills;
+            @Skills.canceled -= instance.OnSkills;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -1746,5 +1775,6 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         void OnTrackedDevicePosition(InputAction.CallbackContext context);
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
         void OnHotBarSelector(InputAction.CallbackContext context);
+        void OnSkills(InputAction.CallbackContext context);
     }
 }

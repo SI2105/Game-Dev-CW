@@ -127,6 +127,15 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""TwoHandAttack"",
+                    ""type"": ""Button"",
+                    ""id"": ""6b51d313-e636-47fe-82b0-f4b65112d87e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""DodgeBackward"",
                     ""type"": ""Button"",
                     ""id"": ""5ab09de0-cfda-45a6-bf65-50fbaf13d08d"",
@@ -175,6 +184,24 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""name"": ""LockOn"",
                     ""type"": ""Button"",
                     ""id"": ""53d94e7a-b266-46b4-8f54-26fa7cac85fd"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PowerUp"",
+                    ""type"": ""Button"",
+                    ""id"": ""f7605a4b-e613-47f8-b761-0d2ee0d5a33e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PowerUp2"",
+                    ""type"": ""Button"",
+                    ""id"": ""81359144-c507-477f-96f4-ee964f6fe235"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -632,6 +659,61 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""action"": ""DodgeRight"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""TwoHandAttack"",
+                    ""id"": ""7008b2b8-0e29-4983-894e-6a99c40d1050"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TwoHandAttack"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""9bcefe6e-ffb9-40b9-949a-aae9b723578c"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TwoHandAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""df1031eb-b888-4620-951a-4c3611baabe4"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TwoHandAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a4cb69c3-ea0e-4841-8204-77822acf786b"",
+                    ""path"": ""<Keyboard>/#(T)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PowerUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""42f8ed38-5d7d-415c-a3e7-6ad953178ad7"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PowerUp2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1312,12 +1394,15 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         m_Player_Block = m_Player.FindAction("Block", throwIfNotFound: true);
         m_Player_SpinAttack = m_Player.FindAction("SpinAttack", throwIfNotFound: true);
         m_Player_DodgeForward = m_Player.FindAction("DodgeForward", throwIfNotFound: true);
+        m_Player_TwoHandAttack = m_Player.FindAction("TwoHandAttack", throwIfNotFound: true);
         m_Player_DodgeBackward = m_Player.FindAction("DodgeBackward", throwIfNotFound: true);
         m_Player_DodgeLeft = m_Player.FindAction("DodgeLeft", throwIfNotFound: true);
         m_Player_DodgeRight = m_Player.FindAction("DodgeRight", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_Objective = m_Player.FindAction("Objective", throwIfNotFound: true);
         m_Player_LockOn = m_Player.FindAction("LockOn", throwIfNotFound: true);
+        m_Player_PowerUp = m_Player.FindAction("PowerUp", throwIfNotFound: true);
+        m_Player_PowerUp2 = m_Player.FindAction("PowerUp2", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1404,12 +1489,15 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Block;
     private readonly InputAction m_Player_SpinAttack;
     private readonly InputAction m_Player_DodgeForward;
+    private readonly InputAction m_Player_TwoHandAttack;
     private readonly InputAction m_Player_DodgeBackward;
     private readonly InputAction m_Player_DodgeLeft;
     private readonly InputAction m_Player_DodgeRight;
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_Objective;
     private readonly InputAction m_Player_LockOn;
+    private readonly InputAction m_Player_PowerUp;
+    private readonly InputAction m_Player_PowerUp2;
     public struct PlayerActions
     {
         private @GameDevCW m_Wrapper;
@@ -1425,12 +1513,15 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         public InputAction @Block => m_Wrapper.m_Player_Block;
         public InputAction @SpinAttack => m_Wrapper.m_Player_SpinAttack;
         public InputAction @DodgeForward => m_Wrapper.m_Player_DodgeForward;
+        public InputAction @TwoHandAttack => m_Wrapper.m_Player_TwoHandAttack;
         public InputAction @DodgeBackward => m_Wrapper.m_Player_DodgeBackward;
         public InputAction @DodgeLeft => m_Wrapper.m_Player_DodgeLeft;
         public InputAction @DodgeRight => m_Wrapper.m_Player_DodgeRight;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @Objective => m_Wrapper.m_Player_Objective;
         public InputAction @LockOn => m_Wrapper.m_Player_LockOn;
+        public InputAction @PowerUp => m_Wrapper.m_Player_PowerUp;
+        public InputAction @PowerUp2 => m_Wrapper.m_Player_PowerUp2;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1473,6 +1564,9 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @DodgeForward.started += instance.OnDodgeForward;
             @DodgeForward.performed += instance.OnDodgeForward;
             @DodgeForward.canceled += instance.OnDodgeForward;
+            @TwoHandAttack.started += instance.OnTwoHandAttack;
+            @TwoHandAttack.performed += instance.OnTwoHandAttack;
+            @TwoHandAttack.canceled += instance.OnTwoHandAttack;
             @DodgeBackward.started += instance.OnDodgeBackward;
             @DodgeBackward.performed += instance.OnDodgeBackward;
             @DodgeBackward.canceled += instance.OnDodgeBackward;
@@ -1491,6 +1585,12 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @LockOn.started += instance.OnLockOn;
             @LockOn.performed += instance.OnLockOn;
             @LockOn.canceled += instance.OnLockOn;
+            @PowerUp.started += instance.OnPowerUp;
+            @PowerUp.performed += instance.OnPowerUp;
+            @PowerUp.canceled += instance.OnPowerUp;
+            @PowerUp2.started += instance.OnPowerUp2;
+            @PowerUp2.performed += instance.OnPowerUp2;
+            @PowerUp2.canceled += instance.OnPowerUp2;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1528,6 +1628,9 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @DodgeForward.started -= instance.OnDodgeForward;
             @DodgeForward.performed -= instance.OnDodgeForward;
             @DodgeForward.canceled -= instance.OnDodgeForward;
+            @TwoHandAttack.started -= instance.OnTwoHandAttack;
+            @TwoHandAttack.performed -= instance.OnTwoHandAttack;
+            @TwoHandAttack.canceled -= instance.OnTwoHandAttack;
             @DodgeBackward.started -= instance.OnDodgeBackward;
             @DodgeBackward.performed -= instance.OnDodgeBackward;
             @DodgeBackward.canceled -= instance.OnDodgeBackward;
@@ -1546,6 +1649,12 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @LockOn.started -= instance.OnLockOn;
             @LockOn.performed -= instance.OnLockOn;
             @LockOn.canceled -= instance.OnLockOn;
+            @PowerUp.started -= instance.OnPowerUp;
+            @PowerUp.performed -= instance.OnPowerUp;
+            @PowerUp.canceled -= instance.OnPowerUp;
+            @PowerUp2.started -= instance.OnPowerUp2;
+            @PowerUp2.performed -= instance.OnPowerUp2;
+            @PowerUp2.canceled -= instance.OnPowerUp2;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1755,12 +1864,15 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         void OnBlock(InputAction.CallbackContext context);
         void OnSpinAttack(InputAction.CallbackContext context);
         void OnDodgeForward(InputAction.CallbackContext context);
+        void OnTwoHandAttack(InputAction.CallbackContext context);
         void OnDodgeBackward(InputAction.CallbackContext context);
         void OnDodgeLeft(InputAction.CallbackContext context);
         void OnDodgeRight(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnObjective(InputAction.CallbackContext context);
         void OnLockOn(InputAction.CallbackContext context);
+        void OnPowerUp(InputAction.CallbackContext context);
+        void OnPowerUp2(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

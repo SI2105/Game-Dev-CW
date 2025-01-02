@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections; // Corrected namespace for IEnumerator
 using UnityEngine.InputSystem;
 
 namespace SG{
@@ -47,6 +48,7 @@ namespace SG{
         private PlayerEquipmentManager playerEquipmentManager;
         [SerializeField] private float staminaCostPerAttack = 10f;
         [SerializeField] private float staminaCostSpinAttack = 20f;
+        
         private PlayerLockOn playerLockOn;
 
         private void Awake()
@@ -61,6 +63,8 @@ namespace SG{
             inputActions.Player.Block.performed += HandleBlockAndHeal;
             inputActions.Player.Block.canceled += HandleBlockAndHeal;
             inputActions.Player.SpinAttack.performed += HandleSpinAttack;
+            inputActions.Player.TwoHandAttack.performed += HandleTwoHandAttack;
+            inputActions.Player.PowerUp2.performed += HandlePowerUp2; 
 
             _playerState = GetComponent<PlayerState>();
             playerLockOn = GetComponent<PlayerLockOn>();
@@ -124,16 +128,16 @@ namespace SG{
                     animator.SetBool(isPlayingActionHash, true); // Prevent other actions during healing
                     animator.SetTrigger("HealTrigger");
                 }
-                else if (equippedItem is WeaponClass weapon)
-                {
-                    // Handle blocking logic
-                    Debug.Log($"Blocking with weapon: {weapon.name}");
-                    isBlocking = true;
+                // else if (equippedItem is WeaponClass weapon)
+                // {
+                //     // Handle blocking logic
+                //     Debug.Log($"Blocking with weapon: {weapon.name}");
+                //     isBlocking = true;
 
-                    // Update animator for blocking
-                    animator.SetBool(BlockHash, true);
-                    animator.SetBool(isBlockingHash, true);
-                }
+                //     // Update animator for blocking
+                //     animator.SetBool(BlockHash, true);
+                //     animator.SetBool(isBlockingHash, true);
+                // }
             }
             else if (context.canceled)
             {
@@ -147,6 +151,86 @@ namespace SG{
             }
         }
 
+        private void HandlePowerUp(InputAction.CallbackContext context){
+            if (context.performed)
+            {
+                if (attributesManager.UseStamina(staminaCostPerAttack))
+                {
+                    Debug.Log("Power Up Triggered");
+                    animator.SetBool("PowerUp", true);
+                    animator.SetBool(isPlayingActionHash, true);
+
+                    // Update player state
+                    _playerState.SetPlayerAttackState(PlayerAttackState.Idling);
+                }
+                else
+                {
+                    Debug.Log("Not enough stamina for power up.");
+                }
+            }
+            else if (context.canceled)
+            {
+                animator.SetBool("PowerUp", false);
+                animator.SetBool(isPlayingActionHash, false);
+            }
+        }
+        private bool isPowerUpOnCooldown = false;
+
+        private void HandlePowerUp2(InputAction.CallbackContext context)
+        {
+            if (context.performed && powerUpLocked == false && !isPowerUpOnCooldown)
+            {
+                if (attributesManager.UseStamina(staminaCostPerAttack))
+                {
+                    Debug.Log("Power Up Triggered");
+                    animator.SetBool("PowerUp2", true);
+                    animator.SetBool(isPlayingActionHash, true);
+                    attributesManager.BoostAllAttributesTemporarily();
+
+                    // Update player state
+                    _playerState.SetPlayerAttackState(PlayerAttackState.Idling);
+
+                    // Start cooldown timer
+                    StartCoroutine(PowerUpCooldown());
+                }
+                else
+                {
+                    Debug.Log("Not enough stamina for power up.");
+                }
+            }
+            else if (context.canceled)
+            {
+                animator.SetBool("PowerUp2", false);
+                animator.SetBool(isPlayingActionHash, false);
+            }
+        }
+
+        private IEnumerator PowerUpCooldown()
+        {
+            // Set the cooldown flag to true
+            isPowerUpOnCooldown = true;
+
+            Debug.Log("Power Up cooldown started.");
+
+            // Wait for 20 seconds
+            yield return new WaitForSeconds(20);
+
+            // Reset the cooldown flag
+            isPowerUpOnCooldown = false;
+
+            Debug.Log("Power Up is ready again.");
+        }
+
+
+        private void cancelPowerUp(){
+            animator.SetBool("PowerUp", false);
+            animator.SetBool(isPlayingActionHash, false);
+        }
+
+        private void cancelPowerUp2(){
+            animator.SetBool("PowerUp2", false);
+            animator.SetBool(isPlayingActionHash, false);
+        }
 
         private void HandleSpinAttack(InputAction.CallbackContext context)
         {
@@ -161,7 +245,7 @@ namespace SG{
                     animator.SetBool(isAttackingHash, true);
                     
                     // Activate the attack camera and sync transforms
-                    CameraOn();
+                    // CameraOn();
                 }
                 else
                 {
@@ -214,6 +298,31 @@ namespace SG{
             {
                 _playerState.SetPlayerAttackState(PlayerAttackState.Idling);
             }
+        }
+
+        private void HandleTwoHandAttack(InputAction.CallbackContext context)
+        {
+            if (context.performed && twoHandClubLocked == false)
+            {
+                if (attributesManager.UseStamina(staminaCostPerAttack))
+                {
+                    Debug.Log("Two-Hand Attack Triggered");
+                    animator.SetBool("TwoHandAttack", true);
+                    animator.SetBool(isPlayingActionHash, true);
+
+                    // Update player state
+                    _playerState.SetPlayerAttackState(PlayerAttackState.Attacking);
+                }
+                else
+                {
+                    Debug.Log("Not enough stamina for two-hand attack.");
+                }
+            }
+        }
+
+        private void cancelTwoHandAttack(){
+            animator.SetBool("TwoHandAttack", false);
+            animator.SetBool(isPlayingActionHash, false);
         }
 
 
@@ -333,17 +442,33 @@ namespace SG{
 
         }
 
-
-
         private void OnEnable()
         {
             inputActions.Enable();
+            Skill.OnSkillUnlocked += Skill_OnSkillUnlocked;
         }
 
         private void OnDisable()
         {
             inputActions.Disable();
+            Skill.OnSkillUnlocked -= Skill_OnSkillUnlocked;
         }
+
+        private bool powerUpLocked = true;
+        private bool twoHandClubLocked = true;
+
+        private void Skill_OnSkillUnlocked(Skill.SkillName skillName)
+        {
+            if (skillName == Skill.SkillName.PowerUpAction)
+            {
+                powerUpLocked = false;
+            }
+            else if (skillName == Skill.SkillName.TwoHandClubComboAction)
+            {
+                twoHandClubLocked = false;
+            }
+        }
+
         public void CameraOn()
         {
             // If the player is locking on, do nothing
@@ -383,6 +508,10 @@ namespace SG{
             animator.SetBool(spinningAttackHash, false);
         }
 
+        public void cancelSpinAttack(){
+            isSpinAttackActive = false;
+            animator.SetBool(spinningAttackHash, false);
+        }
 
 
         public void SyncCameraWithActiveOne(Cinemachine.CinemachineVirtualCamera activeCamera, Cinemachine.CinemachineVirtualCamera otherCamera)

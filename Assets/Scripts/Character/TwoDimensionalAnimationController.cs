@@ -120,7 +120,6 @@ namespace SG{
         [Header("References")]
         [SerializeField] private Transform idleTransform;
         [SerializeField] private Transform cameraTransform;
-        public CinemachineVirtualCamera mainVC;
 
         [Header("Rotation Settings")]
         [SerializeField] private float rotationSpeed = 10f;
@@ -214,6 +213,11 @@ namespace SG{
         }
 
         #endregion
+        private CinemachinePOV mainCamPov;  // reference to your main camera's POV
+        public CinemachineVirtualCamera mainVC;
+
+// e.g. in Awake/Start:
+
         private void Awake()
         {
             inputActions = new GameDevCW();
@@ -245,6 +249,7 @@ namespace SG{
             attributesManager = GetComponent<PlayerAttributesManager>();
             _playerState = GetComponent<PlayerState>();
             playerLockOn = GetComponent<PlayerLockOn>();
+            mainCamPov = mainVC.GetCinemachineComponent<CinemachinePOV>();
 
             if (attributesManager) {
                 Debug.Log("Inventory Manager found");
@@ -368,7 +373,6 @@ namespace SG{
             
             // HandleRotation();
             Movement();
-            HandleMovement();
             UpdateAnimatorParameters();
             UpdateMovementState();
         }
@@ -440,30 +444,134 @@ namespace SG{
             );
         }
 
-        private void HandleRotation()
+        private bool wasLocked; // Tracks if the player was previously locked on
+        [SerializeField] private float verticalClampMin = -80f;
+        [SerializeField] private float verticalClampMax = 80f;
+        [SerializeField] private float lockOnRotationSpeed = 5f;
+        // Tracks the current yaw and pitch
+        private float currentYaw;
+        private float currentPitch;
+        private float oldPitch;
+        private float oldYaw;
+        // Add this variable at the top of the class to track the lock-on state change
+
+
+        private bool hasPrintedTransformAfterLocking = false;
+
+       private void HandleRotation()
         {
-            if (cameraTransform == null || InventoryVisible) return;
+            // Safety check
+            if (cameraTransform == null || InventoryVisible) 
+                return;
 
             if (playerLockOn != null && playerLockOn.IsTargetLocked && playerLockOn.CurrentTarget != null)
             {
-                // When locked on, align player and camera with the target
-                Vector3 directionToTarget = playerLockOn.CurrentTarget.transform.position - idleTransform.position;
-                directionToTarget.y = 0; // Keep rotation on horizontal plane
-
-                if (directionToTarget != Vector3.zero)
+                // --- Lock-On Logic ---
+                Vector3 horizontalDirection = playerLockOn.CurrentTarget.transform.position - transform.position;
+                horizontalDirection.y = 0; // Rotate player horizontally
+                if (horizontalDirection != Vector3.zero)
                 {
-                    Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                    transform.rotation = Quaternion.LookRotation(horizontalDirection, Vector3.up);
                 }
+
+                // Rotate the camera to look directly at the target (with pitch)
+                Vector3 fullDirection = playerLockOn.CurrentTarget.transform.position - cameraTransform.position;
+                if (fullDirection.sqrMagnitude > 0.001f)
+                {
+                    Quaternion worldRotation = Quaternion.LookRotation(fullDirection, Vector3.up);
+                    
+                    // Override Cinemachine camera rotation
+                    OverrideCinemachineRotation(playerLockOn.mainVC, worldRotation);
+
+                    // Update local rotation for cameraTransform
+                    cameraTransform.localRotation = Quaternion.Inverse(transform.rotation) * worldRotation;
+
+                    // Print the transform once after locking
+                    if (!hasPrintedTransformAfterLocking)
+                    {
+                        print($"Transform after locking: {playerLockOn.mainVC.transform.localRotation}");
+                        hasPrintedTransformAfterLocking = true; // Ensure it's printed only once
+                    }
+                }
+
+                wasLocked = true;
             }
             else
             {
-                // Normal rotation when not locked on
-                float mouseX = lookInput.x * rotationSpeed * Time.deltaTime;
-                targetRotation += mouseX * 60f;
-                transform.rotation = Quaternion.Euler(0f, targetRotation, 0f);
+                // --- Transition Logic ---
+                if (wasLocked)
+                {
+                    // Step 1: Capture and Apply Final Lock-On Rotation
+                    Quaternion lockOnFinalRotation = playerLockOn.lockOnCamera.transform.rotation;
+
+                    // Override Cinemachine camera rotation to the final lock-on rotation
+                    OverrideCinemachineRotation(playerLockOn.mainVC, lockOnFinalRotation);
+
+                    // Apply the lock-on camera's final world rotation as local rotation
+                    cameraTransform.localRotation = Quaternion.Inverse(transform.rotation) * lockOnFinalRotation;
+
+                    print("Captured lock-on final rotation: " + lockOnFinalRotation);
+                    print("Lock-on world rotation: " + playerLockOn.lockOnCamera.transform.rotation);
+                    print("Lock-on local rotation: " + cameraTransform.localRotation);
+
+                    // Optional: Smoothly blend to free-look
+                    Quaternion targetRotation = Quaternion.Euler(0f, cameraTransform.eulerAngles.y, 0f);
+                    transform.rotation = Quaternion.Slerp(
+                        transform.rotation,
+                        targetRotation,
+                        rotationSpeed * Time.deltaTime
+                    );
+
+                    if (Quaternion.Angle(transform.rotation, targetRotation) < 1f)
+                        wasLocked = false;
+                    print($"Transform after unlocking: {playerLockOn.mainVC.transform.localRotation}");
+                }
+
+                // --- Free-Look Logic ---
+                if (!wasLocked)
+                {
+                    hasPrintedTransformAfterLocking = false; // Reset the flag after leaving lock-on
+
+                    float mouseX = lookInput.x * rotationSpeed * Time.deltaTime;
+                    currentYaw += mouseX * 60f; 
+                    transform.rotation = Quaternion.Euler(0f, currentYaw, 0f);
+
+                    float mouseY = lookInput.y * rotationSpeed * Time.deltaTime;
+                    currentPitch -= mouseY * 60f;
+                    currentPitch = Mathf.Clamp(currentPitch, verticalClampMin, verticalClampMax);
+
+                    cameraTransform.localRotation = Quaternion.Euler(currentPitch, 0f, 0f);
+                }
             }
         }
+
+        private void OverrideCinemachineRotation(CinemachineVirtualCamera vCam, Quaternion newRotation, bool reattach = true)
+        {
+            // Temporarily detach LookAt and Follow
+            Transform originalLookAt = vCam.LookAt;
+            Transform originalFollow = vCam.Follow;
+
+            vCam.LookAt = null;
+            vCam.Follow = originalFollow;
+
+            // Manually set the rotation
+            vCam.enabled = false;
+            // Set the rotation
+            vCam.transform.rotation = newRotation;
+            // Re-enable
+            vCam.enabled = true;
+
+            // Optionally reattach LookAt and Follow targets
+            if (reattach)
+            {
+                vCam.Follow = originalFollow;
+                vCam.LookAt = originalLookAt;
+
+                // Reapply the rotation after reattaching
+                vCam.transform.rotation = newRotation;
+            }
+        }
+
 
         private void Movement(){
             // Determine current maximum velocities based on sprinting
@@ -566,6 +674,7 @@ namespace SG{
 
         private void LateUpdate()
         {
+            
             HandleRotation(); // Update camera and player rotation
         }
 
@@ -574,7 +683,10 @@ namespace SG{
             CheckGrounded();
             ClampVerticalVelocity();
             PreventSliding();
+            Movement();
+            HandleMovement(); // your rb.MovePosition in here
         }
+
         
         [SerializeField] private CinemachineVirtualCamera virtualCamera; // Reference to the virtual camera
 
@@ -661,12 +773,13 @@ namespace SG{
             }
         }
 
-        [SerializeField] private float dodgeDistance = 0.5f; // Distance to move during a dodge
-        [SerializeField] private float dodgeDuration = 0.5f; // Time it takes to complete the dodge
-        [SerializeField] private float dodgeForce = 0.4f; // Force applied for dodges
-        [SerializeField] private float dodgeStaminaCost = 10f;
-        [SerializeField] private float dodgeCooldown = 0.2f;
-       private bool canDodge = true; // Tracks whether the player is allowed to dodge right now
+        [SerializeField] private float dodgeDistance = 0.75f; // Reduced by half (was 3.0f)
+        [SerializeField] private float dodgeDuration = 0.075f; // Reduced by half (was 0.3f)
+        [SerializeField] private float dodgeForce = 2.5f; // Adjusted proportionally to fit the reduced distance
+        [SerializeField] private float dodgeStaminaCost = 10f; // Optional: lower stamina cost if desired
+        [SerializeField] private float dodgeCooldown = 0.4f; // Slightly shorter cooldown to match reduced dodge
+
+        private bool canDodge = true; // Tracks whether the player can dodge
 
         private void HandleDodge(Vector3 direction, string animationHash)
         {

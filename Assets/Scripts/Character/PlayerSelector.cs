@@ -2,15 +2,16 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 
-namespace SG{
-
+namespace SG
+{
     public class PlayerSelector : MonoBehaviour
     {
         [SerializeField] private Camera playerCamera; // The camera used for raycasting
         [SerializeField] private float maxRaycastDistance = 5f; // Max distance for raycasting
         [SerializeField] private TextMeshProUGUI interactableNameUI; // UI element to display the name of the interactable
+        [SerializeField] private PopupMessageManager popupMessageManager; // Reference to the PopupMessageManager
         private GameDevCW inputActions; // Input action class reference
-        private PlayerAttributesManager playerAttributesManager; // The player attributes managerplayerAttributesManager; // The player attributes managerplayerAttributesManager; // The player attributes manager
+        private PlayerAttributesManager playerAttributesManager; // The player attributes manager
 
         private void Awake()
         {
@@ -54,11 +55,11 @@ namespace SG{
                     interactableNameUI.text = "";
                 }
 
-                Collectible collectible = hit.collider.GetComponent<Collectible>();
+                CollectibleData collectible = hit.collider.GetComponent<CollectibleData>();
                 if (collectible != null)
                 {
-                    // Display the name of the interactable chest on the UI
-                    interactableNameUI.text = collectible.displayName;
+                    // Display the name of the collectible on the UI
+                    interactableNameUI.text = collectible.collectible.displayName;
                 }
                 else
                 {
@@ -67,7 +68,7 @@ namespace SG{
             }
             else
             {
-                // Clear the UI if no chest is hit
+                // Clear the UI if no chest or collectible is hit
                 interactableNameUI.text = "";
             }
         }
@@ -80,19 +81,30 @@ namespace SG{
             if (Physics.Raycast(ray, out hit, maxRaycastDistance))
             {
                 InteractiveChest chest = hit.collider.GetComponent<InteractiveChest>();
-                
+
                 if (chest != null)
                 {
                     chest.OnSelect();
                 }
-                
-                Collectible collectible = hit.collider.GetComponent<Collectible>();
+
+                CollectibleData collectible = hit.collider.GetComponent<CollectibleData>();
                 if (collectible != null)
                 {
-                    playerAttributesManager.InventoryManager.Add(collectible.GetCollectible(), 1);
-                    Destroy(collectible);
+                    print("collectible found");
+                    // Add the collectible to the inventory
+                    if (popupMessageManager != null)
+                    {
+                        popupMessageManager.ShowPopup(collectible.collectible.GetCollectible());
+                    }
+                    playerAttributesManager.InventoryManager.Add(collectible.collectible.GetCollectible(), 1);
+
+
+
+                    // Destroy the associated GameObject
+                    Destroy(hit.collider.gameObject);
                 }
             }
         }
+
     }
 }

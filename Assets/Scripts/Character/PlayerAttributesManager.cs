@@ -257,6 +257,8 @@ namespace SG
                 LevelUp();
             }
         }
+        public event Action<int> OnLevelChanged;
+
         public void LevelUp()
         {
             CurrentXP -= XPToNextLevel;
@@ -275,6 +277,7 @@ namespace SG
 
             // Recalculate derived attributes
             RecalculateAttributes();
+            OnLevelChanged?.Invoke(CurrentLevel);
 
             Debug.Log($"Leveled up! Current Level: {CurrentLevel}. XP for next level: {XPToNextLevel}");
         }
@@ -301,7 +304,115 @@ namespace SG
 
             Debug.Log("Attributes recalculated based on level and stats.");
         }
+       #region Events for Attribute Boosts
+        // For the "all attributes" 5-point boost over 30s
+        public event Action<float> OnAllAttributesBoostCountdownChanged; // Time left
+        public event Action OnAllAttributesBoostEnded;                   // Boost ended
 
+        // For the "strength only" 10-point boost over 15s
+        public event Action<float> OnStrengthBoostCountdownChanged; 
+        public event Action OnStrengthBoostEnded;
+        #endregion
+
+        /// <summary>
+        /// Temporarily boosts all attributes by 5 points for 30 seconds.
+        /// </summary>
+        public void BoostAllAttributesTemporarily()
+        {
+            // Store the original attribute values
+            float originalStrength = Strength;
+            float originalAgility = Agility;
+            float originalEndurance = Endurance;
+            float originalIntelligence = Intelligence;
+
+            // Apply the temporary boost
+            Strength += 5f;
+            Agility += 5f;
+            Endurance += 5f;
+            Intelligence += 5f;
+
+            // Recalculate attributes and start the timer
+            RecalculateAttributes();
+            Debug.Log("All attributes boosted by 5 points for 30 seconds.");
+
+            StartCoroutine(BoostAllAttributesCoroutine(
+                30f,
+                originalStrength,
+                originalAgility,
+                originalEndurance,
+                originalIntelligence
+            ));
+        }
+
+        private IEnumerator BoostAllAttributesCoroutine(
+            float duration,
+            float originalStrength,
+            float originalAgility,
+            float originalEndurance,
+            float originalIntelligence
+        )
+        {
+            float timeLeft = duration;
+            while (timeLeft > 0f)
+            {
+                // Notify subscribers how many seconds remain
+                OnAllAttributesBoostCountdownChanged?.Invoke(timeLeft);
+
+                yield return null; 
+                timeLeft -= Time.deltaTime;
+            }
+
+            // Boost has ended
+            OnAllAttributesBoostEnded?.Invoke();
+
+            // Reset attributes to their original values
+            Strength = originalStrength;
+            Agility = originalAgility;
+            Endurance = originalEndurance;
+            Intelligence = originalIntelligence;
+
+            RecalculateAttributes();
+            Debug.Log("All attributes reverted to their original values.");
+        }
+
+        /// <summary>
+        /// Temporarily grants 10 additional points of strength for 15 seconds.
+        /// </summary>
+        public void GrantTemporaryStrengthBoost()
+        {
+            // Store the original strength value
+            float originalStrength = Strength;
+
+            // Apply the temporary boost
+            Strength += 10f;
+
+            // Recalculate attributes and start the timer
+            RecalculateAttributes();
+            Debug.Log("Strength boosted by 10 points for 15 seconds.");
+
+            StartCoroutine(BoostStrengthCoroutine(15f, originalStrength));
+        }
+
+        private IEnumerator BoostStrengthCoroutine(float duration, float originalStrength)
+        {
+            float timeLeft = duration;
+            while (timeLeft > 0f)
+            {
+                // Notify subscribers how many seconds remain
+                OnStrengthBoostCountdownChanged?.Invoke(timeLeft);
+
+                yield return null;
+                timeLeft -= Time.deltaTime;
+            }
+
+            // Strength boost ended
+            OnStrengthBoostEnded?.Invoke();
+
+            // Reset strength to its original value
+            Strength = originalStrength;
+            RecalculateAttributes();
+            Debug.Log("Strength reverted to its original value.");
+        }
 
         #region Exploration and Survival Attributes
         public float TorchFuel { get; set; } = 100f;

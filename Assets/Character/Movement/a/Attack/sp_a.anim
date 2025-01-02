@@ -29664,9 +29664,9 @@ AnimationClip:
     m_LoopBlendPositionY: 0
     m_LoopBlendPositionXZ: 0
     m_KeepOriginalOrientation: 0
-    m_KeepOriginalPositionY: 1
+    m_KeepOriginalPositionY: 0
     m_KeepOriginalPositionXZ: 0
-    m_HeightFromFeet: 0
+    m_HeightFromFeet: 1
     m_Mirror: 0
   m_EditorCurves:
   - serializedVersion: 2
@@ -58126,7 +58126,14 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
-    functionName: CameraOn
+    functionName: CameraOff
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.16666667
+    functionName: PlayGrunt3Clip
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
@@ -58134,6 +58141,13 @@ AnimationClip:
     messageOptions: 0
   - time: 0.43333334
     functionName: PlaySpinAttackWhooshClip
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.1333333
+    functionName: cancelSpinAttack
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

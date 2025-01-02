@@ -283,17 +283,47 @@ namespace SlimUI.ModernMenu{
 		}
 
 		public void NormalDifficulty (){
+			difficultyeasytextLINE.gameObject.SetActive(false);
+			difficultyadvancedtextLINE.gameObject.SetActive(false);
 			difficultyhardcoretextLINE.gameObject.SetActive(false);
 			difficultynormaltextLINE.gameObject.SetActive(true);
+			PlayerPrefs.SetInt("EasyDifficulty",0);
 			PlayerPrefs.SetInt("NormalDifficulty",1);
+			PlayerPrefs.SetInt("AdvancedDifficulty",0);
 			PlayerPrefs.SetInt("HardCoreDifficulty",0);
 		}
 
 		public void HardcoreDifficulty (){
+			difficultyeasytextLINE.gameObject.SetActive(false);
+			difficultyadvancedtextLINE.gameObject.SetActive(false);
 			difficultyhardcoretextLINE.gameObject.SetActive(true);
 			difficultynormaltextLINE.gameObject.SetActive(false);
+			PlayerPrefs.SetInt("EasyDifficulty",0);
 			PlayerPrefs.SetInt("NormalDifficulty",0);
+			PlayerPrefs.SetInt("AdvancedDifficulty",0);
 			PlayerPrefs.SetInt("HardCoreDifficulty",1);
+		}
+
+		public void EasyDifficulty (){
+			difficultyeasytextLINE.gameObject.SetActive(true);
+			difficultyadvancedtextLINE.gameObject.SetActive(false);
+			difficultyhardcoretextLINE.gameObject.SetActive(false);
+			difficultynormaltextLINE.gameObject.SetActive(false);
+			PlayerPrefs.SetInt("EasyDifficulty",1);
+			PlayerPrefs.SetInt("NormalDifficulty",0);
+			PlayerPrefs.SetInt("AdvancedDifficulty",0);
+			PlayerPrefs.SetInt("HardCoreDifficulty",0);
+		}
+
+		public void AdvancedDifficulty (){
+			difficultyeasytextLINE.gameObject.SetActive(false);
+			difficultyadvancedtextLINE.gameObject.SetActive(true);
+			difficultyhardcoretextLINE.gameObject.SetActive(false);
+			difficultynormaltextLINE.gameObject.SetActive(false);
+			PlayerPrefs.SetInt("EasyDifficulty",0);
+			PlayerPrefs.SetInt("NormalDifficulty",0);
+			PlayerPrefs.SetInt("AdvancedDifficulty",1);
+			PlayerPrefs.SetInt("HardCoreDifficulty",0);
 		}
 
 		public void ShadowsOff (){

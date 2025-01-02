@@ -29,6 +29,8 @@ public class LockOnNode : Node
 
     public override State Evaluate()
     {
+
+
         // 1) If we got hit, stop
         if (animator.GetBool("enemyHit"))
         {
@@ -43,8 +45,23 @@ public class LockOnNode : Node
         enemyAgent.transform.rotation = Quaternion.Slerp(
             enemyAgent.transform.rotation,
             targetRotation,
-            Time.deltaTime * 4f
+            Time.deltaTime * 10f
         );
+
+        if(enemyAI.isComboAttacking){
+            // Gradually adjust velocity to idle
+            velocityX = animator.GetFloat("velocityX");
+            velocityY = animator.GetFloat("velocityY");
+
+            velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
+            velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
+
+            animator.SetFloat("velocityX", velocityX);
+            animator.SetFloat("velocityY", velocityY);
+            node_state = State.SUCCESS;
+            return node_state;
+        }
+
 
         // 2) If currently attacking, do nothing else
         if (enemyAI.isAttacking)
@@ -54,7 +71,7 @@ public class LockOnNode : Node
             velocityY = animator.GetFloat("velocityY");
 
             velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
-            velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
+            velocityY = Mathf.Lerp(velocityY, 0.5f, Time.deltaTime * 2f);
 
             animator.SetFloat("velocityX", velocityX);
             animator.SetFloat("velocityY", velocityY);
@@ -76,21 +93,19 @@ public class LockOnNode : Node
             velocityY = animator.GetFloat("velocityY");
 
             velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
-            velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
+            velocityY = Mathf.Lerp(velocityY, 0.5f, Time.deltaTime * 2f);
 
             animator.SetFloat("velocityX", velocityX);
             animator.SetFloat("velocityY", velocityY);
-
-            // if (Mathf.Abs(velocityX) < 0.01f && Mathf.Abs(velocityY) < 0.01f)
-            // {
-            //     node_state = State.SUCCESS;
-            //     return node_state;
-            // }
 
             node_state = State.SUCCESS;
             return node_state;
         }
         
+
+
+        enemyAgent.isStopped=true;
+        enemyAgent.ResetPath();
 
         // 5) Determine front vs. left vs. right via dot products
         float dotForward = Vector3.Dot(enemyAgent.transform.forward, toPlayer);
@@ -102,12 +117,12 @@ public class LockOnNode : Node
         //   Left  otherwise
         float moveSpeed = 2f; // Adjust strafe/walk speed as desired
 
-        if (dotForward > 0.5f && !(enemyAI.attackSensor.objects.Count > 0))
+        if (dotForward > 0.7f && !(enemyAI.attackSensor.objects.Count > 0))
         {
-            // Debug.LogError("Moving forward");
+            Debug.LogError("Moving forward");
             // Gradually adjust velocityY to move forward
-            velocityY = Mathf.Lerp(velocityY, 0.5f, Time.deltaTime * 4f);
-            velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 4f);
+            velocityY = Mathf.Lerp(velocityY, 0.5f, Time.deltaTime * 10f);
+            velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 10f);
 
             // Move forward in local space
             enemyAgent.transform.position += enemyAgent.transform.forward * moveSpeed * Time.deltaTime;
@@ -116,8 +131,8 @@ public class LockOnNode : Node
         {
             // Debug.LogError("Moving right");
             // Gradually adjust velocityX for strafing right
-            velocityX = Mathf.Lerp(velocityX, 0.5f, Time.deltaTime * 4f);
-            velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 4f);
+            velocityX = Mathf.Lerp(velocityX, 0.5f, Time.deltaTime * 10f);
+            velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 10f);
 
             // Strafe right
             enemyAgent.transform.position += enemyAgent.transform.right * moveSpeed * Time.deltaTime;
@@ -126,8 +141,8 @@ public class LockOnNode : Node
         {
             // Debug.LogError("Moving left");
             // Gradually adjust velocityX for strafing left
-            velocityX = Mathf.Lerp(velocityX, -0.5f, Time.deltaTime * 4f);
-            velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 4f);
+            velocityX = Mathf.Lerp(velocityX, -0.5f, Time.deltaTime * 10f);
+            velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 10f);
 
             // Strafe left
             enemyAgent.transform.position -= enemyAgent.transform.right * moveSpeed * Time.deltaTime;
@@ -137,9 +152,6 @@ public class LockOnNode : Node
         animator.SetFloat("velocityX", velocityX);
         animator.SetFloat("velocityY", velocityY);
 
-
-
-        
         // 8) Default
         node_state = State.FAILURE;
         return node_state;

@@ -13,7 +13,7 @@ public class DamagedNode : Node
     private bool hitReactionTriggered = false;
     private Vector3 dodgeDestination;
     private float dodgeSpeed = 10f;
-
+   
     public DamagedNode(EnemyAIController enemyAI, Animator animator, NavMeshAgent enemyAgent)
     {
         this.enemyAI = enemyAI;
@@ -24,6 +24,7 @@ public class DamagedNode : Node
 
     public override State Evaluate()
     {
+        
         if (!hitReactionTriggered && enemyAI.getHealth() < previousEnemyHealth)
         {
             // Update the previous health value
@@ -59,6 +60,9 @@ public class DamagedNode : Node
                 dodgeDestination = hit.position;
                 animator.SetInteger("DodgeIndex", 1); // Dodge backwards
                 isDodging = true;
+
+                // Rotate the enemy by 90 degrees on the Y-axis
+                enemyAgent.transform.Rotate(0f, 90f, 0f);
             }
             else if (NavMesh.SamplePosition(enemyAgent.transform.position + left * 5f, out hit, 10f, NavMesh.AllAreas))
             {

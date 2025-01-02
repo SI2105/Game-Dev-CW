@@ -61,7 +61,6 @@ public class EnemyLockOnSensor : MonoBehaviour
 
         if (Physics.Linecast(origin, dest, occlusionLayers))
         {
-            Debug.LogError("Physics collision");
             return false;
         }
        

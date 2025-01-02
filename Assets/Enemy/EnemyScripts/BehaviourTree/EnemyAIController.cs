@@ -17,6 +17,8 @@ public class EnemyAIController : MonoBehaviour
     public EnemyWallSensor wall_sensor;
     public EnemyLockOnSensor lockOnSensor;
     public EnemyAttackSensor attackSensor;
+    public bool isComboAttacking{get;set;}
+    public bool shouldRoar{get;set;}
     
     public bool shouldDodge{get;set;}
 
@@ -138,6 +140,9 @@ public class EnemyAIController : MonoBehaviour
         //Sequence node for attacks 1
         SequenceNode attacks1 = new SequenceNode(new List<Node> {isInChasingRange, hasAttacks1Health, playerLockNode, attackNode1});
 
+        //Sequence node for attacks 1
+        SequenceNode attacks2 = new SequenceNode(new List<Node> {isInChasingRange, healthNode, playerLockNode, attackNode2});
+
         //Sequence node for death
         SequenceNode enemyDeath = new SequenceNode(new List<Node> {deathHealthNode, deathNode});
 
@@ -145,7 +150,7 @@ public class EnemyAIController : MonoBehaviour
         SelectorNode block_dodge = new SelectorNode(new List<Node> {blockNode, dodgeNode});
 
         //selector node for root node of behaviour tree
-        topNode= new SelectorNode(new List<Node> {damagedNode, patrollingSequence, attacks1, enemyDeath, block_dodge});
+        topNode= new SelectorNode(new List<Node> {damagedNode, patrollingSequence, attacks1, attacks2, enemyDeath, block_dodge});
     }
 
     //getter for the current enemy health
@@ -181,6 +186,7 @@ public class EnemyAIController : MonoBehaviour
         animator.SetBool("IsRoaring", false);
         audio_controller.stopSound();
         isRoaring=false;
+        shouldRoar=false;
     }
 
     private void stopReaction(){
@@ -196,10 +202,15 @@ public class EnemyAIController : MonoBehaviour
         isAttacking=false;
     }
 
-    private void stopDodge(){
-        animator.SetInteger("DodgeIndex", -1);
+    private void stopCombo(){
+        isComboAttacking=false;
     }
 
+    private void stopDodge(){
+        animator.SetInteger("DodgeIndex", -1);
+        shouldDodge=false;
+        shouldRoar=true;
+    }
 
     //method for initiating the death of the enemy
     public bool Die(){

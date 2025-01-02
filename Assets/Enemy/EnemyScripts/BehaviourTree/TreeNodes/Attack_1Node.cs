@@ -34,6 +34,7 @@ public class Attack_1Node : Node
         {
             if (!(enemyAI.attackSensor.objects.Count > 0)) // Hysteresis for >6f condition
             {
+                Debug.LogError("Attacking and Surging");
                 enemyAI.isAttacking = true;
                 animator.SetBool("IsPlayingAction", true);
                 // Calculate the direction vector from enemy to player

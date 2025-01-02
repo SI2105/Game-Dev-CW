@@ -8,6 +8,8 @@ public class PlayerLockOn : MonoBehaviour
     public float lockOnAngle = 45f;
     public Transform playerTransform;
     public CinemachineVirtualCamera lockOnCamera;
+    public CinemachineVirtualCamera mainVC;
+    public Camera camera;
     
     private GameObject currentTarget;
     private bool targetLocked;
@@ -26,6 +28,7 @@ public class PlayerLockOn : MonoBehaviour
             if (lockOnCamera != null)
             {
                 lockOnCamera.Priority = 0;
+                mainVC.Priority = 60;
             }
             Debug.Log("Target unlocked.");
             return;
@@ -58,8 +61,9 @@ public class PlayerLockOn : MonoBehaviour
             targetLocked = true;
             if (lockOnCamera != null)
             {
-                lockOnCamera.Priority = 10;
+                lockOnCamera.Priority = 60;
                 lockOnCamera.LookAt = currentTarget.transform;
+                mainVC.Priority = 0;
             }
             Debug.Log($"Locked onto {currentTarget.name}");
         }
@@ -68,4 +72,39 @@ public class PlayerLockOn : MonoBehaviour
             Debug.Log("No enemy found within range.");
         }
     }
+    private void TransferRotationToPOV()
+    {
+        // 1) Make sure cameras are valid
+        if (lockOnCamera == null || mainVC == null) return;
+        print("TransferRotationToPOV");
+        // 2) Get the lock-on camera's world rotation
+        Quaternion lockOnRotation = lockOnCamera.transform.rotation;
+        Vector3 eulers = lockOnRotation.eulerAngles;
+        
+        // 3) Grab the POV component from the main camera
+        CinemachinePOV pov = mainVC.GetCinemachineComponent<CinemachinePOV>();
+        if (pov != null)
+        {
+            // Typically, the CinemachinePOV interprets:
+            //   - m_HorizontalAxis as yaw (around Y)
+            //   - m_VerticalAxis as pitch (around X)
+            // 
+            // We'll do a simple assignment, but you might want
+            // to clamp or adjust angles to match your game logic.
+
+            // Yaw
+            pov.m_HorizontalAxis.Value = eulers.y;  
+            // Pitch
+            pov.m_VerticalAxis.Value   = NormalizeAngle(eulers.x);
+        }
+    }
+
+    // Optional: A helper to bring angles into the -180..180 range
+    private float NormalizeAngle(float angle)
+    {
+        while (angle > 180f) angle -= 360f;
+        while (angle < -180f) angle += 360f;
+        return angle;
+    }
+
 }

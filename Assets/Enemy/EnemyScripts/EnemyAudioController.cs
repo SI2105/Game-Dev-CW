@@ -37,3 +37,14 @@ public class EnemyAudioController : MonoBehaviour
         audioSource.volume = startVolume; // Reset volume for future plays
     }
 }
+
+//sound effects needed
+
+//walking
+//surging
+//normal attack and combo attack
+//hit reaction
+//dodge - jump
+//death
+
+

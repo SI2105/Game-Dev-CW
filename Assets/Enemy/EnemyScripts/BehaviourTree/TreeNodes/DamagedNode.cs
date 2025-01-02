@@ -29,9 +29,8 @@ public class DamagedNode : Node
             // Move manually towards the dodge destination
             Vector3 direction = (dodgeDestination - enemyAgent.transform.position).normalized;
             enemyAgent.transform.position += direction * dodgeSpeed * Time.deltaTime;
-
             // Check if the enemy has reached the dodge destination
-            if (enemyAI.shouldDodge==false)
+            if (Vector3.Distance(enemyAgent.transform.position, dodgeDestination) < 0.1f)
             {
                 // Stop dodging
                 isDodging = false;
@@ -56,34 +55,57 @@ public class DamagedNode : Node
 
         if (hitReactionTriggered && enemyAI.shouldDodge && !isDodging)
         {
-            // Determine the free direction for dodging
             Vector3 backwards = -enemyAgent.transform.forward;
             Vector3 left = -enemyAgent.transform.right;
             Vector3 right = enemyAgent.transform.right;
 
             NavMeshHit hit;
+            Vector3 selectedDirection = Vector3.zero;
+            float maxDistance = 0f;
+            int dodgeIndex = -1;
 
+            // Check each direction and find the farthest valid position
             if (NavMesh.SamplePosition(enemyAgent.transform.position + backwards * 8f, out hit, 10f, NavMesh.AllAreas))
             {
-                // Move backwards as far as possible (up to 5f)
-                dodgeDestination = hit.position;
-                animator.SetInteger("DodgeIndex", 1); // Dodge backwards
-                isDodging = true;
+                float distance = Vector3.Distance(enemyAgent.transform.position, hit.position);
+                if (distance > maxDistance)
+                {
+                    maxDistance = distance;
+                    selectedDirection = hit.position;
+                    dodgeIndex = 1; // Backward
+                }
             }
-            else if (NavMesh.SamplePosition(enemyAgent.transform.position + left * 8f, out hit, 10f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(enemyAgent.transform.position + left * 8f, out hit, 10f, NavMesh.AllAreas))
             {
-                // Move left as far as possible (up to 5f)
-                dodgeDestination = hit.position;
-                animator.SetInteger("DodgeIndex", 2); // Dodge left
-                isDodging = true;
+                float distance = Vector3.Distance(enemyAgent.transform.position, hit.position);
+                if (distance > maxDistance)
+                {
+                    maxDistance = distance;
+                    selectedDirection = hit.position;
+                    dodgeIndex = 2; // Left
+                }
             }
-            else if (NavMesh.SamplePosition(enemyAgent.transform.position + right * 8f, out hit, 10f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(enemyAgent.transform.position + right * 8f, out hit, 10f, NavMesh.AllAreas))
             {
-                // Move right as far as possible (up to 5f)
-                dodgeDestination = hit.position;
-                animator.SetInteger("DodgeIndex", 0); // Dodge right
-                isDodging = true;
+                float distance = Vector3.Distance(enemyAgent.transform.position, hit.position);
+                if (distance > maxDistance)
+                {
+                    maxDistance = distance;
+                    selectedDirection = hit.position;
+                    dodgeIndex = 0; // Right
+                }
             }
+
+            // If a valid direction is found, set up dodging
+            if (maxDistance > 0f && dodgeIndex != -1)
+            {
+                dodgeDestination = selectedDirection;
+                animator.SetInteger("DodgeIndex", dodgeIndex); // Set dodge animation
+                isDodging = true;
+                enemyAgent.updateRotation = false;
+                enemyAgent.SetDestination(dodgeDestination);
+            }
+          
 
             node_state = State.SUCCESS; // Start dodging, return SUCCESS
             return node_state;

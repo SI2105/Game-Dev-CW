@@ -34,12 +34,6 @@ public class EnemyAIController : MonoBehaviour
     //float variable for the current enemy health
     [SerializeField] private float enemyCurrentHealth;
 
-    //threshold for when enemy should start chasing player
-    [SerializeField] private float chasingThreshold;
-
-    //threshold for when player should start attacking
-    [SerializeField] private float attackingThreshold;
-
     //threshold for when low player health threshold
     [SerializeField] private float lowHealthThreshold;
 
@@ -162,16 +156,7 @@ public class EnemyAIController : MonoBehaviour
         return enemyTransform.position;
     }
 
-    //getter method for chasing threshold
-    public float getChasingThreshold(){
-        return chasingThreshold;
-    }
-
-    //getter method for attacking threshold
-    public float getAttackingThreshold(){
-        return attackingThreshold;
-    }
-
+  
     //method for taking damage to be used by player class
     public void takeDamage(float damage){
         enemyCurrentHealth-=damage;

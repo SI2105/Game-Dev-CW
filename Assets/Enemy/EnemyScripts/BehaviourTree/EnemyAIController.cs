@@ -19,7 +19,7 @@ public class EnemyAIController : MonoBehaviour
     public EnemyAttackSensor attackSensor;
     public bool isComboAttacking{get;set;}
     public bool shouldRoar{get;set;}
-    
+    public bool isDodging{get;set;}
     public bool shouldDodge{get;set;}
 
     public bool isRoaring;
@@ -46,7 +46,7 @@ public class EnemyAIController : MonoBehaviour
 
     private NavMeshAgent enemyAgent;
     
-
+    public PlayerState playerState;
     //public field for player transform
     public Transform playerTransform;
 
@@ -61,6 +61,7 @@ public class EnemyAIController : MonoBehaviour
         lockOnSensor=GetComponent<EnemyLockOnSensor>();
         attackSensor=GetComponent<EnemyAttackSensor>();
         audio_controller= GetComponent<EnemyAudioController>();
+        playerState = playerTransform.GetComponent<PlayerState>();
     }
 
     void Start(){
@@ -105,11 +106,8 @@ public class EnemyAIController : MonoBehaviour
         //node for death initation
         DieNode deathNode = new DieNode(this, enemyAgent);
 
-        //node for blocking
-        BlockNode blockNode = new BlockNode(this, 0.5f);
-
         //node for dodging
-        DodgeNode dodgeNode = new DodgeNode(this, 0.5f);
+        DodgeNode dodgeNode = new DodgeNode(this, animator, enemyAgent);
 
         //node for first set of attacks
         Attack_1Node attackNode1 = new Attack_1Node(enemyAgent, this, animator);
@@ -127,7 +125,7 @@ public class EnemyAIController : MonoBehaviour
         DamagedNode damagedNode = new DamagedNode(this, animator, enemyAgent);
 
         //Define Sequence and Selector Nodes in Behaviour Tree
-
+        
         //Invertor node for determing if enemy is in patrolling range
         InverterNode isInPatrollingRange = new InverterNode(isInChasingRange);
 
@@ -147,10 +145,10 @@ public class EnemyAIController : MonoBehaviour
         SequenceNode enemyDeath = new SequenceNode(new List<Node> {deathHealthNode, deathNode});
 
         //selector node for blocking/dodging
-        SelectorNode block_dodge = new SelectorNode(new List<Node> {blockNode, dodgeNode});
+        SequenceNode dodge = new SequenceNode(new List<Node> {isInChasingRange, dodgeNode});
 
         //selector node for root node of behaviour tree
-        topNode= new SelectorNode(new List<Node> {damagedNode, patrollingSequence, attacks1, attacks2, enemyDeath, block_dodge});
+        topNode= new SelectorNode(new List<Node> {enemyDeath, damagedNode, dodge, patrollingSequence, attacks1, attacks2});
     }
 
     //getter for the current enemy health
@@ -209,7 +207,7 @@ public class EnemyAIController : MonoBehaviour
     private void stopDodge(){
         animator.SetInteger("DodgeIndex", -1);
         shouldDodge=false;
-        shouldRoar=true;
+        isDodging=false;
     }
 
     //method for initiating the death of the enemy

@@ -24,7 +24,6 @@ public class DamagedNode : Node
 
     public override State Evaluate()
     {
-
          if (isDodging)
         {
             // Move manually towards the dodge destination
@@ -34,7 +33,6 @@ public class DamagedNode : Node
             // Check if the enemy has reached the dodge destination
             if (enemyAI.shouldDodge==false)
             {
-                Debug.LogError("Dodging stopped");
                 // Stop dodging
                 isDodging = false;
                 hitReactionTriggered = false; // Reset for future reactions
@@ -106,7 +104,6 @@ public class DamagedNode : Node
             return node_state;
         }
 
-    
         node_state = State.FAILURE;
         return node_state;
     }

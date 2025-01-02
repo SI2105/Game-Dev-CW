@@ -75,7 +75,6 @@ public class LockOnNode : Node
 
         if (enemyAI.lockOnSensor.objects.Count > 0) // Lock on if sensor detects the player
         {
-            Debug.LogError("Locked On");
             enemyAgent.isStopped = true;
             enemyAgent.ResetPath();
 
@@ -110,7 +109,6 @@ public class LockOnNode : Node
 
         if (dotForward > 0.7f && !(enemyAI.attackSensor.objects.Count > 0))
         {
-            Debug.LogError("Moving forward");
             // Gradually adjust velocityY to move forward
             velocityY = Mathf.Lerp(velocityY, 0.5f, Time.deltaTime * 10f);
             velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 10f);
@@ -120,7 +118,6 @@ public class LockOnNode : Node
         }
         else if (dotRight > 0f)
         {
-            Debug.LogError("Moving right");
             // Gradually adjust velocityX for strafing right
             velocityX = Mathf.Lerp(velocityX, 0.5f, Time.deltaTime * 10f);
             velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 10f);
@@ -130,7 +127,6 @@ public class LockOnNode : Node
         }
         else
         {
-            Debug.LogError("Moving left");
             // Gradually adjust velocityX for strafing left
             velocityX = Mathf.Lerp(velocityX, -0.5f, Time.deltaTime * 10f);
             velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 10f);

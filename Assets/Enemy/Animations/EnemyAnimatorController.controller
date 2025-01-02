@@ -21,7 +21,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: e486384a8911b4560ac98f8fe13f54c0, type: 2}
+  m_Motion: {fileID: 7400000, guid: 5deaea35011914f97a67ad2abd399249, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -785,7 +785,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Surge
     m_StateMachine: {fileID: -5545798838963073212}
-    m_Mask: {fileID: 31900000, guid: d71fad629e643406cb7111cfae6e8d60, type: 2}
+    m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
@@ -1294,7 +1294,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Standing Dodge Left
-  m_Speed: 1
+  m_Speed: 0.4
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 923803767696260853}
@@ -1307,7 +1307,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: e6b20f4655392485f8a0d2d64c2ddbbe, type: 2}
+  m_Motion: {fileID: 7400000, guid: 5deaea35011914f97a67ad2abd399249, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

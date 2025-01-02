@@ -21,14 +21,12 @@ public class Attack_1Node : Node
 
     public override State Evaluate()
     {
-        Debug.LogError("Stuck in Attack_1Node");
         float currentTime = Time.time;
 
         if (currentTime - lastAttackTime >= attackCooldown)
         {
             if (!(enemyAI.attackSensor.objects.Count > 0)) // Hysteresis for >6f condition
             {
-                Debug.LogError("Attacking and Surging");
                 enemyAI.isAttacking = true;
                 animator.SetBool("IsPlayingAction", true);
                 // Calculate the direction vector from enemy to player

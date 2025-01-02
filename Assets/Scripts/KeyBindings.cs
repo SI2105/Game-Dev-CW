@@ -387,11 +387,6 @@ public class KeyBindings : MonoBehaviour
         StartRebinding("Player/Move", "right", buttonText); 
     }
 
-    public void StartRebindingJump(TMP_Text buttonText)
-    {
-        StartRebinding("Player/Jump", "", buttonText); // Action: Jump, Binding Index: 0
-    }
-
     public void StartRebindingSprint(TMP_Text buttonText)
     {
         StartRebinding("Player/Sprint", "", buttonText); // Action: Sprint, Binding Index: 0
@@ -401,8 +396,8 @@ public class KeyBindings : MonoBehaviour
     {
         StartRebinding("Player/Pause", "", buttonText); // Action: Pause, Binding Index: 0
     }
-
-    public void StartRebindingFire(TMP_Text buttonText)
+ 
+    public void StartRebindingAttack(TMP_Text buttonText)
     {
         // string actionName = "Fire"; 
         // int bindingIndex = 0;
@@ -454,11 +449,36 @@ public class KeyBindings : MonoBehaviour
         //         rebindingOperation = null;
         //     })
         //     .Start();
-        StartRebinding("Player/Fire", "", buttonText); // Action: Inventory, Binding Index: 0
+        StartRebinding("Player/Attack", "", buttonText); // Action: Inventory, Binding Index: 0
     }
 
-    public void StartRebindingInventory(TMP_Text buttonText)
+    public void StartRebindingToggle(TMP_Text buttonText)
     {
-        StartRebinding("Player/Inventory", "", buttonText); // Action: Inventory, Binding Index: 0
+        StartRebinding("Player/ToggleCamera", "", buttonText); // Action: Inventory, Binding Index: 0
+    }
+
+    public void StartRebindingBlock(TMP_Text buttonText)
+    {
+        StartRebinding("Player/Block", "", buttonText); // Action: Inventory, Binding Index: 0
+    }
+
+    public void StartRebindingInteract(TMP_Text buttonText)
+    {
+        StartRebinding("Player/Interact", "", buttonText); // Action: Inventory, Binding Index: 0
+    }
+
+    public void StartRebindingObjective(TMP_Text buttonText)
+    {
+        StartRebinding("Player/Objective", "", buttonText); // Action: Inventory, Binding Index: 0
+    }
+
+    public void StartRebindingLockOn(TMP_Text buttonText)
+    {
+        StartRebinding("Player/LockOn", "", buttonText); // Action: Inventory, Binding Index: 0
+    }
+
+    public void StartRebindingDodge(TMP_Text buttonText)
+    {
+        //StartRebinding("Player/Dodge", "", buttonText); // Action: Inventory, Binding Index: 0
     }
 }

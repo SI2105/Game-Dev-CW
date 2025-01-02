@@ -396,6 +396,11 @@ public class KeyBindings : MonoBehaviour
     {
         StartRebinding("Player/Pause", "", buttonText); // Action: Pause, Binding Index: 0
     }
+
+    public void StartRebindingInventory(TMP_Text buttonText)
+    {
+        StartRebinding("Player/Inventory", "", buttonText);
+    }
  
     public void StartRebindingAttack(TMP_Text buttonText)
     {
@@ -480,5 +485,10 @@ public class KeyBindings : MonoBehaviour
     public void StartRebindingDodge(TMP_Text buttonText)
     {
         //StartRebinding("Player/Dodge", "", buttonText); // Action: Inventory, Binding Index: 0
+    }
+
+    public void StartRebindingSkills(TMP_Text buttonText)
+    {
+        StartRebinding("UI/Skills", "", buttonText); // Action: Inventory, Binding Index: 0
     }
 }

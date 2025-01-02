@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 59e793e0c25684c03a2d596908a00744
+guid: f00f7817743ef4e1987ef3825240fd66
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -22,7 +22,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 3
+    animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -75,30 +75,7 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
-  referencedClips:
-  - dff7e4545b24c4a34869f170b441621b
-  - 2927127b2f9f64d438ea92c0c462cc88
-  - f00f7817743ef4e1987ef3825240fd66
-  - b2aec5e8ff704400f82dd546da912380
-  - de720765cbe3149aa8ecb8edc0ef6946
-  - 5260a59a94d1e448fafd042a53e862ba
-  - bb6529121c5254c8ab6556e547dfdccb
-  - 5eca1d679d1e1455794b91dfa968d54b
-  - c6ad242864889460aa0557b59256ad4d
-  - 8a225ac7f7cd949bfb0524b5028814ff
-  - 2fafad504a63c4544a8e63644dac0262
-  - 3f3e481fefc544b5eaca42a7f5e97777
-  - fad1f7d69f4754f04abeea36e59063bf
-  - 69e0f57cccaf84ac7b8e440d962e5693
-  - 98f3719f1ed1946599ad248fab742099
-  - 4aa7bc4f80a4e428b9e0a8917e6276a2
-  - 227cba11dec364248b5179a455f11cd9
-  - e357bb6821d72411082880ac7e9b59c5
-  - 026b963365f01414c9a7c5ab3cf3dcd2
-  - fdf5138b7f1114c8780d4d28dcb84037
-  - 1348cc8df6dd34a3a9ece63663969008
-  - 91897ce4685ea47d198313c14bc366ef
-  - d7938ea2794994b799bd433f56761301
+  referencedClips: []
   importAnimation: 1
   humanDescription:
     serializedVersion: 3

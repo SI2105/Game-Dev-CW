@@ -21,6 +21,7 @@ public class EnemyAIController : MonoBehaviour
     public bool shouldRoar{get;set;}
     public bool isDodging{get;set;}
     public bool shouldDodge{get;set;}
+    public bool isDead{get;set;}
 
     public bool isRoaring;
 
@@ -104,7 +105,7 @@ public class EnemyAIController : MonoBehaviour
         HealthNode deathHealthNode = new HealthNode(this, 0);
 
         //node for death initation
-        DieNode deathNode = new DieNode(this, enemyAgent);
+        DieNode deathNode = new DieNode(this, enemyAgent, animator);
 
         //node for dodging
         DodgeNode dodgeNode = new DodgeNode(this, animator, enemyAgent);

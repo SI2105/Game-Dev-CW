@@ -152,5 +152,13 @@ namespace SlimUI.ModernMenu
             PlayerPrefs.SetInt("AdvancedDifficulty", IsAdvancedDifficulty ? 1 : 0);
             PlayerPrefs.SetInt("HardCoreDifficulty", IsHardcoreDifficulty ? 1 : 0);
         }
+        
+        public void ApplyMusicVolume(AudioSource audioSource)
+        {
+            if (audioSource != null)
+            {
+                audioSource.volume = MusicVolume;
+            }
+        }
     }
 }

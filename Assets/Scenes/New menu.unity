@@ -12115,7 +12115,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: learnAnimations
+          m_StringArgument: andrej
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &880591734
@@ -12593,11 +12593,11 @@ MonoBehaviour:
   texturehightextLINE: {fileID: 1985421308}
   cameraeffectstext: {fileID: 0}
   difficultyeasyttext: {fileID: 0}
-  difficultyeasytextLINE: {fileID: 0}
+  difficultyeasytextLINE: {fileID: 1177895285}
   difficultynormaltext: {fileID: 0}
   difficultynormaltextLINE: {fileID: 928704097}
   difficultyadvancedtext: {fileID: 0}
-  difficultyadvancedtextLINE: {fileID: 0}
+  difficultyadvancedtextLINE: {fileID: 35565661}
   difficultyhardcoretext: {fileID: 0}
   difficultyhardcoretextLINE: {fileID: 1574980}
   musicSlider: {fileID: 1141395588}

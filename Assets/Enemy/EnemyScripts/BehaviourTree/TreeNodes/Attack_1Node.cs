@@ -21,13 +21,7 @@ public class Attack_1Node : Node
 
     public override State Evaluate()
     {
-        if (animator.GetBool("enemyHit") == true)
-        {
-            enemyAgent.isStopped = true;
-            node_state = State.FAILURE;
-            return State.FAILURE;
-        }
-
+        Debug.LogError("Stuck in Attack_1Node");
         float currentTime = Time.time;
 
         if (currentTime - lastAttackTime >= attackCooldown)

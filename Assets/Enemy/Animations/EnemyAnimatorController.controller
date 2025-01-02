@@ -122,7 +122,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Standing Dodge Backward
-  m_Speed: 1
+  m_Speed: 0.4
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -6807004316755279694}
@@ -135,7 +135,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 86e8bc6aa8ff643b1bbc97e2ffb994df, type: 2}
+  m_Motion: {fileID: 7400000, guid: 5deaea35011914f97a67ad2abd399249, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -504,7 +504,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Mutant Swiping Left
-  m_Speed: 2
+  m_Speed: 0.9
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 6949278075643860737}

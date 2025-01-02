@@ -12,7 +12,7 @@ public class DamagedNode : Node
     private bool isDodging = false;
     private bool hitReactionTriggered = false;
     private Vector3 dodgeDestination;
-    private float dodgeSpeed = 10f;
+    private float dodgeSpeed = 3f;
    
     public DamagedNode(EnemyAIController enemyAI, Animator animator, NavMeshAgent enemyAgent)
     {
@@ -24,20 +24,31 @@ public class DamagedNode : Node
 
     public override State Evaluate()
     {
-        
-        if (!hitReactionTriggered && enemyAI.getHealth() < previousEnemyHealth)
+
+         if (isDodging)
         {
-            // Update the previous health value
-            previousEnemyHealth = enemyAI.getHealth();
+            // Move manually towards the dodge destination
+            Vector3 direction = (dodgeDestination - enemyAgent.transform.position).normalized;
+            enemyAgent.transform.position += direction * dodgeSpeed * Time.deltaTime;
 
-            // Trigger the hit reaction
-            animator.SetBool("enemyHit", true);
-            animator.SetBool("IsPlayingAction", true);
-
-            hitReactionTriggered = true;
-            node_state = State.SUCCESS; // Indicate the hit reaction started
-            return node_state;
+            // Check if the enemy has reached the dodge destination
+            if (enemyAI.shouldDodge==false)
+            {
+                Debug.LogError("Dodging stopped");
+                // Stop dodging
+                isDodging = false;
+                hitReactionTriggered = false; // Reset for future reactions
+                enemyAgent.ResetPath();
+                node_state = State.FAILURE; // Dodge complete, return FAILURE
+                return node_state;
+            }
+            else
+            {
+                node_state = State.SUCCESS; // Still dodging, return SUCCESS
+                return node_state;
+            }
         }
+
 
         if (hitReactionTriggered && !enemyAI.shouldDodge)
         {
@@ -54,24 +65,21 @@ public class DamagedNode : Node
 
             NavMeshHit hit;
 
-            if (NavMesh.SamplePosition(enemyAgent.transform.position + backwards * 5f, out hit, 10f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(enemyAgent.transform.position + backwards * 8f, out hit, 10f, NavMesh.AllAreas))
             {
                 // Move backwards as far as possible (up to 5f)
                 dodgeDestination = hit.position;
                 animator.SetInteger("DodgeIndex", 1); // Dodge backwards
                 isDodging = true;
-
-                // Rotate the enemy by 90 degrees on the Y-axis
-                enemyAgent.transform.Rotate(0f, 90f, 0f);
             }
-            else if (NavMesh.SamplePosition(enemyAgent.transform.position + left * 5f, out hit, 10f, NavMesh.AllAreas))
+            else if (NavMesh.SamplePosition(enemyAgent.transform.position + left * 8f, out hit, 10f, NavMesh.AllAreas))
             {
                 // Move left as far as possible (up to 5f)
                 dodgeDestination = hit.position;
                 animator.SetInteger("DodgeIndex", 2); // Dodge left
                 isDodging = true;
             }
-            else if (NavMesh.SamplePosition(enemyAgent.transform.position + right * 5f, out hit, 10f, NavMesh.AllAreas))
+            else if (NavMesh.SamplePosition(enemyAgent.transform.position + right * 8f, out hit, 10f, NavMesh.AllAreas))
             {
                 // Move right as far as possible (up to 5f)
                 dodgeDestination = hit.position;
@@ -83,28 +91,22 @@ public class DamagedNode : Node
             return node_state;
         }
 
-        if (isDodging)
+        
+        if (!hitReactionTriggered && enemyAI.getHealth() < previousEnemyHealth)
         {
-            // Move manually towards the dodge destination
-            Vector3 direction = (dodgeDestination - enemyAgent.transform.position).normalized;
-            enemyAgent.transform.position += direction * dodgeSpeed * Time.deltaTime;
+            // Update the previous health value
+            previousEnemyHealth = enemyAI.getHealth();
 
-            // Check if the enemy has reached the dodge destination
-            if (Vector3.Distance(enemyAgent.transform.position, dodgeDestination) <= 0.1f)
-            {
-                // Stop dodging
-                isDodging = false;
-                hitReactionTriggered = false; // Reset for future reactions
-                node_state = State.FAILURE; // Dodge complete, return FAILURE
-                return node_state;
-            }
-            else
-            {
-                node_state = State.SUCCESS; // Still dodging, return SUCCESS
-                return node_state;
-            }
+            // Trigger the hit reaction
+            animator.SetBool("enemyHit", true);
+            animator.SetBool("IsPlayingAction", true);
+
+            hitReactionTriggered = true;
+            node_state = State.SUCCESS; // Indicate the hit reaction started
+            return node_state;
         }
 
+    
         node_state = State.FAILURE;
         return node_state;
     }

@@ -30,15 +30,6 @@ public class LockOnNode : Node
     public override State Evaluate()
     {
 
-
-        // 1) If we got hit, stop
-        if (animator.GetBool("enemyHit"))
-        {
-            enemyAgent.isStopped = true;
-            return State.FAILURE;
-        }
-
-
         // 4) If not dodging, always rotate to face the player
         Vector3 toPlayer = (player.position - enemyAgent.transform.position).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(toPlayer);
@@ -71,7 +62,7 @@ public class LockOnNode : Node
             velocityY = animator.GetFloat("velocityY");
 
             velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
-            velocityY = Mathf.Lerp(velocityY, 0.5f, Time.deltaTime * 2f);
+            velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
 
             animator.SetFloat("velocityX", velocityX);
             animator.SetFloat("velocityY", velocityY);
@@ -93,7 +84,7 @@ public class LockOnNode : Node
             velocityY = animator.GetFloat("velocityY");
 
             velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
-            velocityY = Mathf.Lerp(velocityY, 0.5f, Time.deltaTime * 2f);
+            velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
 
             animator.SetFloat("velocityX", velocityX);
             animator.SetFloat("velocityY", velocityY);
@@ -129,7 +120,7 @@ public class LockOnNode : Node
         }
         else if (dotRight > 0f)
         {
-            // Debug.LogError("Moving right");
+            Debug.LogError("Moving right");
             // Gradually adjust velocityX for strafing right
             velocityX = Mathf.Lerp(velocityX, 0.5f, Time.deltaTime * 10f);
             velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 10f);
@@ -139,7 +130,7 @@ public class LockOnNode : Node
         }
         else
         {
-            // Debug.LogError("Moving left");
+            Debug.LogError("Moving left");
             // Gradually adjust velocityX for strafing left
             velocityX = Mathf.Lerp(velocityX, -0.5f, Time.deltaTime * 10f);
             velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 10f);

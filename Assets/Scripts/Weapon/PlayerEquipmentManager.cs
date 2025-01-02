@@ -10,24 +10,139 @@ public class PlayerEquipmentManager : MonoBehaviour
     private AnimationLayerController animationLayerController;
     private PlayerAnimationManager animationManager;
 
+    // How long to wait for the unsheath animation (if not using animation events).
+    [SerializeField] private float unsheathAnimationDuration = 0.24f;
+
+    private object currentEquippedItem; // Tracks the currently equipped item
+
     void Awake()
     {
+        // Grab references
         inventoryManager = GetChildComponent<InventoryManager>();
-        if (inventoryManager != null)
-        {
-            inventoryManager.onSelectedItemChanged.AddListener(LoadRightWeapon);
-        }
         animationLayerController = GetComponent<AnimationLayerController>();
         animationManager = GetComponent<PlayerAnimationManager>();
+
+        // Listen for item changes
+        if (inventoryManager != null)
+        {
+            // Instead of directly calling LoadRightWeapon, we’ll call LoadWeaponWithUnsheath
+            inventoryManager.onSelectedItemChanged.AddListener(LoadWeaponWithUnsheath);
+        }
     }
 
     void Start()
     {
-        LoadRightWeapon();
+        // On start, do the unsheath/load sequence
+        LoadWeaponWithUnsheath();
     }
 
-    private object currentEquippedItem; // Tracks the currently equipped item
+    /// <summary>
+    /// Call this to start the full sequence:
+    /// 1) Unsheath animation
+    /// 2) Wait
+    /// 3) Load weapon
+    /// </summary>
+    public void LoadWeaponWithUnsheath()
+    {
+        // If no item or inventory manager, just deactivate and stop
+        if (inventoryManager == null || inventoryManager.SelectedItem == null)
+        {
+            animationLayerController.DeactivateWeaponOverride();
+            return;
+        }
 
+        // Start coroutine to unsheath, wait, then load
+        StartCoroutine(LoadWeaponSequence());
+    }
+
+    /// <summary>
+    /// Coroutine to play the unsheath animation, wait for it to complete, then load the weapon.
+    /// </summary>
+    private IEnumerator LoadWeaponSequence()
+    {
+        // 1) Play the unsheath animation
+        animationManager.PlayUnsheathAnimation();
+
+        // 2) Wait for unsheath to finish.
+        yield return new WaitForSeconds(unsheathAnimationDuration);
+
+        // 3) Now that unsheath is done, load the weapon
+        LoadRightWeapon_Internal();
+
+        // 4) (Optional) Reset or stop the unsheath animation if needed
+        animationManager.PlaySheatheAnimation();
+    }
+
+    /// <summary>
+    /// Internal method that actually creates and attaches the weapon.
+    /// This is the old LoadRightWeapon() logic.
+    /// </summary>
+    private void LoadRightWeapon_Internal()
+    {
+        // Clean up existing weapon model
+        if (rightHandWeaponModel != null)
+        {
+            Destroy(rightHandWeaponModel);
+        }
+
+        // Safety check for inventory manager and selected item
+        if (inventoryManager == null || inventoryManager.SelectedItem == null)
+        {
+            animationLayerController.DeactivateWeaponOverride();
+            return;
+        }
+
+        // Try to get weapon from selected item
+        WeaponClass weapon = null;
+        ConsumableClass consumable = null;
+
+        try
+        {
+            weapon = inventoryManager.SelectedItem.GetWeapon();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"Failed to get weapon from selected item: {e.Message}");
+        }
+
+        try
+        {
+            consumable = inventoryManager.SelectedItem.GetConsumable();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"Failed to get consumable from selected item: {e.Message}");
+        }
+
+        if ((weapon != null && weapon.prefab != null) || 
+            (consumable != null && consumable.prefab != null))
+        {
+            Debug.Log($"Loading weapon: {(weapon != null && weapon.prefab != null ? weapon.prefab.name : "None")}");
+            Debug.Log($"Loading consumable: {(consumable != null && consumable.prefab != null ? consumable.prefab.name : "None")}");
+
+            // Example: only load swords. Adjust this if logic differs in your game.
+            if (weapon != null && weapon.weaponType == WeaponClass.WeaponType.Sword)
+            {
+                if (rightHandSlot == null)
+                {
+                    Debug.LogError("RightHandSlot is not assigned in the Inspector.");
+                    return;
+                }
+
+                // Choose whether to load the weapon or the consumable prefab
+                GameObject toLoad = (weapon != null && weapon.prefab != null)
+                    ? weapon.prefab 
+                    : consumable.prefab;
+
+                rightHandWeaponModel = Instantiate(toLoad);
+                rightHandSlot.LoadWeapon(rightHandWeaponModel);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Tracks the currently equipped item of a given type (WeaponClass, ConsumableClass, etc.).
+    /// </summary>
     public T TrackEquippedItem<T>() where T : class
     {
         if (inventoryManager == null || inventoryManager.SelectedItem == null)
@@ -40,7 +155,7 @@ public class PlayerEquipmentManager : MonoBehaviour
         }
 
         // Try to get the item as either a consumable or weapon
-        T newEquippedItem = inventoryManager.SelectedItem.GetConsumable() as T 
+        T newEquippedItem = inventoryManager.SelectedItem.GetConsumable() as T
                             ?? inventoryManager.SelectedItem.GetWeapon() as T;
 
         // Check if the equipped item has changed
@@ -52,68 +167,9 @@ public class PlayerEquipmentManager : MonoBehaviour
         return newEquippedItem; // Return the equipped item
     }
 
-    public void LoadRightWeapon()
-    {
-        // Clean up existing weapon model
-        if (rightHandWeaponModel != null)
-        {
-            Destroy(rightHandWeaponModel);
-        }
-
-        // Safety check for inventory manager and selected item
-        if (inventoryManager == null || inventoryManager.SelectedItem == null)
-        {
-            animationLayerController.DeactivateWeaponOverride();
-            animationManager.PlaySheatheAnimation();
-            return;
-        }
-
-        // Try to get weapon from selected item
-        WeaponClass weapon = null;
-        ConsumableClass consumable = null;
-        try
-        {
-            weapon = inventoryManager.SelectedItem.GetWeapon();
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogWarning($"Failed to get weapon from selected item: {e.Message}");
-        }
-
-        try{
-            consumable = inventoryManager.SelectedItem.GetConsumable();
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogWarning($"Failed to get weapon from selected item: {e.Message}");
-        }
-
-        if ((weapon != null && weapon.prefab != null) || (consumable != null && consumable.prefab != null))
-        {
-            Debug.Log($"Loading weapon: {(weapon != null && weapon.prefab != null ? weapon.prefab.name : "None")}");
-            Debug.Log($"Loading consumable: {(consumable != null && consumable.prefab != null ? consumable.prefab.name : "None")}");
-
-            if (weapon != null && weapon.weaponType == WeaponClass.WeaponType.Sword)
-            {
-                if (rightHandSlot == null)
-                {
-                    Debug.LogError("RightHandSlot is not assigned in the Inspector.");
-                    return;
-                }
-
-                GameObject toLoad = (weapon != null && weapon.prefab != null) 
-                    ? weapon.prefab 
-                    : consumable.prefab;
-
-                rightHandWeaponModel = Instantiate(toLoad);
-                rightHandSlot.LoadWeapon(rightHandWeaponModel);
-
-                animationLayerController.ActivateWeaponOverride();
-                animationManager.PlayUnsheathAnimation();
-            }
-        }
-    }
-
+    /// <summary>
+    /// Checks if the currently equipped item is a heal item (consumable).
+    /// </summary>
     public bool IsEquippedItemHeal()
     {
         if (inventoryManager == null || inventoryManager.SelectedItem == null)
@@ -132,8 +188,9 @@ public class PlayerEquipmentManager : MonoBehaviour
             Debug.LogWarning($"Failed to get consumable from selected item: {e.Message}");
         }
 
-        // Check if the consumable is a healing item
-        if (consumable != null) // Assuming IsHealingItem is a bool property of ConsumableClass
+        // Example check if the consumable is a healing item. 
+        // Adjust if your class has a different property, e.g. consumable.IsHealingItem
+        if (consumable != null)
         {
             return true;
         }
@@ -141,7 +198,9 @@ public class PlayerEquipmentManager : MonoBehaviour
         return false;
     }
 
-
+    /// <summary>
+    /// Helper to retrieve a component from a child GameObject.
+    /// </summary>
     private T GetChildComponent<T>() where T : Component
     {
         foreach (Transform child in transform)

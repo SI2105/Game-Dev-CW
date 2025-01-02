@@ -105,6 +105,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "TwoHandAttack",
+                    "type": "Button",
+                    "id": "6b51d313-e636-47fe-82b0-f4b65112d87e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "DodgeBackward",
                     "type": "Button",
                     "id": "5ab09de0-cfda-45a6-bf65-50fbaf13d08d",
@@ -153,6 +162,24 @@
                     "name": "LockOn",
                     "type": "Button",
                     "id": "53d94e7a-b266-46b4-8f54-26fa7cac85fd",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PowerUp",
+                    "type": "Button",
+                    "id": "f7605a4b-e613-47f8-b761-0d2ee0d5a33e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PowerUp2",
+                    "type": "Button",
+                    "id": "81359144-c507-477f-96f4-ee964f6fe235",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -610,6 +637,61 @@
                     "action": "DodgeRight",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "TwoHandAttack",
+                    "id": "7008b2b8-0e29-4983-894e-6a99c40d1050",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TwoHandAttack",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "9bcefe6e-ffb9-40b9-949a-aae9b723578c",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TwoHandAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "df1031eb-b888-4620-951a-4c3611baabe4",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TwoHandAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "a4cb69c3-ea0e-4841-8204-77822acf786b",
+                    "path": "<Keyboard>/#(T)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PowerUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "42f8ed38-5d7d-415c-a3e7-6ad953178ad7",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PowerUp2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

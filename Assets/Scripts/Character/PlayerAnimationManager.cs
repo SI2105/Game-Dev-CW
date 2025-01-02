@@ -11,13 +11,12 @@ public class PlayerAnimationManager : MonoBehaviour
 
     public void PlayUnsheathAnimation()
     {
-        animator.SetTrigger("Unsheath");
+        animator.SetBool("itemChange", true);
     }
 
     public void PlaySheatheAnimation()
     {
-        animator.SetTrigger("Sheathe");
+        animator.SetBool("itemChange", false);
     }
-
     
 }

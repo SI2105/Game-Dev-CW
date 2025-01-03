@@ -4401,7 +4401,7 @@ Transform:
   m_GameObject: {fileID: 401415811}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 1, z: 0}
+  m_LocalPosition: {x: 50, y: 1, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5303,7 +5303,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -5.187082, y: 817.00006}
+  m_AnchoredPosition: {x: -5.187082, y: 817.0023}
   m_SizeDelta: {x: 5.1871, y: 1000}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &526260750
@@ -6437,7 +6437,7 @@ Transform:
   m_GameObject: {fileID: 588471259}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0061678886, y: 1.6625295, z: 0.0061428905}
+  m_LocalPosition: {x: -0.0061683655, y: 1.6625295, z: 0.006143093}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6773,7 +6773,7 @@ Transform:
   m_GameObject: {fileID: 602962735}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0061678886, y: 1.6625295, z: 0.0061428905}
+  m_LocalPosition: {x: -0.0061683655, y: 1.6625295, z: 0.006143093}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6881,7 +6881,7 @@ Transform:
   m_GameObject: {fileID: 607023317}
   serializedVersion: 2
   m_LocalRotation: {x: -0.000000007450581, y: 7.2333255e-12, z: 1.0572876e-10, w: 1}
-  m_LocalPosition: {x: -0.0050001107, y: 0.17799996, z: 0.057000004}
+  m_LocalPosition: {x: -0.0050005876, y: 0.17799993, z: 0.05700022}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7513,13 +7513,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 135918067219138504, guid: 0764d59664510486da5605185137b21d, type: 3}
+      propertyPath: angle
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 135918067219138504, guid: 0764d59664510486da5605185137b21d, type: 3}
+      propertyPath: meshColor.a
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2662363423373375942, guid: 0764d59664510486da5605185137b21d, type: 3}
       propertyPath: m_Name
       value: Mutant
       objectReference: {fileID: 0}
     - target: {fileID: 2662363423373375942, guid: 0764d59664510486da5605185137b21d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3438865282261181308, guid: 0764d59664510486da5605185137b21d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7565,6 +7573,22 @@ PrefabInstance:
       propertyPath: playerTransform
       value: 
       objectReference: {fileID: 401415830}
+    - target: {fileID: 6274940498973578671, guid: 0764d59664510486da5605185137b21d, type: 3}
+      propertyPath: enemyCurrentHealth
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 6274940498973578671, guid: 0764d59664510486da5605185137b21d, type: 3}
+      propertyPath: lowHealthThreshold
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 6274940498973578671, guid: 0764d59664510486da5605185137b21d, type: 3}
+      propertyPath: enemyStartingHealth
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7307387449053106464, guid: 0764d59664510486da5605185137b21d, type: 3}
+      propertyPath: meshColor.a
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7991465913625142966, guid: 0764d59664510486da5605185137b21d, type: 3}
       propertyPath: angle
       value: 360
@@ -7708,8 +7732,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 292785008}
   m_HandleRect: {fileID: 292785007}
   m_Direction: 0
-  m_Value: 0.9999956
-  m_Size: 0.9755417
+  m_Value: 0.99999267
+  m_Size: 0.97554153
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -9506,7 +9530,7 @@ Transform:
   m_GameObject: {fileID: 839627940}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0061678886, y: 1.6625295, z: 0.0061428905}
+  m_LocalPosition: {x: -0.0061683655, y: 1.6625295, z: 0.006143093}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10366,8 +10390,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 844926736}
   m_HandleRect: {fileID: 844926735}
   m_Direction: 2
-  m_Value: -0.00000011205966
-  m_Size: 0.18299498
+  m_Value: -0.0000029135508
+  m_Size: 0.18161747
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -23593,7 +23617,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2211139671561190733, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6597950899212962100, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
       propertyPath: meshColor.a

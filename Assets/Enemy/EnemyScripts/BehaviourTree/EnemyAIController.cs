@@ -131,10 +131,10 @@ public class EnemyAIController : MonoBehaviour
         InverterNode hasAttacks1Health = new InverterNode(healthNode);
 
         //Sequence node for attacks 1
-        SequenceNode attacks1 = new SequenceNode(new List<Node> {isInChasingRange, hasAttacks1Health, playerLockNode});
+        SequenceNode attacks1 = new SequenceNode(new List<Node> {isInChasingRange, hasAttacks1Health, playerLockNode, attackNode1});
 
         //Sequence node for attacks 1
-        SequenceNode attacks2 = new SequenceNode(new List<Node> {isInChasingRange, healthNode, playerLockNode});
+        SequenceNode attacks2 = new SequenceNode(new List<Node> {isInChasingRange, healthNode, playerLockNode, attackNode2});
 
         //Sequence node for death
         SequenceNode enemyDeath = new SequenceNode(new List<Node> {deathHealthNode, deathNode});

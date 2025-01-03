@@ -49,15 +49,9 @@ public class LockOnNode : Node
         );
 
         if(enemyAI.isComboAttacking){
-            // Gradually adjust velocity to idle
-            velocityX = animator.GetFloat("velocityX");
-            velocityY = animator.GetFloat("velocityY");
-
-            velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
-            velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
-
-            animator.SetFloat("velocityX", velocityX);
-            animator.SetFloat("velocityY", velocityY);
+            // Update animator smoothly
+            animator.SetFloat("velocityX", 0.0f);
+            animator.SetFloat("velocityY", 0.5f);
             node_state = State.SUCCESS;
             return node_state;
         }
@@ -66,22 +60,10 @@ public class LockOnNode : Node
         // 2) If currently attacking, do nothing else
         if (enemyAI.isAttacking)
         {
-            // Gradually adjust velocity to idle
-            velocityX = animator.GetFloat("velocityX");
-            velocityY = animator.GetFloat("velocityY");
-
-            velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
-            velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
-
-            animator.SetFloat("velocityX", velocityX);
-            animator.SetFloat("velocityY", velocityY);
-
-            if(enemyAI.attackSensor.objects.Count > 0){
-                enemyAgent.isStopped = true;
-                enemyAgent.ResetPath();
-            }
-
-            node_state = State.FAILURE;
+            // Update animator smoothly
+            animator.SetFloat("velocityX", 0.0f);
+            animator.SetFloat("velocityY", 0.5f);
+            node_state = State.SUCCESS;
             return node_state;
         }
 
@@ -139,7 +121,6 @@ public class LockOnNode : Node
        
         if (dotForward > 0.95f)
         {
-            Debug.LogError("Moving forward");
             if (currentState != MovementState.Forward)
             {
                 currentState = MovementState.Forward;
@@ -148,7 +129,6 @@ public class LockOnNode : Node
         }
         else if (dotRight > 0f)
         {
-            Debug.LogError("Strafing Right");
             if (currentState != MovementState.StrafeRight)
             {
                 currentState = MovementState.StrafeRight;
@@ -157,7 +137,6 @@ public class LockOnNode : Node
         }
         else
         {
-            Debug.LogError("Strafing Left");
             if (currentState != MovementState.StrafeLeft)
             {
                 currentState = MovementState.StrafeLeft;

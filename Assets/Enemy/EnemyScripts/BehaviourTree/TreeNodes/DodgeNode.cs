@@ -6,12 +6,12 @@ using UnityEngine.AI;
 public class DodgeNode : Node
 {
     private EnemyAIController enemyAI;
-    private float dodgeProbability = 0.7f; // Set the dodge probability here (e.g., 50%)
+    private float dodgeProbability = 0.5f; // Set the dodge probability here (e.g., 50%)
     private Animator animator;
     private NavMeshAgent enemyAgent;
     private bool isDodging = false;
     private Vector3 dodgeDestination;
-    private float dodgeSpeed = 3f;
+    private float dodgeSpeed = 20f;
 
     public DodgeNode(EnemyAIController enemyAI, Animator animator, NavMeshAgent enemyAgent)
     {
@@ -22,33 +22,43 @@ public class DodgeNode : Node
 
     public override State Evaluate()
     {
-        if(enemyAI.isAttacking){
-            node_state=State.FAILURE;
+        if (enemyAI.isAttacking)
+        {
+            node_state = State.FAILURE;
             return node_state;
         }
 
-         // Continue dodging
+        // 4) If not dodging, always rotate to face the player
+        Vector3 toPlayer = (enemyAI.playerTransform.position - enemyAgent.transform.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(toPlayer);
+        enemyAgent.transform.rotation = Quaternion.Slerp(
+            enemyAgent.transform.rotation,
+            targetRotation,
+            Time.deltaTime * 10f
+        );
+
+        // Continue dodging
         if (isDodging)
         {
+            // Move towards the dodge destination manually
             Vector3 direction = (dodgeDestination - enemyAgent.transform.position).normalized;
-            Rigidbody rb = enemyAgent.GetComponent<Rigidbody>();
-            
+            enemyAgent.transform.position += direction * dodgeSpeed * Time.deltaTime;
+
             // Check if dodge is complete
-            if (Vector3.Distance(enemyAgent.transform.position, dodgeDestination) < 0.1f)
+            if (Vector3.Distance(enemyAgent.transform.position, dodgeDestination) < 1f)
             {
-                Debug.LogError("dodging completed");
+                Debug.Log("Dodging completed");
                 isDodging = false;
-                node_state=State.FAILURE;
+                node_state = State.FAILURE;
                 return node_state; // Dodge complete
             }
 
-            node_state=State.SUCCESS;
+            node_state = State.SUCCESS;
             return node_state;
         }
 
-    
         // Check if the player is attacking
-        if (enemyAI.playerState.IsInState(PlayerAttackState.Attacking) && enemyAI.attackSensor.objects.Count>0)
+        if (enemyAI.playerState.IsInState(PlayerAttackState.Attacking) && enemyAI.attackSensor.objects.Count > 0)
         {
             // Generate a random value and compare it to dodge probability
             float randomValue = Random.value;
@@ -106,7 +116,6 @@ public class DodgeNode : Node
                         isDodging = true;
                         enemyAI.isDodging = true; // Inform AI that dodging is active
                         enemyAgent.updateRotation = false;
-                        enemyAgent.SetDestination(dodgeDestination);
                     }
 
                     Debug.LogError(maxDistance);
@@ -116,9 +125,8 @@ public class DodgeNode : Node
                 return node_state;
             }
         }
-    
+
         node_state = State.FAILURE;
         return node_state;
-
     }
 }

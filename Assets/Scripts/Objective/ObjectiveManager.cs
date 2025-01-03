@@ -14,6 +14,8 @@ public class ObjectiveManager : MonoBehaviour
     [SerializeField] private GameObject ObjectivePrefab;
     private bool IsObjectivePanelActive;
     private GameObject ObjectivePopup;
+    private GameObject MiniObjectivePanel;
+    [SerializeField] private GameObject MiniObjectivePrefab;
     private void Awake()
     {
         //Ensures Singleton Pattern
@@ -23,12 +25,14 @@ public class ObjectiveManager : MonoBehaviour
             IsObjectivePanelActive = false;
             ObjectivePanel = GameObject.Find("ObjectivePanel").transform;
             ObjectiveUI = GameObject.Find("ObjectiveUI");
+            MiniObjectivePanel = GameObject.Find("MiniObjectivePanel");
             ObjectiveUI.SetActive(IsObjectivePanelActive);
             ObjectivePopup.SetActive(false);
             ObjectivePopup.transform.GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = "";
             DontDestroyOnLoad(gameObject);
             IntializeObjective_Dict();
             UpdateDisplayedObjectives();
+            RefreshMiniObjectivePanel();
         }
         else
         {
@@ -54,7 +58,16 @@ public class ObjectiveManager : MonoBehaviour
             Objective_Dict[eventName] = new ObjectiveData(eventName, eventDescription);
         }
     }
-
+    private int chestOpened = 0;
+    private const int chestsToOpen = 3;
+    public void ChestOpened() {
+        chestOpened++;
+        
+        if(chestOpened >= chestsToOpen)
+        {
+            SetEventComplete("Open 3 Chests");
+        }
+    }
     public void SetEventComplete(string objectiveName) {
         //Sets the event to complete, will be used when the event associated with the objective is completed
         if (Objective_Dict.ContainsKey(objectiveName) && !Objective_Dict[objectiveName].objectiveComplete)
@@ -63,10 +76,35 @@ public class ObjectiveManager : MonoBehaviour
             Objective_Dict[objectiveName].objectiveComplete = true;
             UpdateDisplayedObjectives();
             ShowObjectivePopup(objectiveName, "Objective Complete!");
+            RefreshMiniObjectivePanel();
 
         }
     }
 
+    public void RefreshMiniObjectivePanel()
+    {
+        foreach (Transform child in MiniObjectivePanel.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // Get the first two uncompleted objectives
+        int count = 0;
+        foreach (ObjectiveData objective in Objective_Dict.Values)
+        {
+            if (!objective.objectiveComplete)
+            {
+                GameObject miniObjectiveItem = Instantiate(MiniObjectivePrefab, MiniObjectivePanel.transform);
+                miniObjectiveItem.transform.GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = objective.objectiveName;
+                miniObjectiveItem.transform.GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().text = objective.objectiveDescription;
+                count++;
+                if (count >= 2)
+                {
+                    break;
+                }
+            }
+        }
+    }
     public bool IsObjectiveComplete(string objectiveName) {
         //Checks if the objective is complete
         return Objective_Dict.ContainsKey(objectiveName) && Objective_Dict[objectiveName].objectiveComplete;

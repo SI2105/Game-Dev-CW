@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 03522bb5dd98b2b49b21ea6c9516b2d3
+timeCreated: 1515688767
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 106912
+  packageName: Blue Dungeon
+  packageVersion: 1.0
+  assetPath: Assets/Triple Dungeon Pack/Blue Dungeon/prefabs/ground_stairs/ground-2.prefab
+  uploadId: 223459

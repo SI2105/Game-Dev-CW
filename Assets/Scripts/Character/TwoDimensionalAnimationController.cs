@@ -201,12 +201,14 @@ namespace SG{
 
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                Time.timeScale = 0f;
             }
             else
             {
 
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
+                Time.timeScale = 1f;
             }
 
             attributesManager.SkillTreeManager.ToggleSkillTree();
@@ -280,14 +282,16 @@ namespace SG{
 
             if (objectiveVisible)
             {
-
+               
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                Time.timeScale = 0f;
             }
             else {
                 
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
+                Time.timeScale = 1f;
             }
 
             attributesManager.ObjectiveManager.ToggleObjectivePanel();
@@ -327,6 +331,7 @@ namespace SG{
             InventoryVisible = !InventoryVisible;
             if (InventoryVisible)
             {
+                inputActions.UI.Click.performed += attributesManager.InventoryManager.OnClick;
                 //attributesManager.InventoryManager.CraftTest();
                 inputActions.UI.Click.performed += attributesManager.InventoryManager.OnClick;
                 inputActions.UI.Click.canceled += attributesManager.InventoryManager.OnClick;
@@ -339,6 +344,7 @@ namespace SG{
                 attributesManager.InventoryManager.HotBarSelector.SetActive(false);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                Time.timeScale = 0f;
             }
             else {
                 
@@ -351,7 +357,8 @@ namespace SG{
                 attributesManager.InventoryManager.HotBar.SetActive(true);
                 attributesManager.InventoryManager.HotBarSelector.SetActive(true);
                 Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false; 
+                Cursor.visible = false;
+                Time.timeScale = 1f;
             }
         }
 
@@ -768,7 +775,7 @@ namespace SG{
 
         private void HandleLook(InputAction.CallbackContext context){
 
-            if (InventoryVisible)
+            if (InventoryVisible || isSkillTreeVisible || objectiveVisible)
             {
                 return;
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine.UI;
 
 public class InteractiveChest : MonoBehaviour
@@ -12,31 +13,30 @@ public class InteractiveChest : MonoBehaviour
     public bool isOpen = false; // State to track if the chest is open
     [SerializeField] private ItemClass[] PossibleItems; // Array of possible items that can be in the chest
     public List<SlotClass> Items = new List<SlotClass>(); // List of items in the chest
-    public GameObject ItemsContainer;
-    public GameObject ChestPanel;
+    private GameObject ItemsContainer;
+    private GameObject ChestPanel;
     [SerializeField]private GameObject ItemPrefab;
-    public InventoryManager Inventory;
+    private InventoryManager Inventory;
+    [SerializeField] private GameObject ChestPanelPrefab;
     private Button collectAllButton;
     private bool Looted;
     private float RareItemDropChance;
     private Button CloseButton;
+    private int ChestOpened = 0;
     // Called when the object is interacted with
+    
     public void Start()
     {
         
         Looted = false;
         RareItemDropChance = 0.0f;
-        //ChestPanel = GameObject.Find("ChestPanel");
-        //ItemsContainer = GameObject.Find("ItemsContainer");
+       
         Inventory = GameObject.Find("Inventory").GetComponent<InventoryManager>();
-        collectAllButton = ChestPanel.transform.GetChild(2).GetComponent<Button>();
-        collectAllButton.onClick.AddListener(CollectAll);
-        CloseButton = ChestPanel.transform.GetChild(3).gameObject.GetComponent<Button>();
-        CloseButton.onClick.AddListener(CloseChest);
-        ChestPanel.SetActive(false);
+
 
         System.Random random = new System.Random();
         int itemCount = random.Next(1, 5); // Random number of items between 1 and 4
+        bool itemAdded = false;
         for (int i = 0; i < itemCount; i++)
         {
             ItemClass item = PossibleItems[random.Next(PossibleItems.Length)];
@@ -51,17 +51,26 @@ public class InteractiveChest : MonoBehaviour
             // Make weapons very rare
             else if (item is WeaponClass)
             {
-                if (random.NextDouble() > RareItemDropChance) // 5% chance to get a weapon, to make it rare
+                if (random.NextDouble() > RareItemDropChance) 
                 {
                     continue; // Skip this iteration if the weapon is not selected
                 }
             }
 
             Items.Add(new SlotClass(item, quantity));
+            itemAdded = true;
         }
 
+        if (!itemAdded) {
+            // Add a random item if no item was added
+            ItemClass item = PossibleItems[random.Next(PossibleItems.Length)];
+            int quantity = item.Stackable ? random.Next(1, 5) : 1;
+            Items.Add(new SlotClass(item, quantity));
+
+        }
 
     }
+
     public void Interact()
     {
         if (isOpen)
@@ -77,13 +86,29 @@ public class InteractiveChest : MonoBehaviour
     // Opens the chest
     public void OpenChest()
     {
-       
+        ChestOpened += 1;
+        if (ChestOpened == 1){
+            ObjectiveManager.Instance.ChestOpened();
+        }
+      
+        ObjectiveManager.Instance.SetEventComplete("Open Chest");
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         Debug.Log($"{chestName} opened.");
+
+
+        ChestPanel = Instantiate(ChestPanelPrefab, GameObject.Find("HUD Manager").transform);
+        ItemsContainer = ChestPanel.transform.GetChild(1).GetChild(0).GetChild(0).gameObject;
+
+        collectAllButton = ChestPanel.transform.GetChild(2).GetComponent<Button>();
+        collectAllButton.onClick.AddListener(CollectAll);
+        CloseButton = ChestPanel.transform.GetChild(3).gameObject.GetComponent<Button>();
+        CloseButton.onClick.AddListener(CloseChest);
+        
         RefreshChest();
         ChestPanel.SetActive(true);
         isOpen = true;
+        Time.timeScale = 0f;
     }
 
     // Closes the chest
@@ -93,7 +118,9 @@ public class InteractiveChest : MonoBehaviour
         Cursor.visible = false;
         Debug.Log($"{chestName} closed.");
         ChestPanel.SetActive(false);
+        Destroy(ChestPanel);
         isOpen = false;
+        Time.timeScale = 1f;
     }
 
     // This method can be triggered by a raycast manager or selector
@@ -132,8 +159,9 @@ public class InteractiveChest : MonoBehaviour
                 RefreshChest();
             }); //Button has a Listener added that add Item to Inventory, Removes from Chest and Refreshes the Chest once complete.
 
-            if (item.GetItem() is ConsumableClass consumable && consumable.IsPotion && Inventory.FullForPotions())
-            {
+            
+            if (Inventory.isFull() || (item.GetItem() is ConsumableClass consumable && consumable.IsPotion && !Inventory.CanAddPotion(item.GetQuantity())))
+            {   
                 
                 ChestItem.transform.GetChild(4).GetComponent<Button>().interactable = false;
                 ChestItem.transform.GetChild(4).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = "Inventory Full";
@@ -151,10 +179,15 @@ public class InteractiveChest : MonoBehaviour
     }
 
     private void CollectAll() {
-        foreach (SlotClass item in Items)
+
+        for (int i = 0; i<Items.Count; i++)
         {
-            Inventory.Add(item.GetItem(), item.GetQuantity());
-            Items.Remove(item);
+            if (!(Inventory.isFull() || (Items[i].GetItem() is ConsumableClass consumable && consumable.IsPotion && !Inventory.CanAddPotion(Items[i].GetQuantity())))) {
+                Inventory.Add(Items[i].GetItem(), Items[i].GetQuantity());
+                Items.RemoveAt(i);
+            }
+              
+            
         }
         
         RefreshChest();

@@ -48,7 +48,24 @@ public class PlayerSoundManager : MonoBehaviour
     [Range(0f, 1f)] public float swordSlashHit1Volume = 0.9f;
     public AudioClip swordSlashHit2Clip; // Sword Slash Hit 2
     [Range(0f, 1f)] public float swordSlashHit2Volume = 0.9f;
+    public AudioClip grabItem; // Sword Slash Hit 2
+    [Range(0f, 1f)] public float grabItemVolume = 0.9f;
+    public AudioClip grunt1; // Sword Slash Hit 2
+    [Range(0f, 1f)] public float grunt1Volume = 0.9f;
 
+    public AudioClip grunt2; // Sword Slash Hit 2
+    [Range(0f, 1f)] public float grunt2Volume = 0.9f;
+    public AudioClip grunt3; // Sword Slash Hit 2
+    [Range(0f, 1f)] public float grunt3Volume = 0.9f;
+
+    public AudioClip dodge; // Sword Slash Hit 2
+    [Range(0f, 1f)] public float dodgeVolume = 0.9f;
+
+    public AudioClip powerup1; // Sword Slash Hit 2
+    [Range(0f, 1f)] public float powerup1Volume = 0.9f;
+
+    public AudioClip powerup2; // Sword Slash Hit 2
+    [Range(0f, 1f)] public float powerup2Volume = 0.9f;
     private void Awake()
     {
         if (walkingAudioSource == null || runningAudioSource == null)
@@ -150,5 +167,35 @@ public class PlayerSoundManager : MonoBehaviour
     public void PlaySwordSlashHit2Clip()
     {
         PlaySound(attackAudioSource, swordSlashHit2Clip, swordSlashHit2Volume);
+    }
+    public void PlayGrabItemClip()
+    {
+        PlaySound(attackAudioSource, grabItem, grabItemVolume);
+    }
+    public void PlayGrunt1Clip()
+    {
+        PlaySound(attackAudioSource, grunt1, grunt1Volume);
+    }
+    public void PlayGrunt2Clip()
+    {
+        PlaySound(attackAudioSource, grunt2, grunt2Volume);
+    }
+    public void PlayGrunt3Clip()
+    {
+        PlaySound(attackAudioSource, grunt3, grunt3Volume);
+    }
+
+    public void PlayDodgeClip()
+    {
+        PlaySound(attackAudioSource, dodge, dodgeVolume);
+    }
+
+    public void PlayPowerUp1Clip()
+    {
+        PlaySound(attackAudioSource, powerup1, powerup1Volume);
+    }
+    public void PlayPowerUp2Clip()
+    {
+        PlaySound(attackAudioSource, powerup2, powerup2Volume);
     }
 }

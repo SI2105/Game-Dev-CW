@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "new Collectible class", menuName = "Item/Class")]
+[CreateAssetMenu(fileName = "new Collectible class", menuName = "Item/Collectible")]
 public class Collectible : ItemClass
 {
     public override ItemClass GetItem() { return this; }

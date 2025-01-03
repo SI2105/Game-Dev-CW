@@ -134,12 +134,15 @@ public class InventoryManager : MonoBehaviour
     #endregion
     public ItemClass SelectedItem
     {
-        get { return selectedItem; }
+        get => selectedItem;
         set
         {
+            // Compare references to see if it’s actually a new item
+            if (selectedItem == value) 
+                return; // Do nothing if it’s the same
+
             selectedItem = value;
 
-            // Ensure the event is invoked safely
             if (onSelectedItemChanged != null)
             {
                 Debug.Log($"SelectedItem changed to: {selectedItem?.name ?? "null"}");
@@ -151,6 +154,7 @@ public class InventoryManager : MonoBehaviour
             }
         }
     }
+
 
 
     public ItemClass getSelectedItem(){

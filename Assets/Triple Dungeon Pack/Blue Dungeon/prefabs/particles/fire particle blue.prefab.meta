@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 45a0f0d35d74a804189dd88b632faa41
+timeCreated: 1512952164
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 106912
+  packageName: Blue Dungeon
+  packageVersion: 1.0
+  assetPath: Assets/Triple Dungeon Pack/Blue Dungeon/prefabs/particles/fire particle
+    blue.prefab
+  uploadId: 223459

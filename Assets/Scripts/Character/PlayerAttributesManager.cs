@@ -81,7 +81,7 @@ namespace SG
         public float HealthRegenRate { get; set; } = 10f;
         public float MaxStamina { get; set; } = 100f;
         public float StaminaCostPerSecond { get; set; } = 1f;
-        public float StaminaRegenRate { get; set; } = 15f;
+        public float StaminaRegenRate { get; set; } = 20f;
         private float currentStamina;
         public float CurrentStamina
         {
@@ -186,7 +186,7 @@ namespace SG
                     MaxStamina,
                     -amount,
                     StaminaRegenRate,
-                    2f,
+                    1f,
                     () => {},
                     null  // Don't start a new coroutine in the callback
                 );

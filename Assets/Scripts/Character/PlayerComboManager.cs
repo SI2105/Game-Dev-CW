@@ -206,12 +206,13 @@ namespace SG
             {
                 float weaponDamage = weapon.damage;
                 WeaponCollisionHandler collisionHandler = playerEquipmentManager.rightHandWeaponModel.GetComponent<WeaponCollisionHandler>();
-
+                attributesManager.UseStamina(10f);
                 if (collisionHandler != null)
                 {
                     collisionHandler.SetTemporaryDamage(weaponDamage);
                     collisionHandler.SetCurrentComboStep(currentComboStep);
                     collisionHandler.TriggerAttack(); // Ensure you have a method to trigger the collider
+                    
                     Debug.Log($"Weapon collider ready with damage: {weaponDamage}");
                 }
                 else

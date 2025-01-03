@@ -239,7 +239,6 @@ namespace SG{
             inputActions.Player.Pause.canceled += HandlePause;
 
             inputActions.Player.LockOn.performed += HandleLockOn;
-            inputActions.Player.LockOn.canceled += HandleLockOn;
 
             inputActions.Player.DodgeForward.performed += HandleDodgeForward;
             inputActions.Player.DodgeBackward.performed += HandleDodgeBackward;
@@ -253,9 +252,7 @@ namespace SG{
 
             if (attributesManager) {
                 Debug.Log("Inventory Manager found");
-                inputActions.UI.Click.performed += attributesManager.InventoryManager.OnClick;
                 inputActions.UI.HotBarSelector.performed += attributesManager.InventoryManager.OnHotBarSelection;
-                inputActions.UI.Click.canceled += attributesManager.InventoryManager.OnClick;
                 inputActions.UI.HotBarSelector.canceled += attributesManager.InventoryManager.OnHotBarSelection;
                 inputActions.Player.Objective.performed += onObjective;
                 inputActions.Player.Objective.canceled += onObjective;
@@ -265,6 +262,7 @@ namespace SG{
                 UpdatePlayerStats();
             }
         }
+
 
 
         public void onObjective(InputAction.CallbackContext context)
@@ -302,12 +300,25 @@ namespace SG{
 
             }
         }
-
-        private void HandleLockOn(InputAction.CallbackContext context) {
-            if (context.performed) {
-                playerLockOn.LockOn();
-            } else {
-                playerLockOn.LockOn();
+        private bool isLockedOn = false;
+        private void HandleLockOn(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                if (isLockedOn)
+                {
+                    // If already locked on, cancel lock-on
+                    playerLockOn.LockOn();
+                    isLockedOn = false;
+                    Debug.Log("Lock-on canceled.");
+                }
+                else
+                {
+                    // If not locked on, activate lock-on
+                    playerLockOn.LockOn();
+                    isLockedOn = true;
+                    Debug.Log("Lock-on activated.");
+                }
             }
         }
 
@@ -317,6 +328,8 @@ namespace SG{
             if (InventoryVisible)
             {
                 //attributesManager.InventoryManager.CraftTest();
+                inputActions.UI.Click.performed += attributesManager.InventoryManager.OnClick;
+                inputActions.UI.Click.canceled += attributesManager.InventoryManager.OnClick;
                 UpdatePlayerStats();
                 attributesManager.InventoryManager.InventoryPanel.SetActive(true);
                 attributesManager.InventoryManager.PlayerStatsPanel.SetActive(true);
@@ -328,6 +341,9 @@ namespace SG{
                 Cursor.visible = true;
             }
             else {
+                
+                inputActions.UI.Click.performed -= attributesManager.InventoryManager.OnClick;
+                inputActions.UI.Click.canceled -= attributesManager.InventoryManager.OnClick;
                 attributesManager.InventoryManager.InventoryPanel.SetActive(false);
                 attributesManager.InventoryManager.PlayerStatsPanel.SetActive(false);
                 attributesManager.InventoryManager.CraftingPanel.SetActive(false);
@@ -790,9 +806,9 @@ namespace SG{
 
         [SerializeField] private float dodgeDistance = 0.75f; // Reduced by half (was 3.0f)
         [SerializeField] private float dodgeDuration = 0.075f; // Reduced by half (was 0.3f)
-        [SerializeField] private float dodgeForce = 2.5f; // Adjusted proportionally to fit the reduced distance
-        [SerializeField] private float dodgeStaminaCost = 10f; // Optional: lower stamina cost if desired
-        [SerializeField] private float dodgeCooldown = 0.4f; // Slightly shorter cooldown to match reduced dodge
+        [SerializeField] private float dodgeForce = 4f; // Adjusted proportionally to fit the reduced distance
+        [SerializeField] private float dodgeStaminaCost = 1f; // Optional: lower stamina cost if desired
+        [SerializeField] private float dodgeCooldown = 0.05f; // Slightly shorter cooldown to match reduced dodge
 
         private bool canDodge = true; // Tracks whether the player can dodge
 
@@ -804,7 +820,7 @@ namespace SG{
                 Debug.Log("Dodge is on cooldown!");
                 return;
             }
-            attributesManager.TakeDamage(20f);
+            // attributesManager.TakeDamage(20f);
 
             // 2. Check stamina
             if (attributesManager.CurrentStamina < dodgeStaminaCost)

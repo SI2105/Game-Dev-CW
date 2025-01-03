@@ -25,6 +25,11 @@ public class MazeCell : MonoBehaviour
     [SerializeField]
     private GameObject _unvisitedBlock;
 
+
+    public GameObject ceilingObject{get;set;}
+
+    public GameObject floorObj{get;set;}
+
     [SerializeField]
     private GameObject floorObject; // The initial floor object
 
@@ -83,6 +88,8 @@ public class MazeCell : MonoBehaviour
         // Instantiate the ceilingPrefab at the original position
         GameObject newCeiling = Instantiate(ceilingPrefab, ceilingPosition, Quaternion.identity, this.transform);
 
+        newCeiling.SetActive(false);
+
         // Adjust the scale, preserving the prefab's y scale
         Vector3 tileScale = newCeiling.transform.localScale;
         newCeiling.transform.localScale = new Vector3(adjustedScale.x, tileScale.y, adjustedScale.z);
@@ -92,6 +99,8 @@ public class MazeCell : MonoBehaviour
 
           // Apply a -180° rotation on the Z-axis after instantiation
         newCeiling.transform.Rotate(0, 0, -180f);
+
+        ceilingObject=newCeiling;
     }
 
    // Replace the floor object with a single random tile
@@ -117,6 +126,9 @@ public class MazeCell : MonoBehaviour
         // Apply the adjusted scale, preserving the prefab's y scale
         Vector3 tileScale = newTile.transform.localScale;
         newTile.transform.localScale = new Vector3(adjustedScale.x, tileScale.y/3f, adjustedScale.z);
+
+        newTile.SetActive(false);
+        floorObj=newTile;
     }
 
 

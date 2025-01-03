@@ -21,6 +21,11 @@ public class Attack_1Node : Node
 
     public override State Evaluate()
     {
+        if(enemyAI.attackSensor.objects.Count > 0){
+            enemyAgent.isStopped=true;
+            enemyAgent.ResetPath();
+        }
+
         float currentTime = Time.time;
 
         if (currentTime - lastAttackTime >= attackCooldown)

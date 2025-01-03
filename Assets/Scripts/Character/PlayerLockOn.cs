@@ -29,6 +29,7 @@ public class PlayerLockOn : MonoBehaviour
             {
                 lockOnCamera.Priority = 0;
                 mainVC.Priority = 60;
+                lockOnCamera.LookAt = null;
             }
             Debug.Log("Target unlocked.");
             return;
@@ -36,7 +37,7 @@ public class PlayerLockOn : MonoBehaviour
 
         GameObject closestEnemy = null;
         float closestAngle = lockOnAngle;
-        
+
         // Detect enemies within range
         Collider[] hits = Physics.OverlapSphere(playerTransform.position, lockOnRange);
         foreach (var hit in hits)
@@ -46,7 +47,7 @@ public class PlayerLockOn : MonoBehaviour
                 Vector3 enemyDirection = hit.transform.position - playerTransform.position;
                 float angle = Vector3.Angle(playerTransform.forward, enemyDirection);
                 Debug.DrawRay(playerTransform.position, enemyDirection, Color.red, 1.0f);
-                
+
                 if (angle < closestAngle)
                 {
                     closestAngle = angle;
@@ -62,7 +63,20 @@ public class PlayerLockOn : MonoBehaviour
             if (lockOnCamera != null)
             {
                 lockOnCamera.Priority = 60;
-                lockOnCamera.LookAt = currentTarget.transform;
+
+                // Find UpperHalfPoint child
+                Transform upperHalfTransform = currentTarget.transform.Find("UpperHalfPoint");
+                if (upperHalfTransform != null)
+                {
+                    lockOnCamera.LookAt = upperHalfTransform;
+                }
+                else
+                {
+                    // Fallback to the enemy's main transform if UpperHalfPoint is missing
+                    lockOnCamera.LookAt = currentTarget.transform;
+                    Debug.LogWarning($"UpperHalfPoint not found on {currentTarget.name}. Using main transform as LookAt.");
+                }
+
                 mainVC.Priority = 0;
             }
             Debug.Log($"Locked onto {currentTarget.name}");
@@ -72,6 +86,22 @@ public class PlayerLockOn : MonoBehaviour
             Debug.Log("No enemy found within range.");
         }
     }
+
+    Vector3 GetUpperHalfPosition(GameObject target)
+    {
+        Renderer renderer = target.GetComponent<Renderer>();
+        if (renderer != null)
+        {
+            // Calculate the upper half position
+            return renderer.bounds.center + Vector3.up * (renderer.bounds.size.y / 4);
+        }
+        else
+        {
+            // Fallback if Renderer is not found
+            return target.transform.position + Vector3.up * 1.0f; // Adjust as needed
+        }
+    }
+
     private void TransferRotationToPOV()
     {
         // 1) Make sure cameras are valid

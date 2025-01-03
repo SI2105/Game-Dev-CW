@@ -96,9 +96,6 @@ public class LockOnNode : Node
             return node_state;
         }
         
-
-
-        enemyAgent.isStopped=true;
         enemyAgent.ResetPath();
 
         // 5) Determine front vs. left vs. right via dot products
@@ -115,24 +112,24 @@ public class LockOnNode : Node
         switch (currentState)
         {
             case MovementState.Forward:
-                velocityY = Mathf.Lerp(velocityY, 0.5f, Time.deltaTime *2f);
-                velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
+                velocityY = Mathf.Lerp(velocityY, 0.5f, Time.deltaTime);
+                velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime);
                 if(enemyAI.attackSensor.objects.Count==0){
                     enemyAgent.transform.position += enemyAgent.transform.forward * moveSpeed * Time.deltaTime;
                 }
                 break;
 
             case MovementState.StrafeRight:
-                velocityX = Mathf.Lerp(velocityX, 0.5f, Time.deltaTime * 2f);
-                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
+                velocityX = Mathf.Lerp(velocityX, 0.5f, Time.deltaTime);
+                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime);
                 if(enemyAI.attackSensor.objects.Count==0){
                     enemyAgent.transform.position += enemyAgent.transform.right * moveSpeed * Time.deltaTime;
                  }
                 break;
 
             case MovementState.StrafeLeft:
-                velocityX = Mathf.Lerp(velocityX, -0.5f, Time.deltaTime * 2f);
-                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
+                velocityX = Mathf.Lerp(velocityX, -0.5f, Time.deltaTime);
+                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime);
                 if(enemyAI.attackSensor.objects.Count==0){
                     enemyAgent.transform.position -= enemyAgent.transform.right * moveSpeed * Time.deltaTime;
                 }

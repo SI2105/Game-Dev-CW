@@ -8,7 +8,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Standing Dodge Right
-  m_Speed: 0.4
+  m_Speed: 1.5
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 2151063761403682666}
@@ -21,7 +21,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 5deaea35011914f97a67ad2abd399249, type: 2}
+  m_Motion: {fileID: 7400000, guid: 485ec8d0ccbb1453c85b0f551f9067c3, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -60,17 +60,9 @@ BlendTree:
     m_DirectBlendParameter: Blend
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: bb0e41082fc584f73bbdc93455b2208f, type: 2}
+    m_Motion: {fileID: 7400000, guid: 6f3c69bab15b04e878d6bc07dcdf7bef, type: 2}
     m_Threshold: 0.75
     m_Position: {x: 0, y: 0}
-    m_TimeScale: 1
-    m_CycleOffset: 0
-    m_DirectBlendParameter: Blend
-    m_Mirror: 0
-  - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: e7f421581b73544f7972e713f2914061, type: 2}
-    m_Threshold: 1
-    m_Position: {x: 0, y: -0.5}
     m_TimeScale: 1
     m_CycleOffset: 0
     m_DirectBlendParameter: Blend
@@ -78,7 +70,7 @@ BlendTree:
   m_BlendParameter: velocityX
   m_BlendParameterY: velocityY
   m_MinThreshold: 0
-  m_MaxThreshold: 1
+  m_MaxThreshold: 0.75
   m_UseAutomaticThresholds: 1
   m_NormalizedBlendValues: 0
   m_BlendType: 2
@@ -122,7 +114,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Standing Dodge Backward
-  m_Speed: 0.4
+  m_Speed: 1.5
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -6807004316755279694}
@@ -135,7 +127,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 5deaea35011914f97a67ad2abd399249, type: 2}
+  m_Motion: {fileID: 7400000, guid: 8e5a89973e968402eb82b14bbd82e833, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -563,7 +555,7 @@ AnimatorStateMachine:
     m_Position: {x: -190, y: 340, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -8821272357437301674}
-    m_Position: {x: -290, y: 230, z: 0}
+    m_Position: {x: -250, y: 210, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 5812407010697048028}
     m_Position: {x: -250, y: 20, z: 0}
@@ -1415,7 +1407,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Standing Dodge Left
-  m_Speed: 0.4
+  m_Speed: 1.5
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 923803767696260853}
@@ -1428,7 +1420,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 5deaea35011914f97a67ad2abd399249, type: 2}
+  m_Motion: {fileID: 7400000, guid: 11622e86d19c248b9a3c584e2cea75d0, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

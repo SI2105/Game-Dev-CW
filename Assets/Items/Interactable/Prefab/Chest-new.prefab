@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &4264366322236305836
+--- !u!1001 &3240617383017377258
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: bc6a5b9569a04e84da05e9c18eec8275, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -11.92
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bc6a5b9569a04e84da05e9c18eec8275, type: 3}
       propertyPath: m_LocalPosition.y
@@ -58,23 +58,23 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bc6a5b9569a04e84da05e9c18eec8275, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5576631789713325294}
+      addedObject: {fileID: 8204711494194264281}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bc6a5b9569a04e84da05e9c18eec8275, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1337106779554289921}
+      addedObject: {fileID: 8177943895085438324}
   m_SourcePrefab: {fileID: 100100000, guid: bc6a5b9569a04e84da05e9c18eec8275, type: 3}
---- !u!1 &4030575716814130429 stripped
+--- !u!1 &2322051489867616443 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: bc6a5b9569a04e84da05e9c18eec8275, type: 3}
-  m_PrefabInstance: {fileID: 4264366322236305836}
+  m_PrefabInstance: {fileID: 3240617383017377258}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5576631789713325294
+--- !u!114 &8204711494194264281
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4030575716814130429}
+  m_GameObject: {fileID: 2322051489867616443}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1f985415454e91d44a6cb9ec842232e8, type: 3}
@@ -95,13 +95,13 @@ MonoBehaviour:
   ChestPanel: {fileID: 0}
   ItemPrefab: {fileID: 4772539233113714616, guid: c7ca53f296642404788a04ce18e5427e, type: 3}
   Inventory: {fileID: 0}
---- !u!65 &1337106779554289921
+--- !u!65 &8177943895085438324
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4030575716814130429}
+  m_GameObject: {fileID: 2322051489867616443}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2

@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &288609470886786444
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4966536870690095458}
+  - component: {fileID: 6599132560759661490}
+  m_Layer: 0
+  m_Name: Inventory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4966536870690095458
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288609470886786444}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 855.22986, y: 93.7626, z: -91.26046}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6599132560759661490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288609470886786444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35ce2ada111f05d47977871aafda481e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  craftingRecipes:
+  - {fileID: 11400000, guid: fe017fa3456dffb43b93853e78b1960e, type: 2}
+  - {fileID: 11400000, guid: de6ef2aea65f2d048a306fbba81a0583, type: 2}
+  - {fileID: 11400000, guid: de1f4457b7dbb2246b08209238a81be6, type: 2}
+  - {fileID: 11400000, guid: bd8c217b00536e44a9cc66b91fbae926, type: 2}
+  - {fileID: 11400000, guid: 4fdd55660fcb3ed45aa1f8b7404357be, type: 2}
+  itemCursor: {fileID: 0}
+  itemToAdd: []
+  itemToRemove: []
+  SlotHolder: {fileID: 0}
+  InventoryPanel: {fileID: 0}
+  PlayerStatsPanel: {fileID: 0}
+  CraftingPanel: {fileID: 0}
+  Overlay: {fileID: 0}
+  HotBar: {fileID: 0}
+  HotBarSelector: {fileID: 0}
+  HotBarSlotHolder: {fileID: 0}
+  startingItems:
+  - item: {fileID: 11400000, guid: 0d414df23a4e517488ae36f729bcce23, type: 2}
+    quantity: 1
+  - item: {fileID: 11400000, guid: ac82d5860a64aba4493a765e9d8d33e1, type: 2}
+    quantity: 1
+  - item: {fileID: 11400000, guid: 595f1a3ad27ce9d47a4f5092d2edad47, type: 2}
+    quantity: 50
+  - item: {fileID: 11400000, guid: aee79cc0ef3133e4a9bd3987207b7126, type: 2}
+    quantity: 50
+  - item: {fileID: 11400000, guid: cac625fbed5fcd249980d68e8125b878, type: 2}
+    quantity: 10
+  - item: {fileID: 11400000, guid: bfb72ed5dba5368469b92c0544a004d8, type: 2}
+    quantity: 10
+  - item: {fileID: 11400000, guid: bfb72ed5dba5368469b92c0544a004d8, type: 2}
+    quantity: 10
+  onSelectedItemChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  selectedSlotIndex: 0
+  selectedItem: {fileID: 0}
+  craftingContainer: {fileID: 0}
+  craftingRecipeItem: {fileID: 8262240836787108943, guid: 0f4da9aafb012e84d85d92d3b190ba6f, type: 3}

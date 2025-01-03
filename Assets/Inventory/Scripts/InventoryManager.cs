@@ -115,13 +115,18 @@ public class InventoryManager : MonoBehaviour
             if(recipe.OutputIsPotion() && FullForPotions())
             {
                 recipeItem.transform.GetChild(3).GetComponent<Button>().interactable = false;
-               
+                recipeItem.transform.GetChild(3).GetChild(0).GetComponent<TextMeshProUGUI>().text = "Full";
+
             }
             else
             {
                 recipeItem.transform.GetChild(3).GetComponent<Button>().interactable = true;
+                recipeItem.transform.GetChild(3).GetChild(0).GetComponent<TextMeshProUGUI>().text = "Craft";
             }
-            recipeItem.transform.GetChild(3).GetComponent<Button>().onClick.AddListener(() => Craft(recipe));
+            recipeItem.transform.GetChild(3).GetComponent<Button>().onClick.AddListener(() => {
+                Craft(recipe); 
+                PopulateCraftingPanel();
+            });
         }
     }
 
@@ -232,7 +237,7 @@ public class InventoryManager : MonoBehaviour
             itemCursor.GetComponent<Image>().sprite = MovingSlot.GetItem().icon;
         }
 
-        
+
         HotBarSelector.transform.position = HotBarslots[selectedSlotIndex].transform.position;
         SelectedItem = Items[selectedSlotIndex].GetItem();
        
@@ -279,9 +284,11 @@ public class InventoryManager : MonoBehaviour
 
     public void OnClick(InputAction.CallbackContext context)
     {
-       
+     
+
         if (context.performed) {
 
+           
             if (isMovingItem)
             {
                 EndItemMove();
@@ -293,79 +300,103 @@ public class InventoryManager : MonoBehaviour
 
         }
 
-        SlotClass GetClosestSlot()
+        
+
+    }
+
+    SlotClass GetClosestSlot()
+    {
+      
+        for (int i = 0; i < slots.Length; i++)
         {
-            Vector2 mousePos = Mouse.current.position.ReadValue();
-            for (int i = 0; i < slots.Length; i++) {
-                if (Vector2.Distance(slots[i].transform.position, mousePos) <= 40){
-                    return Items[i];
-
-                }
-            }
-            return null;
-        }
-
-        bool BeginItemMove() { 
-            OriginalSlot = GetClosestSlot() ;
-            if (OriginalSlot != null && OriginalSlot.GetItem() != null)
+            if (Vector2.Distance(slots[i].transform.position, Mouse.current.position.ReadValue()) <= 55)
             {
-                MovingSlot = new SlotClass(OriginalSlot);
-                OriginalSlot.RemoveItem();
-                isMovingItem = true;
-                RefreshInterface();
-                return true;
+                
+                return Items[i];
+               
+
             }
+        }
+        return null;
+    }
+
+    bool BeginItemMove()
+    {
+        OriginalSlot = GetClosestSlot();
+        if (OriginalSlot == null || OriginalSlot.GetItem() == null)
+        {
+           
             return false;
         }
+       
+        MovingSlot = new SlotClass(OriginalSlot);
+        Remove(MovingSlot.GetItem(), MovingSlot.GetQuantity());
+        isMovingItem = true;
+        RefreshInterface();
+        return true;
 
-        bool EndItemMove() {
-            OriginalSlot = GetClosestSlot();
-            if (OriginalSlot == null)
+    }
+
+    bool EndItemMove()
+    {
+        OriginalSlot = GetClosestSlot();
+        if (OriginalSlot == null)
+        {
+          
+            
+            Remove(MovingSlot.GetItem(), MovingSlot.GetQuantity());
+            Add(MovingSlot.GetItem(), MovingSlot.GetQuantity());
+            MovingSlot.RemoveItem();
+        }
+        else
+        {
+
+
+            if (OriginalSlot.GetItem() != null)
             {
-                Add(MovingSlot.GetItem(), MovingSlot.GetQuantity());
-                MovingSlot.RemoveItem();
-            }
-            else
-            {
-
-
-                if (OriginalSlot.GetItem() != null)
+                if (OriginalSlot.GetItem() == MovingSlot.GetItem())
                 {
-                    if (OriginalSlot.GetItem() == MovingSlot.GetItem())
+                    if (OriginalSlot.GetItem().Stackable)
                     {
-                        if (OriginalSlot.GetItem().Stackable)
-                        {
-                            OriginalSlot.AddQuantity(MovingSlot.GetQuantity());
-                            MovingSlot.RemoveItem();
-                        }
-                        else
-                        {
-                            return false;
-                        }
-
+                        
+                        OriginalSlot.AddQuantity(MovingSlot.GetQuantity());
+                        MovingSlot.RemoveItem();
                     }
                     else
                     {
-
-                        TempSlot = new SlotClass(OriginalSlot);
-                        OriginalSlot.AddItem(MovingSlot.GetItem(), MovingSlot.GetQuantity());
-                        MovingSlot.AddItem(TempSlot.GetItem(), TempSlot.GetQuantity());
-                        RefreshInterface();
-                        return true;
-
+                       
+                        return false;
                     }
+
                 }
                 else
                 {
+                   
+                    TempSlot = new SlotClass(OriginalSlot);
+              
+                    Remove(OriginalSlot.GetItem(), OriginalSlot.GetQuantity());
+                   
                     OriginalSlot.AddItem(MovingSlot.GetItem(), MovingSlot.GetQuantity());
-                    MovingSlot.RemoveItem();
+                    Add(TempSlot.GetItem(), TempSlot.GetQuantity());
+                    isMovingItem = false;
+                    RefreshInterface();
+                    return true;
+
                 }
             }
-            isMovingItem = false;
-            RefreshInterface(); 
-            return true;
-            
+            else
+            {
+               
+                OriginalSlot.AddItem(MovingSlot.GetItem(), MovingSlot.GetQuantity());
+                MovingSlot.RemoveItem();
+                
+            }
         }
+        
+        isMovingItem = false;
+        RefreshInterface();
+        return true;
+
     }
 
     public bool Add(ItemClass item, int quantity) {
@@ -494,8 +525,15 @@ public class InventoryManager : MonoBehaviour
         SlotClass temp = Contains(item);
         if (temp != null)
         {
-
-            if (temp.GetQuantity() > 1)
+            if (item is ConsumableClass)
+            {
+                ConsumableClass ToCheck = (ConsumableClass)item;
+                if (ToCheck.IsPotion && NumOfPotion < MaxNumOfPotion)
+                {
+                    NumOfPotion -= 1;
+                }
+            }
+                if (temp.GetQuantity() > 1)
             {
                 temp.SubQuantity(1);
             }
@@ -540,6 +578,14 @@ public class InventoryManager : MonoBehaviour
         SlotClass temp = Contains(item);
         if (temp != null)
         {
+            if (item is ConsumableClass)
+            {
+                ConsumableClass ToCheck = (ConsumableClass)item;
+                if (ToCheck.IsPotion)
+                {
+                    NumOfPotion -= quantity;
+                }
+            }
 
             if (temp.GetQuantity() > quantity)
             {
@@ -595,6 +641,10 @@ public class InventoryManager : MonoBehaviour
 
     public bool FullForPotions() { 
         return NumOfPotion >= MaxNumOfPotion;
+    }
+
+    public bool CanAddPotion(int quantity) {
+        return   (MaxNumOfPotion - NumOfPotion) >= quantity && !FullForPotions();
     }
 
 

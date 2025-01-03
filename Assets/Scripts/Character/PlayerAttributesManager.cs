@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using System;
+using UnityEngine.Rendering.PostProcessing;
 
 namespace SG
 {
@@ -31,6 +32,10 @@ namespace SG
         public SkillTreeManager SkillTreeManager { get => skillTreeManager; 
             set => skillTreeManager = value; 
         }
+
+        public float intensity = 0f;
+        public PostProcessVolume _volume;
+        Vignette _vignette;
 
         //void OnEnable()
         //{
@@ -78,7 +83,7 @@ namespace SG
             }
         }
 
-        private float currentHealth;
+        public float currentHealth;
         public float CurrentHealth
         {
             get => currentHealth;
@@ -178,6 +183,140 @@ namespace SG
 
             return false;
         }
+        private Coroutine lowHealthPulseCoroutine;
+        private PlayerSoundManager soundEffectManager;
+        void Start(){
+            soundEffectManager = GetComponent<PlayerSoundManager>();
+            _volume.profile.TryGetSettings(out _vignette);
+            if (_vignette != null){
+                _vignette.enabled.Override(false);
+                _vignette.intensity.Override(0f);
+            }
+        }
+        private Coroutine damageEffectCoroutine;
+        private Coroutine recoveryEffectCoroutine;
+        private float lastInjuredSoundTime = 0f;
+        private float injuredSoundCooldown = 7f; // Adjust this value to control how often the sound can play
+
+        private IEnumerator DamageEffectCoroutine()
+        {
+            if (_vignette == null) yield break;
+
+            float lowHealthThreshold = MaxHealth * 0.3f; // 30% health threshold
+            
+            // If health is below threshold, start pulsing
+            if (currentHealth <= lowHealthThreshold)
+            {
+                soundEffectManager.InjuredClip();
+                _vignette.enabled.Override(true);
+                float pulseSpeed = 2f; // Adjust for faster/slower pulse
+                float minIntensity = 0.2f;
+                float maxIntensity = 0.4f;
+
+                // Keep pulsing until health goes above threshold
+                while (currentHealth <= lowHealthThreshold)
+                {
+
+                    if (Time.time - lastInjuredSoundTime >= injuredSoundCooldown)
+                    {
+                        soundEffectManager.InjuredClip();
+                        lastInjuredSoundTime = Time.time;
+                    }
+                    // Fade in
+                    float elapsed = 0f;
+                    while (elapsed < 1f/pulseSpeed && currentHealth <= lowHealthThreshold)
+                    {
+                        elapsed += Time.deltaTime;
+                        float currentIntensity = Mathf.Lerp(minIntensity, maxIntensity, elapsed * pulseSpeed);
+                        _vignette.intensity.Override(currentIntensity);
+                        yield return null;
+                    }
+
+                    // Fade out
+                    elapsed = 0f;
+                    while (elapsed < 1f/pulseSpeed && currentHealth <= lowHealthThreshold)
+                    {
+                        elapsed += Time.deltaTime;
+                        float currentIntensity = Mathf.Lerp(maxIntensity, minIntensity, elapsed * pulseSpeed);
+                        _vignette.intensity.Override(currentIntensity);
+                        yield return null;
+                    }
+                }
+
+                // When health goes above threshold, clean up
+                _vignette.intensity.Override(0f);
+                _vignette.enabled.Override(false);
+            }
+            else
+            {
+                // Normal damage effect for when health is above threshold
+                _vignette.enabled.Override(true);
+                float duration = 0.5f;
+                float holdTime = 0.2f;
+                float fadeOutDuration = 0.5f;
+                float targetIntensity = 0.4f;
+
+                // Normal fade in
+                float elapsed = 0f;
+                while (elapsed < duration)
+                {
+                    _vignette.intensity.Override(Mathf.Lerp(0f, targetIntensity, elapsed / duration));
+                    elapsed += Time.deltaTime;
+                    yield return null;
+                }
+                _vignette.intensity.Override(targetIntensity);
+
+                yield return new WaitForSeconds(holdTime);
+
+                // Normal fade out
+                elapsed = 0f;
+                while (elapsed < fadeOutDuration)
+                {
+                    _vignette.intensity.Override(Mathf.Lerp(targetIntensity, 0f, elapsed / fadeOutDuration));
+                    elapsed += Time.deltaTime;
+                    yield return null;
+                }
+                _vignette.intensity.Override(0f);
+                _vignette.enabled.Override(false);
+            }
+        }
+
+       
+        private IEnumerator RecoveryEffectCoroutine()
+        {
+            // Enable Vignette and set initial parameters
+            _vignette.enabled.Override(true);
+            _vignette.color.Override(Color.green); // Green tint for recovery
+            float duration = 0.5f; // Time to fade in
+            float holdTime = 0.2f; // Time to hold the effect
+            float fadeOutDuration = 0.5f; // Time to fade out
+            float targetIntensity = 0.3f; // Maximum intensity
+
+            // Fade In
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                _vignette.intensity.Override(Mathf.Lerp(0f, targetIntensity, elapsed / duration));
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+            _vignette.intensity.Override(targetIntensity);
+
+            // Hold
+            yield return new WaitForSeconds(holdTime);
+
+            // Fade Out
+            elapsed = 0f;
+            while (elapsed < fadeOutDuration)
+            {
+                _vignette.intensity.Override(Mathf.Lerp(targetIntensity, 0f, elapsed / fadeOutDuration));
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+            _vignette.intensity.Override(0f);
+            _vignette.enabled.Override(false);
+        }
+
 
         public bool TakeDamage(float damage)
         {
@@ -189,12 +328,14 @@ namespace SG
                     value => CurrentHealth = value,
                     MaxHealth,
                     -damage,
-                    0f, // No health regeneration rate here (set to 0 if you don’t want auto-regen)
-                    0f, // No delay for health regen (set a delay if regen is required)
+                    0f, // No health regeneration rate here
+                    0f, // No delay for health regen
                     null, // No recovery stop callback for health damage
                     null  // No recovery start callback for health damage
                 );
 
+                // Trigger Damage Vignette Effect
+                ApplyDamageEffect();
                 // Return true to indicate damage was successfully taken
                 return true;
             }
@@ -202,6 +343,25 @@ namespace SG
             // Return false if the player is already at 0 health
             return false;
         }
+
+        /// <summary>
+        /// Initiates the Damage Vignette Effect.
+        /// </summary>
+        private void ApplyDamageEffect()
+        {
+            if (_vignette == null)
+                return;
+
+            // If a damage effect is already running, stop it to restart
+            if (damageEffectCoroutine != null)
+            {
+                StopCoroutine(damageEffectCoroutine);
+            }
+
+            // Start the damage effect coroutine
+            damageEffectCoroutine = StartCoroutine(DamageEffectCoroutine());
+        }
+
 
         private void StopStaminaRecovery()
         {
@@ -222,23 +382,73 @@ namespace SG
             Debug.Log("Starting stamina recovery process now.");
         }
 
-        private void StopHealthRecovery()
-        {
-            if (recoveryCoroutine != null)
-            {
-                StopCoroutine(recoveryCoroutine);
-                recoveryCoroutine = null;
-            }
-            Debug.Log("Health recovery manually interrupted. Ongoing recovery halted.");
-        }
-
-        private void StartHealthRecovery()
+        public void StartHealthRecovery()
         {
             if (currentHealth < MaxHealth)
             {
-                recoveryCoroutine = StartCoroutine(RecoveryCoroutine(() => currentHealth, v => CurrentHealth = v, MaxHealth, HealthRegenRate, 0f, null));
+                recoveryCoroutine = StartCoroutine(RecoveryCoroutine(
+                    () => currentHealth, 
+                    v => CurrentHealth = v, 
+                    MaxHealth, 
+                    HealthRegenRate, 
+                    0f, 
+                    null
+                ));
+
+                // Trigger Recovery Vignette Effect
+                ApplyRecoveryEffect();
             }
             Debug.Log("Starting health recovery process now.");
+        }
+
+        /// <summary>
+        /// Initiates the Recovery Vignette Effect.
+        /// </summary>
+        private void ApplyRecoveryEffect()
+        {
+            if (_vignette == null)
+                return;
+
+            // If a recovery effect is already running, stop it to restart
+            if (recoveryEffectCoroutine != null)
+            {
+                StopCoroutine(recoveryEffectCoroutine);
+            }
+
+            // Start the recovery effect coroutine
+            recoveryEffectCoroutine = StartCoroutine(RecoveryEffectCoroutine());
+        }
+
+
+        /// <summary>
+        /// Generic coroutine to handle Vignette intensity transition.
+        /// </summary>
+        private IEnumerator VignetteEffectCoroutine(Color effectColor, float targetIntensity, float duration)
+        {
+            if (_vignette == null)
+                yield break;
+
+            // Set Vignette color
+            _vignette.color.Override(effectColor);
+
+            // Enable Vignette
+            _vignette.enabled.Override(true);
+
+            // Set initial intensity
+            _vignette.intensity.Override(targetIntensity);
+
+            // Gradually decrease intensity to 0
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                _vignette.intensity.Override(Mathf.Lerp(targetIntensity, 0f, elapsed / duration));
+                yield return null;
+            }
+
+            // Ensure intensity is set to 0 and disable Vignette
+            _vignette.intensity.Override(0f);
+            _vignette.enabled.Override(false);
         }
 
         public void GainExperience(float xp)

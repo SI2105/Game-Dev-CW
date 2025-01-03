@@ -804,6 +804,7 @@ namespace SG{
                 Debug.Log("Dodge is on cooldown!");
                 return;
             }
+            attributesManager.TakeDamage(20f);
 
             // 2. Check stamina
             if (attributesManager.CurrentStamina < dodgeStaminaCost)

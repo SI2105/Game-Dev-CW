@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9058222931490843813}
   - component: {fileID: 4645255513149962796}
   - component: {fileID: 5185541706658486506}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wall_Chiseled
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 5201984801552638041}
   - component: {fileID: 3634375446153022144}
   - component: {fileID: 2983348431340704394}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Column_Half
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,7 +226,7 @@ GameObject:
   - component: {fileID: 9211938980496024404}
   - component: {fileID: 5075771202500706106}
   - component: {fileID: 6496468574445018925}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Column_Half (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -332,7 +332,7 @@ GameObject:
   - component: {fileID: 5236356151359893265}
   - component: {fileID: 8161822015886777288}
   - component: {fileID: 5398800928735256316}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Column_Half
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -438,7 +438,7 @@ GameObject:
   - component: {fileID: 6393064947278683357}
   - component: {fileID: 1510143991882835821}
   - component: {fileID: -1698255733152223389}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wall_DoorStand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -547,7 +547,7 @@ GameObject:
   - component: {fileID: 5720377326343697172}
   - component: {fileID: 7970047152549846955}
   - component: {fileID: 2559583913877147125}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Column_Half (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -143,7 +143,7 @@ public class EnemyAIController : MonoBehaviour
         SequenceNode dodge = new SequenceNode(new List<Node> {isInChasingRange, dodgeNode});
 
         //selector node for root node of behaviour tree
-        topNode= new SelectorNode(new List<Node> {enemyDeath, damagedNode, dodge, patrollingSequence, attacks1, attacks2});
+        topNode= new SelectorNode(new List<Node> {enemyDeath, damagedNode,dodge, patrollingSequence, attacks1, attacks2});
     }
 
     //getter for the current enemy health

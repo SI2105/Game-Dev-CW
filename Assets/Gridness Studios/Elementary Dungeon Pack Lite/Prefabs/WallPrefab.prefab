@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6599283856036550296}
   - component: {fileID: 8567205698731334478}
   - component: {fileID: 6313170275383823639}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wall_Chiseled (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ GameObject:
   m_Component:
   - component: {fileID: 304738408769115248}
   - component: {fileID: 6533860529919029356}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -211,7 +211,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5846274264044889936}
   - component: {fileID: -1720509009710389966}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WallPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -279,7 +279,7 @@ GameObject:
   - component: {fileID: 1363573712052526696}
   - component: {fileID: 2249080563623850715}
   - component: {fileID: 3678848671725268407}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Column_Half (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -385,7 +385,7 @@ GameObject:
   - component: {fileID: 3576555364987589684}
   - component: {fileID: 7076855257173779299}
   - component: {fileID: 3486841987741190556}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Column_Half (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -490,7 +490,7 @@ GameObject:
   - component: {fileID: 1449889744002226446}
   - component: {fileID: 3629783579839506522}
   - component: {fileID: 8023726847547065190}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Fire_Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5339,7 +5339,7 @@ GameObject:
   - component: {fileID: 5403515248464590612}
   - component: {fileID: 5854636783879659552}
   - component: {fileID: 2997791221107401763}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Torch.001 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5447,7 +5447,7 @@ GameObject:
   - component: {fileID: 7296695612193769966}
   - component: {fileID: 3832658218742519986}
   - component: {fileID: 3901099127125681999}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Flag.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5552,7 +5552,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6840907500556282537}
   - component: {fileID: 34202920021610165}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5648,7 +5648,7 @@ GameObject:
   - component: {fileID: 2594882347422293557}
   - component: {fileID: 462932927230615092}
   - component: {fileID: 6387313602268270326}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wall_Chiseled
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5754,7 +5754,7 @@ GameObject:
   - component: {fileID: 4637831924926979424}
   - component: {fileID: 4282313768361828102}
   - component: {fileID: 4398592156860544191}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pot (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5860,7 +5860,7 @@ GameObject:
   - component: {fileID: 7645876440571696032}
   - component: {fileID: 4208855421736895228}
   - component: {fileID: 4142169400492064001}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Flag.004 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5967,7 +5967,7 @@ GameObject:
   - component: {fileID: 332989232914852712}
   - component: {fileID: 206337452551645831}
   - component: {fileID: 1875234776694623447}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sand_B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6073,7 +6073,7 @@ GameObject:
   - component: {fileID: 4058990952818571390}
   - component: {fileID: 6922261188273292435}
   - component: {fileID: 901916633508199531}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Column_Half
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6178,7 +6178,7 @@ GameObject:
   - component: {fileID: 5677464479295842263}
   - component: {fileID: 7533106247945328259}
   - component: {fileID: 3859424185279413695}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Fire_Effect2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11027,7 +11027,7 @@ GameObject:
   - component: {fileID: 1164260398938769869}
   - component: {fileID: 858698745456008953}
   - component: {fileID: 8308903735695481594}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Torch.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11135,7 +11135,7 @@ GameObject:
   - component: {fileID: 8292136218081421576}
   - component: {fileID: 586210997361011566}
   - component: {fileID: 1028375595670831319}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pot
   m_TagString: Untagged
   m_Icon: {fileID: 0}

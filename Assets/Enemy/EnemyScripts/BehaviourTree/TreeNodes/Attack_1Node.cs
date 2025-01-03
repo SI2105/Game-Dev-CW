@@ -9,6 +9,9 @@ public class Attack_1Node : Node
     private EnemyAIController enemyAI;
     private Animator animator;
 
+    private float lastAttackTime = 0f; // Tracks the time of the last attack
+    private float attackCooldown = 1f; // Minimum time between attacks (in seconds)
+
     public Attack_1Node(NavMeshAgent enemyAgent, EnemyAIController enemyAI, Animator animator)
     {
         this.enemyAgent = enemyAgent;
@@ -18,59 +21,49 @@ public class Attack_1Node : Node
 
     public override State Evaluate()
     {
-        
-        float distance = Vector3.Distance(enemyAgent.transform.position, enemyAI.playerTransform.position);
-        if (enemyAI.attackSensor.objects.Count>0)
+        float currentTime = Time.time;
+
+        if (currentTime - lastAttackTime >= attackCooldown)
         {
-            animator.SetBool("IsPlayingAction", true);
-            enemyAgent.ResetPath();
-            // Close-range attack
-            enemyAgent.isStopped = true;
-            // Randomly choose between AttackRight or AttackLeft
-            animator.SetBool("AttackLeft", true);
+            if (!(enemyAI.attackSensor.objects.Count > 0)) // Hysteresis for >6f condition
+            {
+                enemyAI.isAttacking = true;
+                animator.SetBool("IsPlayingAction", true);
+                // Calculate the direction vector from enemy to player
+                Vector3 directionToPlayer = (enemyAI.playerTransform.position - enemyAgent.transform.position).normalized;
+
+                // Offset the player's position by 2f in the direction away from the enemy
+                Vector3 destination = enemyAI.playerTransform.position - directionToPlayer * 2f;
+
+                // Set the speed for the surge
+                float adjustedSpeed = 20f;
+                enemyAgent.speed = adjustedSpeed;
+
+                // Set the calculated destination
+                enemyAgent.SetDestination(destination);
+                // Set surge boolean
+                animator.SetBool("Surge", true);
+
+                // Trigger the surge attack
+                animator.SetTrigger("AttackLeft");
             
+                lastAttackTime = currentTime;
+
+            }
+            else
+            {
+                enemyAgent.ResetPath();
+                // Debug.LogError("Here");
+                animator.SetBool("IsPlayingAction", true);
+                // Long-range surge attack
+                animator.SetTrigger("AttackLeft");
+                enemyAI.isAttacking = true;
+                lastAttackTime = currentTime;
+            }
         }
-        else if (distance > 4f)
-        {
-            animator.SetBool("IsPlayingAction", true);
-            // Long-range surge attack
-            animator.SetBool("AttackLeft", true);
-
-            // Set surge boolean
-            animator.SetBool("Surge", true);
-
-            enemyAgent.isStopped = false;
-
-            // Calculate the direction vector from enemy to player
-            Vector3 directionToPlayer = (enemyAI.playerTransform.position - enemyAgent.transform.position).normalized;
-
-            // Offset the player's position by 2.5f in the direction away from the enemy
-            Vector3 destination = enemyAI.playerTransform.position - directionToPlayer * 2f;
-
-            // Calculate the distance to the player
-            float distanceToPlayer = Vector3.Distance(enemyAI.playerTransform.position, enemyAgent.transform.position);
-
-            // Set the speed as the difference in distance minus 2.5f (clamp to ensure positive speed)
-            float adjustedSpeed = Mathf.Max(distanceToPlayer, 0f);
-            enemyAgent.speed = adjustedSpeed;
-
-            // Set the calculated destination
-            enemyAgent.SetDestination(destination);
-        }
-
-        else{
-          
-            enemyAgent.isStopped = false;
-            enemyAgent.speed=1.5f;
-            animator.SetBool("IsPlayingAction", false);
-            animator.SetFloat("velocityY", 0.5f);
-            animator.SetFloat("velocityX", 0.0f);
-            enemyAgent.SetDestination(enemyAI.playerTransform.position);
-             
-        }
-       
 
         node_state = State.RUNNING;
         return node_state;
     }
+
 }

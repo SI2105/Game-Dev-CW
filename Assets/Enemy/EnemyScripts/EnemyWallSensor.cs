@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[ExecuteInEditMode]
 public class EnemyWallSensor : MonoBehaviour
 {
     public float distance;
@@ -36,6 +36,7 @@ public class EnemyWallSensor : MonoBehaviour
         for(int i=0; i<count; ++i){
             GameObject obj = colliders[i].gameObject;
             if(isInSight(obj)){
+                Debug.LogError("Wall detected");
                 objects.Add(obj);
             }
         }
@@ -50,12 +51,14 @@ public class EnemyWallSensor : MonoBehaviour
         //     return false;
         // }
 
-        direction.y = 0;
-
         float deltaAngle = Vector3.Angle(direction, transform.forward);
+
         if(deltaAngle>angle){
             return false;
         }
+
+
+        direction.y = 0;
 
         origin.y +=height/2;
         dest.y = origin.y;

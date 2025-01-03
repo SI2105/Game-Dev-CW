@@ -196,18 +196,4 @@ public class EnemyAIController : MonoBehaviour
         isDodging=false;
     }
 
-    //method for initiating the death of the enemy
-    public bool Die(){
-        return true;
-    }
-
-    //method for initiating dodge
-    public void dodge(){
-       
-    }
-
-    //method for initiating block
-    public void block(){
-      
-    }
 }

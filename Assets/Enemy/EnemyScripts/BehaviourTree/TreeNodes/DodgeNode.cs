@@ -33,6 +33,14 @@ public class DodgeNode : Node
             Vector3 direction = (dodgeDestination - enemyAgent.transform.position).normalized;
             Rigidbody rb = enemyAgent.GetComponent<Rigidbody>();
             
+            Vector3 toPlayer = (enemyAI.playerTransform.position - enemyAgent.transform.position).normalized;
+            Quaternion targetRotation = Quaternion.LookRotation(toPlayer);
+            enemyAgent.transform.rotation = Quaternion.Slerp(
+                enemyAgent.transform.rotation,
+                targetRotation,
+                Time.deltaTime * 10f
+            );
+
             // Check if dodge is complete
             if (Vector3.Distance(enemyAgent.transform.position, dodgeDestination) < 0.1f)
             {

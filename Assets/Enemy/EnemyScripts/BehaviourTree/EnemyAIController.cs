@@ -131,10 +131,10 @@ public class EnemyAIController : MonoBehaviour
         InverterNode hasAttacks1Health = new InverterNode(healthNode);
 
         //Sequence node for attacks 1
-        SequenceNode attacks1 = new SequenceNode(new List<Node> {isInChasingRange, hasAttacks1Health, playerLockNode, attackNode1});
+        SequenceNode attacks1 = new SequenceNode(new List<Node> {isInChasingRange, hasAttacks1Health, playerLockNode});
 
         //Sequence node for attacks 1
-        SequenceNode attacks2 = new SequenceNode(new List<Node> {isInChasingRange, healthNode, playerLockNode, attackNode2});
+        SequenceNode attacks2 = new SequenceNode(new List<Node> {isInChasingRange, healthNode, playerLockNode});
 
         //Sequence node for death
         SequenceNode enemyDeath = new SequenceNode(new List<Node> {deathHealthNode, deathNode});
@@ -143,7 +143,7 @@ public class EnemyAIController : MonoBehaviour
         SequenceNode dodge = new SequenceNode(new List<Node> {isInChasingRange, dodgeNode});
 
         //selector node for root node of behaviour tree
-        topNode= new SelectorNode(new List<Node> {enemyDeath, damagedNode, dodge, patrollingSequence, attacks1, attacks2});
+        topNode= new SelectorNode(new List<Node> {enemyDeath, damagedNode,dodge, patrollingSequence, attacks1, attacks2});
     }
 
     //getter for the current enemy health

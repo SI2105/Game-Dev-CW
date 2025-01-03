@@ -48,7 +48,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerState: {fileID: 0}
-  hitSound: {fileID: 8300000, guid: 220d8fb57ac14944abc88955b5d6d266, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: 889b551e7e3fae743a799e5f1039b426, type: 3}
+  - {fileID: 8300000, guid: 2c00b41bc6538864892a6c02921c51c6, type: 3}
   hitVolume: 0.195
 --- !u!82 &-1028601082621062085
 AudioSource:
@@ -225,8 +227,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.8, y: 0.1, z: -0.24}
-  m_Center: {x: -0.75, y: 0.09, z: 0.05}
+  m_Size: {x: 0.38, y: 0.1, z: -0.24}
+  m_Center: {x: -0.95, y: 0.09, z: 0.05}
 --- !u!1 &6831344523575673727
 GameObject:
   m_ObjectHideFlags: 0

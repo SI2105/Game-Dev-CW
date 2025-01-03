@@ -1,8 +1,9 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
-namespace SG {
-
+namespace SG
+{
     public class WeaponCollisionHandler : MonoBehaviour
     {
         // Temporary damage value set by the PlayerComboManager
@@ -13,10 +14,14 @@ namespace SG {
 
         // Audio components for hit sounds
         private AudioSource audioSource;
-        [Tooltip("Assign the hit sound clip in the Inspector.")]
-        public AudioClip hitSound; // Assign via Inspector
+
+        [Tooltip("Assign the hit sound clips in the Inspector.")]
+        public AudioClip[] hitSounds; // Array to hold multiple hit sounds
         [Range(0f, 1f)]
         public float hitVolume = 0.5f;
+
+        // Index to keep track of the current sound
+        private int currentHitSoundIndex = 0;
 
         // Collider component (ensure it's set as a Trigger in the Inspector)
         private Collider weaponCollider;
@@ -31,8 +36,6 @@ namespace SG {
                 audioSource = gameObject.AddComponent<AudioSource>();
             }
 
-            // Initialize PlayerState (assumes PlayerState is on the parent GameObject)
-
             // Initialize Collider
             weaponCollider = GetChildComponent<Collider>();
             if (weaponCollider == null)
@@ -44,26 +47,18 @@ namespace SG {
                 Debug.LogWarning("Weapon collider should be set as a Trigger. Setting it as Trigger now.");
                 weaponCollider.isTrigger = true;
             }
-
-            // Initially disable the collider to prevent unintended hits
-            // weaponCollider.enabled = false;
         }
 
-        void Update(){
-            Debug.Log("player state" + _playerState);
+        private void Update()
+        {
+            Debug.Log("Player state: " + _playerState);
         }
-        /// <summary>
-        /// Sets the temporary damage value for the current attack.
-        /// </summary>
-        /// <param name="damage">Damage to be applied to enemies.</param>
+
         public void SetTemporaryDamage(float damage)
         {
             temporaryDamage = damage;
         }
 
-        /// <summary>
-        /// Activates the weapon's collider to detect hits and schedules its deactivation.
-        /// </summary>
         public void TriggerAttack()
         {
             if (weaponCollider == null)
@@ -75,9 +70,6 @@ namespace SG {
             // Enable the collider to detect hits
             weaponCollider.enabled = true;
             Debug.Log("Weapon collider enabled for attack.");
-
-            // Schedule collider deactivation after a short delay to prevent multiple hits
-            // StartCoroutine(DisableColliderAfterDelay(0.1f)); // Adjust delay as needed
         }
 
         private int internalCurrentComboStep;
@@ -87,25 +79,10 @@ namespace SG {
             internalCurrentComboStep = comboStep;
         }
 
-        /// <summary>
-        /// Coroutine to disable the collider after a specified delay.
-        /// </summary>
-        /// <param name="delay">Time in seconds before disabling the collider.</param>
-        /// <returns></returns>
-        private IEnumerator DisableColliderAfterDelay(float delay)
-        {
-            yield return new WaitForSeconds(delay);
-            weaponCollider.enabled = false;
-            Debug.Log("Weapon collider disabled after attack.");
-        }
+        public event Action OnHit;
 
-        /// <summary>
-        /// Handles collision events with enemies.
-        /// </summary>
-        /// <param name="other">The Collider that enters the trigger.</param>
         private void OnTriggerEnter(Collider other)
         {
-            // Check if the collided object is tagged as "Enemy"
             if (other.CompareTag("Enemy"))
             {
                 if (_playerState == null)
@@ -115,58 +92,32 @@ namespace SG {
                 }
 
                 print($"Hit {other.name} with damage: {temporaryDamage}");
-                if (_playerState.IsInState(PlayerAttackState.Attacking)){
-                    if (internalCurrentComboStep == 1)
-                    {
-                        print($"Hit {other.name} with damage: {temporaryDamage} with stat1: {_playerState.Attack1_progress}");
-                        _playerState.Attack1_progress = false;
-                        PlayHitSound();
-                    }
-                    else if (internalCurrentComboStep == 2)
-                    {
-                        print($"Hit {other.name} with damage: {temporaryDamage} with state2: {_playerState.Attack2_progress}");
-                        _playerState.Attack2_progress = false;
-                        PlayHitSound();
-                    }
-                    else if (internalCurrentComboStep == 3)
-                    {
-                        print($"Hit {other.name} with damage: {temporaryDamage} with state3: {_playerState.Attack2_progress}");
-                        _playerState.Attack3_progress = false;
-                        PlayHitSound();
-                    }
-                    internalCurrentComboStep = 0;
-
+                if (_playerState.IsInState(PlayerAttackState.Attacking))
+                {
+                    OnHit?.Invoke();
+                    PlayHitSound();
                 }
-                
-                                
-                // Apply damage to the enemy
-                // if (other.TryGetComponent<Health>(out Health enemyHealth))
-                // {
-                //     enemyHealth.TakeDamage(temporaryDamage);
-                // }
-                // else
-                // {
-                //     Debug.LogWarning($"Enemy {other.name} does not have a Health component.");
-                // }
-
-                // Play hit sound if assigned
-                
             }
         }
 
         /// <summary>
-        /// Plays the assigned hit sound.
+        /// Plays the next hit sound in the sequence.
         /// </summary>
         private void PlayHitSound()
         {
-            if (audioSource != null && hitSound != null)
+            if (audioSource != null && hitSounds != null && hitSounds.Length > 0)
             {
-                audioSource.PlayOneShot(hitSound, hitVolume);
-                Debug.Log("Hit sound played.");
+                // Play the current sound
+                audioSource.PlayOneShot(hitSounds[currentHitSoundIndex], hitVolume);
+
+                // Increment and loop the index
+                currentHitSoundIndex = (currentHitSoundIndex + 1) % hitSounds.Length;
+
+                Debug.Log($"Hit sound {currentHitSoundIndex} played.");
             }
             else
             {
-                Debug.LogWarning("Hit sound or AudioSource not assigned.");
+                Debug.LogWarning("Hit sounds array is empty or AudioSource is not assigned.");
             }
         }
 

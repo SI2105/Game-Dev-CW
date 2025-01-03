@@ -9,6 +9,7 @@ namespace SG{
         public AudioSource runningAudioSource; // Audio source for running sounds
         public AudioSource attackAudioSource;
         public AudioSource effectAudioSource;
+        public AudioSource injuredAudioSource;
         
         [Header("Breathing Sounds")]
         public AudioClip breathing_0_100; // 0-100 Breathing
@@ -203,8 +204,31 @@ namespace SG{
             PlaySound(attackAudioSource, powerup2, powerup2Volume);
         }
 
-        public void InjuredClip(){
-            PlaySound(attackAudioSource, injuredClip, 0.5f);
+
+        public void PlayInjuredClip(float volume = 0.5f)
+        {
+            injuredAudioSource.volume = Mathf.Clamp01(volume); // Ensure volume is between 0 and 1
+
+            // Stop and restart the sound if it's already playing
+            if (injuredAudioSource.isPlaying)
+            {
+                injuredAudioSource.Stop();
+            }
+
+            injuredAudioSource.clip = injuredClip; // Set the clip explicitly
+            injuredAudioSource.Play(); // Play the clip
+            Debug.Log($"Injured sound playing at volume: {injuredAudioSource.volume}");
         }
+
+        public void StopInjuredClip()
+        {
+            if (injuredAudioSource.isPlaying)
+            {
+                injuredAudioSource.Stop();
+                Debug.Log("Injured sound stopped.");
+            }
+        }
+
+
     }
 }

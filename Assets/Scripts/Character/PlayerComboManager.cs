@@ -129,7 +129,7 @@ namespace SG
         private void StartAttack()
         {
             isComboActive = true;
-            currentComboStep = 1;
+            currentComboStep = 0;
             comboTimer = 0f;
             staminaUsageCount = 1;
 
@@ -154,6 +154,7 @@ namespace SG
         /// </summary>
         private void ContinueCombo()
         {
+            if (currentComboStep >= 2) return;
             currentComboStep++;
             comboTimer = 0f;
             staminaUsageCount++;
@@ -318,6 +319,7 @@ namespace SG
                 if (currentComboStep == 1)
                 {
                     playerState.Attack1_progress = true;
+                    
                     playerState.SetPlayerAttackStatusState(PlayerAttackStatusState.Attack_progress_1);
                 }
                 else if (currentComboStep == 2)
@@ -361,6 +363,8 @@ namespace SG
                 {
                     // Handle healing logic
                     Debug.Log($"Using consumable: {consumable.name}");
+                    float healthToGain = consumable.healAmount;
+                    attributesManager.GainHealth(healthToGain);
 
                     animator.SetBool(isPlayingActionHash, true); // Prevent other actions during healing
                     animator.SetTrigger("HealTrigger");

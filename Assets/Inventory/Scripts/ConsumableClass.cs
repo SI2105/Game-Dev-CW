@@ -6,6 +6,7 @@ using UnityEngine;
 public class ConsumableClass : ItemClass
 {
     public bool IsPotion;
+    public float healAmount;
 
     public override ItemClass GetItem() { return this; }
     public override WeaponClass GetWeapon() { return null; }

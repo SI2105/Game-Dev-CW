@@ -17,6 +17,8 @@ namespace SG
         public Image selectorDot; // Default active image
         public Image onHit; // Inactive by default, shown when a hit occurs
 
+        public TextMeshProUGUI LevelUpText;
+
         [Header("Boost UI")]
         public Image icon; // Icon to show for the active boost
         public TextMeshProUGUI allAttributesBoostTimerText;
@@ -221,9 +223,34 @@ namespace SG
         {
             if (playerLevelText)
             {
+                // Update the level text
                 playerLevelText.text = $"{newLevel}";
+
+                // Show the level-up popup message
+                // if (LevelUpText)
+                // {
+                    // LevelUpText.text = $"New Level Reached! {newLevel}";
+                //     StartCoroutine(ShowLevelUpMessage());
+                // }
             }
         }
+
+        private void Start(){
+            RefreshUI();
+        }
+
+        private IEnumerator ShowLevelUpMessage()
+        {
+            // Ensure the text is visible
+            LevelUpText.gameObject.SetActive(true);
+
+            // Wait for 1 second
+            yield return new WaitForSeconds(1f);
+
+            // Hide the text after the delay
+            LevelUpText.gameObject.SetActive(false);
+        }
+
 
         // ------------------- Hit Indicator Handler ------------------- //
 
@@ -263,5 +290,18 @@ namespace SG
                 onHit.gameObject.SetActive(false);
             }
         }
+        public void RefreshUI()
+        {
+            if (attributesManager != null)
+            {
+                // Refresh Stamina and Health
+                UpdateStaminaUI(attributesManager.CurrentStamina, attributesManager.MaxStamina);
+                UpdateHealthUI(attributesManager.CurrentHealth, attributesManager.MaxHealth);
+
+                // Refresh Level UI
+                UpdateLevelUI(attributesManager.CurrentLevel);
+            }
+        }
+
     }
 }

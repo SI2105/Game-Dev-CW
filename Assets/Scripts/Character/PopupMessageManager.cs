@@ -25,13 +25,20 @@ namespace SG
                 popupPanel.SetActive(false);
         }
 
-        public void ShowPopup(ItemClass item)
+    public void ShowPopup(ItemClass item)
+    {
+        if (item == null)
         {
-            messageQueue.Enqueue(item);
-
-            if (!isDisplayingMessage)
-                StartCoroutine(ProcessQueue());
+            Debug.LogWarning("Attempted to show a popup for a null item.");
+            return;
         }
+
+        messageQueue.Enqueue(item);
+
+        if (!isDisplayingMessage)
+            StartCoroutine(ProcessQueue());
+    }
+
 
         private IEnumerator ProcessQueue()
         {
@@ -42,7 +49,7 @@ namespace SG
                 ItemClass currentItem = messageQueue.Dequeue();
                 popupPanel.SetActive(true);
                 popupText.text = currentItem.displayName;
-                // icon.sprite = currentItem.icon;
+                //icon.sprite = currentItem.icon;
 
                 yield return new WaitForSeconds(displayDuration);
 

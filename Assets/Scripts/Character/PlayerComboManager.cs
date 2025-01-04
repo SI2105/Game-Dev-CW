@@ -129,7 +129,7 @@ namespace SG
         private void StartAttack()
         {
             isComboActive = true;
-            currentComboStep = 1;
+            currentComboStep = 0;
             comboTimer = 0f;
             staminaUsageCount = 1;
 
@@ -154,6 +154,7 @@ namespace SG
         /// </summary>
         private void ContinueCombo()
         {
+            if (currentComboStep >= 2) return;
             currentComboStep++;
             comboTimer = 0f;
             staminaUsageCount++;
@@ -205,12 +206,13 @@ namespace SG
             {
                 float weaponDamage = weapon.damage;
                 WeaponCollisionHandler collisionHandler = playerEquipmentManager.rightHandWeaponModel.GetComponent<WeaponCollisionHandler>();
-
+                attributesManager.UseStamina(10f);
                 if (collisionHandler != null)
                 {
                     collisionHandler.SetTemporaryDamage(weaponDamage);
                     collisionHandler.SetCurrentComboStep(currentComboStep);
                     collisionHandler.TriggerAttack(); // Ensure you have a method to trigger the collider
+                    
                     Debug.Log($"Weapon collider ready with damage: {weaponDamage}");
                 }
                 else
@@ -318,6 +320,7 @@ namespace SG
                 if (currentComboStep == 1)
                 {
                     playerState.Attack1_progress = true;
+                    
                     playerState.SetPlayerAttackStatusState(PlayerAttackStatusState.Attack_progress_1);
                 }
                 else if (currentComboStep == 2)
@@ -359,8 +362,12 @@ namespace SG
 
                 if (playerEquipmentManager.IsEquippedItemHeal() && equippedItem is ConsumableClass consumable)
                 {
+                    attributesManager.InventoryManager.Remove(consumable, 1);
+
                     // Handle healing logic
                     Debug.Log($"Using consumable: {consumable.name}");
+                    float healthToGain = consumable.healAmount;
+                    attributesManager.GainHealth(healthToGain);
 
                     animator.SetBool(isPlayingActionHash, true); // Prevent other actions during healing
                     animator.SetTrigger("HealTrigger");

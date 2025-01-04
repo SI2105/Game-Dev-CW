@@ -42,13 +42,15 @@ public class Skill : MonoBehaviour
 
     public void UnlockSkill()
     {
+        //Check if the skill can be unlocked, and Unlocks it
         if (skillTreeManager.CanUnlock(this))
         {
-            
+            //Triggers completion of First Skill Objective
+            ObjectiveManager.Instance.SetEventComplete("Get your First Skill");
             isUnlocked = true;
             skillTreeManager.SpendSkillPoints(cost);
 
-            //Trigger the even when the skill is unlocked
+            //Trigger the even when the skill is unlocked, used on the player end to make it take effect
 
             OnSkillUnlocked?.Invoke(skillName);
             UpdateUI();
@@ -57,7 +59,7 @@ public class Skill : MonoBehaviour
 
     private void UpdateUI()
     {
-        
+        //Disables the button if the skill can't be unlocked and if theres prerequisites that are not unlocked.
         skillButton.interactable = skillTreeManager.CanUnlock(this) && !isUnlocked;
         skillIcon.color = isUnlocked ? Color.green : Color.gray;
     }

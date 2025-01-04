@@ -201,12 +201,14 @@ namespace SG{
 
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                Time.timeScale = 0f;
             }
             else
             {
 
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
+                Time.timeScale = 1f;
             }
 
             attributesManager.SkillTreeManager.ToggleSkillTree();
@@ -239,7 +241,6 @@ namespace SG{
             inputActions.Player.Pause.canceled += HandlePause;
 
             inputActions.Player.LockOn.performed += HandleLockOn;
-            inputActions.Player.LockOn.canceled += HandleLockOn;
 
             inputActions.Player.DodgeForward.performed += HandleDodgeForward;
             inputActions.Player.DodgeBackward.performed += HandleDodgeBackward;
@@ -253,9 +254,7 @@ namespace SG{
 
             if (attributesManager) {
                 Debug.Log("Inventory Manager found");
-                inputActions.UI.Click.performed += attributesManager.InventoryManager.OnClick;
                 inputActions.UI.HotBarSelector.performed += attributesManager.InventoryManager.OnHotBarSelection;
-                inputActions.UI.Click.canceled += attributesManager.InventoryManager.OnClick;
                 inputActions.UI.HotBarSelector.canceled += attributesManager.InventoryManager.OnHotBarSelection;
                 inputActions.Player.Objective.performed += onObjective;
                 inputActions.Player.Objective.canceled += onObjective;
@@ -265,6 +264,7 @@ namespace SG{
                 UpdatePlayerStats();
             }
         }
+
 
 
         public void onObjective(InputAction.CallbackContext context)
@@ -282,14 +282,16 @@ namespace SG{
 
             if (objectiveVisible)
             {
-
+               
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                Time.timeScale = 0f;
             }
             else {
                 
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
+                Time.timeScale = 1f;
             }
 
             attributesManager.ObjectiveManager.ToggleObjectivePanel();
@@ -302,12 +304,25 @@ namespace SG{
 
             }
         }
-
-        private void HandleLockOn(InputAction.CallbackContext context) {
-            if (context.performed) {
-                playerLockOn.LockOn();
-            } else {
-                playerLockOn.LockOn();
+        private bool isLockedOn = false;
+        private void HandleLockOn(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                if (isLockedOn)
+                {
+                    // If already locked on, cancel lock-on
+                    playerLockOn.LockOn();
+                    isLockedOn = false;
+                    Debug.Log("Lock-on canceled.");
+                }
+                else
+                {
+                    // If not locked on, activate lock-on
+                    playerLockOn.LockOn();
+                    isLockedOn = true;
+                    Debug.Log("Lock-on activated.");
+                }
             }
         }
 
@@ -316,7 +331,10 @@ namespace SG{
             InventoryVisible = !InventoryVisible;
             if (InventoryVisible)
             {
+                inputActions.UI.Click.performed += attributesManager.InventoryManager.OnClick;
                 //attributesManager.InventoryManager.CraftTest();
+                inputActions.UI.Click.performed += attributesManager.InventoryManager.OnClick;
+                inputActions.UI.Click.canceled += attributesManager.InventoryManager.OnClick;
                 UpdatePlayerStats();
                 attributesManager.InventoryManager.InventoryPanel.SetActive(true);
                 attributesManager.InventoryManager.PlayerStatsPanel.SetActive(true);
@@ -326,8 +344,12 @@ namespace SG{
                 attributesManager.InventoryManager.HotBarSelector.SetActive(false);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                Time.timeScale = 0f;
             }
             else {
+                
+                inputActions.UI.Click.performed -= attributesManager.InventoryManager.OnClick;
+                inputActions.UI.Click.canceled -= attributesManager.InventoryManager.OnClick;
                 attributesManager.InventoryManager.InventoryPanel.SetActive(false);
                 attributesManager.InventoryManager.PlayerStatsPanel.SetActive(false);
                 attributesManager.InventoryManager.CraftingPanel.SetActive(false);
@@ -335,7 +357,8 @@ namespace SG{
                 attributesManager.InventoryManager.HotBar.SetActive(true);
                 attributesManager.InventoryManager.HotBarSelector.SetActive(true);
                 Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false; 
+                Cursor.visible = false;
+                Time.timeScale = 1f;
             }
         }
 
@@ -467,31 +490,28 @@ namespace SG{
             if (playerLockOn != null && playerLockOn.IsTargetLocked && playerLockOn.CurrentTarget != null)
             {
                 // --- Lock-On Logic ---
-                Vector3 horizontalDirection = playerLockOn.CurrentTarget.transform.position - transform.position;
-                horizontalDirection.y = 0; // Rotate player horizontally
-                if (horizontalDirection != Vector3.zero)
+                // Find the UpperHalfPoint child transform
+                Transform upperHalfTransform = playerLockOn.CurrentTarget.transform.Find("UpperHalfPoint");
+                if (upperHalfTransform != null)
                 {
-                    transform.rotation = Quaternion.LookRotation(horizontalDirection, Vector3.up);
+                    // Set the camera's LookAt to the UpperHalfPoint
+                    playerLockOn.lockOnCamera.LookAt = upperHalfTransform;
+                }
+                else
+                {
+                    // Fallback: Calculate an upper half position
+                    Vector3 upperHalfPosition = GetUpperHalfPosition(playerLockOn.CurrentTarget);
+                    playerLockOn.lockOnCamera.LookAt = CreateTemporaryTarget(upperHalfPosition);
                 }
 
-                // Rotate the camera to look directly at the target (with pitch)
-                Vector3 fullDirection = playerLockOn.CurrentTarget.transform.position - cameraTransform.position;
-                if (fullDirection.sqrMagnitude > 0.001f)
+                // Optional: Smoothly rotate the player to face the target
+                // If you still want the player to face the target without snapping
+                Vector3 directionToTarget = playerLockOn.CurrentTarget.transform.position - transform.position;
+                directionToTarget.y = 0f; // Ignore vertical difference
+                if (directionToTarget != Vector3.zero)
                 {
-                    Quaternion worldRotation = Quaternion.LookRotation(fullDirection, Vector3.up);
-                    
-                    // Override Cinemachine camera rotation
-                    OverrideCinemachineRotation(playerLockOn.mainVC, worldRotation);
-
-                    // Update local rotation for cameraTransform
-                    cameraTransform.localRotation = Quaternion.Inverse(transform.rotation) * worldRotation;
-
-                    // Print the transform once after locking
-                    if (!hasPrintedTransformAfterLocking)
-                    {
-                        print($"Transform after locking: {playerLockOn.mainVC.transform.localRotation}");
-                        hasPrintedTransformAfterLocking = true; // Ensure it's printed only once
-                    }
+                    Quaternion targetRotation = Quaternion.LookRotation(directionToTarget, Vector3.up);
+                    transform.rotation = targetRotation;
                 }
 
                 wasLocked = true;
@@ -501,36 +521,21 @@ namespace SG{
                 // --- Transition Logic ---
                 if (wasLocked)
                 {
-                    // Step 1: Capture and Apply Final Lock-On Rotation
-                    Quaternion lockOnFinalRotation = playerLockOn.lockOnCamera.transform.rotation;
-
-                    // Override Cinemachine camera rotation to the final lock-on rotation
-                    OverrideCinemachineRotation(playerLockOn.mainVC, lockOnFinalRotation);
-
-                    // Apply the lock-on camera's final world rotation as local rotation
-                    cameraTransform.localRotation = Quaternion.Inverse(transform.rotation) * lockOnFinalRotation;
-
-                    print("Captured lock-on final rotation: " + lockOnFinalRotation);
-                    print("Lock-on world rotation: " + playerLockOn.lockOnCamera.transform.rotation);
-                    print("Lock-on local rotation: " + cameraTransform.localRotation);
-
-                    // Optional: Smoothly blend to free-look
-                    Quaternion targetRotation = Quaternion.Euler(0f, cameraTransform.eulerAngles.y, 0f);
-                    transform.rotation = Quaternion.Slerp(
-                        transform.rotation,
-                        targetRotation,
-                        rotationSpeed * Time.deltaTime
-                    );
-
-                    if (Quaternion.Angle(transform.rotation, targetRotation) < 1f)
-                        wasLocked = false;
-                    print($"Transform after unlocking: {playerLockOn.mainVC.transform.localRotation}");
+                    // Unlock the target
+                    wasLocked = false;
+                    if (playerLockOn.lockOnCamera != null)
+                    {
+                        playerLockOn.lockOnCamera.Priority = 0;
+                        mainVC.Priority = 60;
+                        playerLockOn.lockOnCamera.LookAt = null; // Reset LookAt
+                    }
+                    Debug.Log("Target unlocked.");
                 }
 
                 // --- Free-Look Logic ---
                 if (!wasLocked)
                 {
-                    hasPrintedTransformAfterLocking = false; // Reset the flag after leaving lock-on
+                    hasPrintedTransformAfterLocking = false;
 
                     float mouseX = lookInput.x * rotationSpeed * Time.deltaTime;
                     currentYaw += mouseX * 60f; 
@@ -544,6 +549,39 @@ namespace SG{
                 }
             }
         }
+
+        /// <summary>
+        /// Calculates an upper half position based on the target's Renderer bounds.
+        /// </summary>
+        /// <param name="target">The target GameObject.</param>
+        /// <returns>The upper half position.</returns>
+        private Vector3 GetUpperHalfPosition(GameObject target)
+        {
+            Renderer renderer = target.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                return renderer.bounds.center + Vector3.up * (renderer.bounds.size.y / 4);
+            }
+            else
+            {
+                // Fallback position if Renderer is not found
+                return target.transform.position + Vector3.up * 1.0f;
+            }
+        }
+
+        /// <summary>
+        /// Creates a temporary GameObject at the specified position for the camera to look at.
+        /// </summary>
+        /// <param name="position">The position to place the temporary target.</param>
+        /// <returns>The Transform of the temporary target.</returns>
+        private Transform CreateTemporaryTarget(Vector3 position)
+        {
+            GameObject tempTarget = new GameObject("TempLookAtTarget");
+            tempTarget.transform.position = position;
+            Destroy(tempTarget, 2f); // Destroy after 2 seconds or when no longer needed
+            return tempTarget.transform;
+        }
+
 
         private void OverrideCinemachineRotation(CinemachineVirtualCamera vCam, Quaternion newRotation, bool reattach = true)
         {
@@ -737,7 +775,7 @@ namespace SG{
 
         private void HandleLook(InputAction.CallbackContext context){
 
-            if (InventoryVisible)
+            if (InventoryVisible || isSkillTreeVisible || objectiveVisible)
             {
                 return;
             }
@@ -775,9 +813,9 @@ namespace SG{
 
         [SerializeField] private float dodgeDistance = 0.75f; // Reduced by half (was 3.0f)
         [SerializeField] private float dodgeDuration = 0.075f; // Reduced by half (was 0.3f)
-        [SerializeField] private float dodgeForce = 2.5f; // Adjusted proportionally to fit the reduced distance
-        [SerializeField] private float dodgeStaminaCost = 10f; // Optional: lower stamina cost if desired
-        [SerializeField] private float dodgeCooldown = 0.4f; // Slightly shorter cooldown to match reduced dodge
+        [SerializeField] private float dodgeForce = 4f; // Adjusted proportionally to fit the reduced distance
+        [SerializeField] private float dodgeStaminaCost = 1f; // Optional: lower stamina cost if desired
+        [SerializeField] private float dodgeCooldown = 0.05f; // Slightly shorter cooldown to match reduced dodge
 
         private bool canDodge = true; // Tracks whether the player can dodge
 
@@ -789,6 +827,7 @@ namespace SG{
                 Debug.Log("Dodge is on cooldown!");
                 return;
             }
+            // attributesManager.TakeDamage(20f);
 
             // 2. Check stamina
             if (attributesManager.CurrentStamina < dodgeStaminaCost)

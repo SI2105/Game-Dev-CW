@@ -17,7 +17,7 @@ namespace SG
         {
             inputActions = new GameDevCW();
             playerAttributesManager = GetComponent<PlayerAttributesManager>();
-            inputActions.Player.Interact.performed += ctx => InteractWithChest();
+            inputActions.Player.Interact.performed += ctx => InteractWithInteractable();
         }
 
         private void OnEnable()
@@ -45,18 +45,22 @@ namespace SG
             if (Physics.Raycast(ray, out hit, maxRaycastDistance))
             {
                 InteractiveChest chest = hit.collider.GetComponent<InteractiveChest>();
+                CollectibleData collectible = hit.collider.GetComponent<CollectibleData>();
+
                 if (chest != null)
                 {
-                    // Display the name of the interactable chest on the UI
                     interactableNameUI.text = chest.chestName;
+              
+                    // Display the name of the interactable chest on the UI
+                    
                 }
-                else
-                {
-                    interactableNameUI.text = "";
-                }
+                //else
+                //{
+                //    interactableNameUI.text = "";
+                //}
 
-                CollectibleData collectible = hit.collider.GetComponent<CollectibleData>();
-                if (collectible != null)
+               
+                else if (collectible != null)
                 {
                     // Display the name of the collectible on the UI
                     interactableNameUI.text = collectible.collectible.displayName;
@@ -73,7 +77,7 @@ namespace SG
             }
         }
 
-        private void InteractWithChest()
+        private void InteractWithInteractable()
         {
             Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
             RaycastHit hit;

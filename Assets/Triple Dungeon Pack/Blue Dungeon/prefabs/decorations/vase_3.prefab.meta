@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 1f7bd7a0d72743b4181c28af4b82c3d5
+timeCreated: 1515688998
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 106912
+  packageName: Blue Dungeon
+  packageVersion: 1.0
+  assetPath: Assets/Triple Dungeon Pack/Blue Dungeon/prefabs/decorations/vase_3.prefab
+  uploadId: 223459

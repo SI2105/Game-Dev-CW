@@ -13,6 +13,7 @@ namespace SG
         private AnimationLayerController animationLayerController;
         private PlayerAnimationManager animationManager;
         private PlayerState playerState;
+        [SerializeField] private PopupMessageManager popupMessageManager;
 
         // How long to wait for the unsheath animation (if not using animation events).
         [SerializeField] private float unsheathAnimationDuration = 0.24f;
@@ -119,22 +120,14 @@ namespace SG
                 Debug.LogWarning($"Failed to get consumable from selected item: {e.Message}");
             }
 
-            if ((weapon != null && weapon.prefab != null) ||
-                (consumable != null && consumable.prefab != null))
-            {
-                Debug.Log($"Loading weapon: {(weapon != null && weapon.prefab != null ? weapon.prefab.name : "None")}");
-                Debug.Log($"Loading consumable: {(consumable != null && consumable.prefab != null ? consumable.prefab.name : "None")}");
+            if (weapon != null && weapon.weaponType == WeaponClass.WeaponType.Sword){
 
-                // Example: only load swords. Adjust this if logic differs in your game.
-                if (weapon != null && weapon.weaponType == WeaponClass.WeaponType.Sword)
+                if ((weapon != null && weapon.prefab != null) ||
+                    (consumable != null && consumable.prefab != null))
                 {
-                    if (rightHandSlot == null)
-                    {
-                        Debug.LogError("RightHandSlot is not assigned in the Inspector.");
-                        return;
-                    }
+                    Debug.Log($"Loading weapon: {(weapon != null && weapon.prefab != null ? weapon.prefab.name : "None")}");
+                    Debug.Log($"Loading consumable: {(consumable != null && consumable.prefab != null ? consumable.prefab.name : "None")}");
 
-                    // Choose whether to load the weapon or the consumable prefab
                     GameObject toLoad = (weapon != null && weapon.prefab != null)
                         ? weapon.prefab
                         : consumable.prefab;
@@ -145,16 +138,31 @@ namespace SG
                     // Get component from the instantiated weapon model
                     WeaponCollisionHandler weaponHandler = rightHandWeaponModel.GetComponent<WeaponCollisionHandler>();
 
-                    // Assign the playerState to the weapon's WeaponCollisionHandler
                     if (weaponHandler != null)
                     {
-                        Debug.Log($"PlayerState type: {playerState.GetType()}");
-                        Debug.Log($"WeaponHandler._playerState type: {weaponHandler._playerState?.GetType()}");
                         weaponHandler._playerState = playerState;
+                    }
+
+                    // Show popup message
+                    if (popupMessageManager != null)
+                    {
+                        if (weapon != null)
+                        {
+                            popupMessageManager.ShowPopup(weapon);
+                        }
+                        else if (consumable != null)
+                        {
+                            popupMessageManager.ShowPopup(consumable);
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning("PopupMessageManager is not assigned.");
                     }
                 }
             }
         }
+
 
         /// <summary>
         /// Tracks the currently equipped item of a given type (WeaponClass, ConsumableClass, etc.).
@@ -178,6 +186,14 @@ namespace SG
             if (!EqualityComparer<T>.Default.Equals(currentEquippedItem as T, newEquippedItem))
             {
                 currentEquippedItem = newEquippedItem; // Update the equipped item
+                // if (currentEquippedItem is WeaponClass item)
+                // {
+                //     popupMessageManager.ShowPopup(item);
+                // }
+                // else
+                // {
+                //     Debug.LogWarning("Equipped item is not of type ItemClass. Popup will not be shown.");
+                // }
             }
 
             return newEquippedItem; // Return the equipped item

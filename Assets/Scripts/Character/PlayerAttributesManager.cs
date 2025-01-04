@@ -688,6 +688,10 @@ namespace SG
             ));
         }
 
+        public void ResetHealth(){
+            CurrentHealth = MaxHealth;
+        }
+
         private IEnumerator BoostAllAttributesCoroutine(
             float duration,
             float originalStrength,

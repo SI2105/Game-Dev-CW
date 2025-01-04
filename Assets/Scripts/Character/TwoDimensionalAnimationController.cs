@@ -461,8 +461,14 @@ namespace SG{
                 inputActions.UI.Skills.canceled -= HandleSkills;
             }
 
+            var inventoryManager = attributesManager.InventoryManager;
+            var objectiveManager = attributesManager.ObjectiveManager;
+
+            GameManager.Instance.HandlePlayerDeath(attributesManager, inventoryManager, objectiveManager);
+
+
             // Disable the input system
-            inputActions.Disable();
+            // inputActions.Disable();
         }
 
         private void OnPlayerRespawn()
@@ -1070,5 +1076,6 @@ namespace SG{
                 HandleDodge(transform.right, "isDodgingRight");
             }
         }
+
     }
 }

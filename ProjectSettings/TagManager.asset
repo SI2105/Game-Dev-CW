@@ -3,15 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - Enemy
-  - PostProcessing
-  - Poulet
+  tags: []
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - PlayerLayer
+  - 
   - Water
   - UI
   - Pickup
@@ -20,8 +17,8 @@ TagManager:
   - GroundLayer
   - chestLayer
   - PostProcessing
-  - 
-  - 
+  - Floor
+  - Chest
   - 
   - 
   - 

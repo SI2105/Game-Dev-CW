@@ -12,12 +12,14 @@ namespace SG
         [SerializeField] private PopupMessageManager popupMessageManager; // Reference to the PopupMessageManager
         private GameDevCW inputActions; // Input action class reference
         private PlayerAttributesManager playerAttributesManager; // The player attributes manager
+        private PlayerChestSensor ChestSensor;
 
         private void Awake()
         {
             inputActions = new GameDevCW();
+            ChestSensor = GetComponent<PlayerChestSensor>();
             playerAttributesManager = GetComponent<PlayerAttributesManager>();
-            inputActions.Player.Interact.performed += ctx => InteractWithChest();
+            inputActions.Player.Interact.performed += ctx => InteractWithInteractable();
         }
 
         private void OnEnable()
@@ -37,28 +39,17 @@ namespace SG
 
         private void CheckForInteractable()
         {
-            Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-            RaycastHit hit;
-
-            Debug.DrawRay(ray.origin, ray.direction * maxRaycastDistance, Color.green); // Debug ray visualization
-
-            if (Physics.Raycast(ray, out hit, maxRaycastDistance))
+            if (ChestSensor.objects.Count > 0)
             {
-                InteractiveChest chest = hit.collider.GetComponent<InteractiveChest>();
+                InteractiveChest chest = ChestSensor.objects[0].GetComponent<InteractiveChest>();
+                CollectibleData collectible = ChestSensor.objects[0].GetComponent<CollectibleData>();
+
                 if (chest != null)
                 {
-                    // Display the name of the interactable chest on the UI
                     interactableNameUI.text = chest.chestName;
                 }
-                else
+                else if (collectible != null)
                 {
-                    interactableNameUI.text = "";
-                }
-
-                CollectibleData collectible = hit.collider.GetComponent<CollectibleData>();
-                if (collectible != null)
-                {
-                    // Display the name of the collectible on the UI
                     interactableNameUI.text = collectible.collectible.displayName;
                 }
                 else
@@ -68,30 +59,63 @@ namespace SG
             }
             else
             {
-                // Clear the UI if no chest or collectible is hit
                 interactableNameUI.text = "";
             }
+            //Vector2 mousePos = Mouse.current.position.ReadValue();
+            //Ray ray = playerCamera.ScreenPointToRay(mousePos);
+            ////Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+            //RaycastHit hit;
+
+            //Debug.DrawRay(ray.origin, ray.direction * maxRaycastDistance, Color.green); // Debug ray visualization
+
+            //if (Physics.Raycast(ray, out hit, maxRaycastDistance))
+            //{
+            //    InteractiveChest chest = hit.collider.GetComponent<InteractiveChest>();
+            //    CollectibleData collectible = hit.collider.GetComponent<CollectibleData>();
+
+            //    if (chest != null)
+            //    {
+            //        interactableNameUI.text = chest.chestName;
+
+            //        // Display the name of the interactable chest on the UI
+
+            //    }
+            //    //else
+            //    //{
+            //    //    interactableNameUI.text = "";
+            //    //}
+
+
+            //    else if (collectible != null)
+            //    {
+            //        // Display the name of the collectible on the UI
+            //        interactableNameUI.text = collectible.collectible.displayName;
+            //    }
+            //    else
+            //    {
+            //        interactableNameUI.text = "";
+            //    }
+            //}
+            //else
+            //{
+            //    // Clear the UI if no chest or collectible is hit
+            //    interactableNameUI.text = "";
+            //}
         }
 
-        private void InteractWithChest()
+        private void InteractWithInteractable()
         {
-            Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, maxRaycastDistance))
+            if (ChestSensor.objects.Count > 0)
             {
-                InteractiveChest chest = hit.collider.GetComponent<InteractiveChest>();
+                InteractiveChest chest = ChestSensor.objects[0].GetComponent<InteractiveChest>();
+                CollectibleData collectible = ChestSensor.objects[0].GetComponent<CollectibleData>();
 
                 if (chest != null)
                 {
                     chest.OnSelect();
                 }
-
-                CollectibleData collectible = hit.collider.GetComponent<CollectibleData>();
-                if (collectible != null)
+                else if (collectible != null)
                 {
-                    print("collectible found");
-                    // Add the collectible to the inventory
                     if (popupMessageManager != null)
                     {
                         popupMessageManager.ShowPopup(collectible.collectible.GetCollectible());
@@ -101,8 +125,9 @@ namespace SG
 
 
                     // Destroy the associated GameObject
-                    Destroy(hit.collider.gameObject);
+                    Destroy(collectible.gameObject);
                 }
+            
             }
         }
 

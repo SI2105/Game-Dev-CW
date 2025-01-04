@@ -49,7 +49,7 @@ namespace SG
                 ItemClass currentItem = messageQueue.Dequeue();
                 popupPanel.SetActive(true);
                 popupText.text = currentItem.displayName;
-                // icon.sprite = currentItem.icon;
+                //icon.sprite = currentItem.icon;
 
                 yield return new WaitForSeconds(displayDuration);
 

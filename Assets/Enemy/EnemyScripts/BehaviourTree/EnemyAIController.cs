@@ -23,6 +23,9 @@ public class EnemyAIController : MonoBehaviour
     public bool shouldDodge{get;set;}
     public bool isDead{get;set;}
 
+    public bool isPlayedSensed;
+    public bool isMusicPlaying=false;
+
     public bool isRoaring;
 
     public EnemyAudioController audio_controller;
@@ -84,6 +87,12 @@ public class EnemyAIController : MonoBehaviour
 
     void Update(){
         topNode.Evaluate();
+        if(isPlayedSensed){
+            if(!isMusicPlaying){
+                audio_controller.playBackgroundMusic();
+                isMusicPlaying=true;
+            }
+        }
     }
     //method for assembling the behaviour tree from defined nodes
     private void AssembleBehaviourTree(){
@@ -168,7 +177,6 @@ public class EnemyAIController : MonoBehaviour
 
     private void stopRoaring(){
         animator.SetBool("IsRoaring", false);
-        audio_controller.stopSound();
         isRoaring=false;
         shouldRoar=false;
     }
@@ -196,18 +204,4 @@ public class EnemyAIController : MonoBehaviour
         isDodging=false;
     }
 
-    //method for initiating the death of the enemy
-    public bool Die(){
-        return true;
-    }
-
-    //method for initiating dodge
-    public void dodge(){
-       
-    }
-
-    //method for initiating block
-    public void block(){
-      
-    }
 }

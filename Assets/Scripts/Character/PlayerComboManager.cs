@@ -362,6 +362,8 @@ namespace SG
 
                 if (playerEquipmentManager.IsEquippedItemHeal() && equippedItem is ConsumableClass consumable)
                 {
+                    attributesManager.InventoryManager.Remove(consumable, 1);
+
                     // Handle healing logic
                     Debug.Log($"Using consumable: {consumable.name}");
                     float healthToGain = consumable.healAmount;

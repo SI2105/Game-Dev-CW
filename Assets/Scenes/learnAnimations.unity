@@ -1784,7 +1784,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -687.70514, y: 301.994}
+  m_AnchoredPosition: {x: -687.70575, y: 301.99426}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &155056172
@@ -10964,13 +10964,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   comboResetTime: 0.5
   comboWindowTime: 0.3
+  maxComboSteps: 2
+  currentComboStep: 0
+  staminaCostPerAttack: 10
+  staminaCostSpinAttack: 20
+  playerState: {fileID: 0}
+  attributesManager: {fileID: 0}
+  playerEquipmentManager: {fileID: 0}
+  playerController: {fileID: 0}
+  playerLockOn: {fileID: 0}
   maxQueueTime: 0.5
   cameraManager: {fileID: 2096670580}
   defaultCamera: {fileID: 0}
   attackCamera: {fileID: 1853612928}
-  attributesManager: {fileID: 0}
-  staminaCostPerAttack: 10
-  staminaCostSpinAttack: 20
 --- !u!114 &771167265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11024,6 +11030,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightHandSlot: {fileID: 771167265}
   rightHandWeaponModel: {fileID: 0}
+  popupMessageManager: {fileID: 0}
+  unsheathAnimationDuration: 0.24
 --- !u!114 &771167269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11079,7 +11087,6 @@ MonoBehaviour:
   jumpSpeed: 1
   idleTransform: {fileID: 771167261}
   cameraTransform: {fileID: 847753707}
-  mainVC: {fileID: 0}
   rotationSpeed: 0.5
   verticalRotationSpeed: 60
   smoothRotationTime: 0.1
@@ -11089,6 +11096,10 @@ MonoBehaviour:
   pauseMenuPanel: {fileID: 0}
   movingThreashold: 0.01
   cameraSwitcher: {fileID: 0}
+  mainVC: {fileID: 0}
+  verticalClampMin: -80
+  verticalClampMax: 80
+  lockOnRotationSpeed: 5
   rb: {fileID: 771167263}
   virtualCamera: {fileID: 504467472}
   dodgeDistance: 5
@@ -11141,6 +11152,9 @@ MonoBehaviour:
   inventoryManager: {fileID: 1897002619}
   objectiveManager: {fileID: 0}
   skillTreeManager: {fileID: 0}
+  intensity: 0
+  _volume: {fileID: 0}
+  currentHealth: 0
 --- !u!1 &783212267
 GameObject:
   m_ObjectHideFlags: 0
@@ -11391,7 +11405,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0.00003408297, y: 374.9915}
+  m_AnchoredPosition: {x: -0.000011446241, y: 374.99222}
   m_SizeDelta: {x: -1, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &799139315
@@ -12289,8 +12303,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1545898245}
   m_HandleRect: {fileID: 1545898244}
   m_Direction: 2
-  m_Value: 1.0000007
-  m_Size: 0.54440665
+  m_Value: 1
+  m_Size: 0.5447258
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -15163,7 +15177,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -261.01733, y: 310.49393}
+  m_AnchoredPosition: {x: -261.01733, y: 310.49432}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1007550882
@@ -18294,7 +18308,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 223339237}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.9999915
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -20277,8 +20291,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 798218153}
   m_HandleRect: {fileID: 798218152}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.99941206
+  m_Value: 0
+  m_Size: 0.9999981
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -23319,8 +23333,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1117372618}
   m_HandleRect: {fileID: 1117372617}
   m_Direction: 0
-  m_Value: -0.000046022025
-  m_Size: 0.98892313
+  m_Value: -0.0000041838553
+  m_Size: 0.98950297
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -23886,7 +23900,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.5013733, y: -534.1249}
+  m_AnchoredPosition: {x: 0.50097656, y: -534.1249}
   m_SizeDelta: {x: 650, y: 1068.248}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1648961041
@@ -30016,7 +30030,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 300460951}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.9994406
+  m_Size: 0.9999982
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -30322,8 +30336,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1584921310}
   m_HandleRect: {fileID: 1584921309}
   m_Direction: 2
-  m_Value: 1.0000001
-  m_Size: 0.11611759
+  m_Value: 1
+  m_Size: 0.116185606
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -30881,13 +30895,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   comboResetTime: 1.5
   comboWindowTime: 0.4
+  maxComboSteps: 2
+  currentComboStep: 0
+  staminaCostPerAttack: 10
+  staminaCostSpinAttack: 20
+  playerState: {fileID: 0}
+  attributesManager: {fileID: 2077473149}
+  playerEquipmentManager: {fileID: 0}
+  playerController: {fileID: 0}
+  playerLockOn: {fileID: 0}
   maxQueueTime: 0.9
   cameraManager: {fileID: 1867640912}
   defaultCamera: {fileID: 2117968782}
   attackCamera: {fileID: 1217392241}
-  attributesManager: {fileID: 2077473149}
-  staminaCostPerAttack: 10
-  staminaCostSpinAttack: 20
 --- !u!114 &2077473141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30927,6 +30947,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightHandSlot: {fileID: 1065293705}
   rightHandWeaponModel: {fileID: 0}
+  popupMessageManager: {fileID: 0}
+  unsheathAnimationDuration: 0.24
 --- !u!114 &2077473144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30967,6 +30989,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <CurrentPlayerMovementState>k__BackingField: 0
   <CurrentPlayerAttackState>k__BackingField: 0
+  <CurrentPlayerAttackStatusState>k__BackingField: 1
+  attack1_progress: 0
+  attack2_progress: 0
+  attack3_progress: 0
 --- !u!114 &2077473147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30996,7 +31022,6 @@ MonoBehaviour:
   jumpSpeed: 1
   idleTransform: {fileID: 2077473150}
   cameraTransform: {fileID: 78955331}
-  mainVC: {fileID: 2117968782}
   rotationSpeed: 0.5
   verticalRotationSpeed: 60
   smoothRotationTime: 0.1
@@ -31006,6 +31031,10 @@ MonoBehaviour:
   pauseMenuPanel: {fileID: 1486516155}
   movingThreashold: 0.01
   cameraSwitcher: {fileID: 0}
+  mainVC: {fileID: 2117968782}
+  verticalClampMin: -80
+  verticalClampMax: 80
+  lockOnRotationSpeed: 5
   rb: {fileID: 2077473139}
   virtualCamera: {fileID: 2117968782}
   dodgeDistance: 5
@@ -31058,6 +31087,9 @@ MonoBehaviour:
   inventoryManager: {fileID: 7670077666046194722}
   objectiveManager: {fileID: 403889294}
   skillTreeManager: {fileID: 1353478985}
+  intensity: 0
+  _volume: {fileID: 0}
+  currentHealth: 0
 --- !u!4 &2077473150
 Transform:
   m_ObjectHideFlags: 0
@@ -31100,6 +31132,7 @@ MonoBehaviour:
   playerCamera: {fileID: 78955334}
   maxRaycastDistance: 5
   interactableNameUI: {fileID: 173374032}
+  popupMessageManager: {fileID: 0}
 --- !u!114 &2077473152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31116,6 +31149,7 @@ MonoBehaviour:
   runningAudioSource: {fileID: 1710182023}
   attackAudioSource: {fileID: 1248536221}
   effectAudioSource: {fileID: 1736957943}
+  injuredAudioSource: {fileID: 0}
   breathing_0_100: {fileID: 8300000, guid: e2672d6c957754744926af4ac47fd952, type: 3}
   breathing_0_100Volume: 0.713
   breathing_50_100: {fileID: 8300000, guid: 16c6a9e06b913a741903aab8a9ab5371, type: 3}
@@ -31146,6 +31180,21 @@ MonoBehaviour:
   swordSlashHit1Volume: 0.9
   swordSlashHit2Clip: {fileID: 8300000, guid: 4d5a2501ab3dcda4cbe1198021af9904, type: 3}
   swordSlashHit2Volume: 0.9
+  grabItem: {fileID: 0}
+  grabItemVolume: 0.9
+  grunt1: {fileID: 0}
+  grunt1Volume: 0.9
+  grunt2: {fileID: 0}
+  grunt2Volume: 0.9
+  grunt3: {fileID: 0}
+  grunt3Volume: 0.9
+  dodge: {fileID: 0}
+  dodgeVolume: 0.9
+  powerup1: {fileID: 0}
+  powerup1Volume: 0.9
+  powerup2: {fileID: 0}
+  powerup2Volume: 0.9
+  injuredClip: {fileID: 0}
 --- !u!114 &2077473153
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31162,6 +31211,8 @@ MonoBehaviour:
   lockOnAngle: 45
   playerTransform: {fileID: 2077473150}
   lockOnCamera: {fileID: 413115268}
+  mainVC: {fileID: 0}
+  camera: {fileID: 0}
 --- !u!1 &2084756123
 GameObject:
   m_ObjectHideFlags: 0
@@ -31220,6 +31271,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   staminaBar: {fileID: 1885021062}
   healthBar: {fileID: 637639505}
+  playerLevelText: {fileID: 0}
+  selectorDot: {fileID: 0}
+  onHit: {fileID: 0}
+  icon: {fileID: 0}
+  allAttributesBoostTimerText: {fileID: 0}
+  strengthBoostTimerText: {fileID: 0}
 --- !u!1 &2096670579
 GameObject:
   m_ObjectHideFlags: 0

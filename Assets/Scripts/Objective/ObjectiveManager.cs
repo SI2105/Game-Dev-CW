@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ObjectiveManager : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class ObjectiveManager : MonoBehaviour
     private GameObject ObjectivePopup;
     private GameObject MiniObjectivePanel;
     [SerializeField] private GameObject MiniObjectivePrefab;
+    private List<GameObject> miniObjectiveItems = new List<GameObject>();
     private void Awake()
     {
         //Ensures Singleton Pattern
@@ -76,15 +78,59 @@ public class ObjectiveManager : MonoBehaviour
             Objective_Dict[objectiveName].objectiveComplete = true;
             UpdateDisplayedObjectives();
             ShowObjectivePopup(objectiveName, "Objective Complete!");
-            RefreshMiniObjectivePanel();
+            HandleMiniObjectiveCompletion(objectiveName);
+
+
 
         }
     }
 
+    private bool HandleMiniObjectiveCompletion(string ObjectiveName) {
+        foreach (GameObject MiniObjectiveitem in miniObjectiveItems) {
+            if (MiniObjectiveitem.transform.GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text == ObjectiveName)
+            {
+                StartCoroutine(FadeIn(MiniObjectiveitem.transform.GetChild(1).gameObject));
+                return true;
+            }
+          
+        }
+
+        return false;
+    }
+
+    private IEnumerator FadeIn(GameObject target)
+    {
+        Image image = target.GetComponent<Image>();
+        if (image == null)
+        {
+            yield break;
+        }
+
+        float duration = 1.0f; // Duration of the fade-in effect
+        float elapsedTime = 0f;
+        Color color = image.color;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            color.a = Mathf.Clamp01(elapsedTime / duration);
+            image.color = color;
+            yield return null;
+        }
+
+        color.a = 1f;
+        image.color = color;
+
+        yield return new WaitForSeconds(2.0f);
+
+        // Refresh the MiniObjectivePanel
+        RefreshMiniObjectivePanel();
+    }
     public void RefreshMiniObjectivePanel()
     {
         foreach (Transform child in MiniObjectivePanel.transform)
         {
+            miniObjectiveItems.Clear();
             Destroy(child.gameObject);
         }
 
@@ -95,8 +141,12 @@ public class ObjectiveManager : MonoBehaviour
             if (!objective.objectiveComplete)
             {
                 GameObject miniObjectiveItem = Instantiate(MiniObjectivePrefab, MiniObjectivePanel.transform);
+                miniObjectiveItems.Add(miniObjectiveItem);
                 miniObjectiveItem.transform.GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = objective.objectiveName;
-                miniObjectiveItem.transform.GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().text = objective.objectiveDescription;
+                Color color = miniObjectiveItem.transform.GetChild(1).GetComponent<Image>().color;
+                color.a = 0;
+                miniObjectiveItem.transform.GetChild(1).GetComponent<Image>().color = color;
+
                 count++;
                 if (count >= 2)
                 {

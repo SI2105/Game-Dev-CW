@@ -61,7 +61,7 @@ public class PCG_Generator : MonoBehaviour
     public MazeCell[,] _mazeGrid;
 
     private List<GameObject> allObjects = new List<GameObject>();
-    public float activationRadius = 20f; // Radius around the player for activation
+    public float activationRadius = 50f; // Radius around the player for activation
     public Transform playerTransform; // Reference to the player's transform
 
   
@@ -71,6 +71,17 @@ public class PCG_Generator : MonoBehaviour
     private float cellSizeX;
 
     private float cellSizeZ;
+
+    public GameObject zombiePrefab; // Zombie prefab
+    public float zombieSpawnRadius = 20f; // Radius for spawning zombies in cells
+    public float zombieDespawnRadius = 25f; // Radius for despawning zombies
+    public int maxZombies = 15; // Maximum number of zombies
+    public float zombieSpawnInterval = 60f; // Time interval between spawns
+
+    private List<GameObject> activeZombies = new List<GameObject>(); // Track active zombies
+    private float zombieSpawnTimer = 0f; // Timer for spawn control
+
+
 
     void Update(){
         foreach (GameObject obj in allObjects)
@@ -115,7 +126,7 @@ public class PCG_Generator : MonoBehaviour
                     if (!cell.floorObj.activeSelf) // Only activate if not already active
                     {
                         cell.floorObj.SetActive(true);
-                        // cell.ceilingObject.SetActive(true);
+                        cell.ceilingObject.SetActive(true);
                     }
                 }
                 else
@@ -123,15 +134,104 @@ public class PCG_Generator : MonoBehaviour
                     if (cell.floorObj.activeSelf) // Only activate if not already active
                     {
                         cell.floorObj.SetActive(false);
-                        // cell.ceilingObject.SetActive(false);
+                        cell.ceilingObject.SetActive(false);
                     }
                 }
                 
             }
         }
 
+
+        // Update zombie spawn timer
+        zombieSpawnTimer += Time.deltaTime;
+
+        // Spawn zombies if the timer reaches the interval and the max limit isn't reached
+        if (zombieSpawnTimer >= zombieSpawnInterval && activeZombies.Count < maxZombies)
+        {
+            Debug.Log("Spawning zombies");
+            SpawnZombiesInMazeCellsAroundPlayer();
+            zombieSpawnTimer = 0f; // Reset the spawn timer
+        }
+
+        // Check for zombies outside the despawn radius and destroy them
+        for (int i = activeZombies.Count - 1; i >= 0; i--)
+        {
+            GameObject zombie = activeZombies[i];
+            float distanceToPlayer = Vector3.Distance(playerTransform.position, zombie.transform.position);
+
+            if (distanceToPlayer > zombieDespawnRadius)
+            {
+                Destroy(zombie); // Destroy the zombie
+                activeZombies.RemoveAt(i); // Remove from the list
+            }
+        }
+
     }
-    
+
+    private void SpawnZombiesInMazeCellsAroundPlayer()
+    {
+        // Get valid cells within the radius
+        List<MazeCell> validCells = GetMazeCellsWithinRadius(playerTransform.position, zombieSpawnRadius);
+
+        Debug.Log(validCells.Count);
+
+        if (validCells.Count == 0)
+            return; // No valid cells found
+
+        // Determine the number of cells to pick (maximum 4 or total valid cells, whichever is smaller)
+        int cellsToPick = Mathf.Min(4, validCells.Count);
+
+        // Randomly select cells from the valid cells
+        List<MazeCell> selectedCells = new List<MazeCell>();
+        for (int i = 0; i < cellsToPick; i++)
+        {
+            int randomIndex = Random.Range(0, validCells.Count);
+            selectedCells.Add(validCells[randomIndex]);
+            validCells.RemoveAt(randomIndex); // Remove to avoid selecting the same cell again
+        }
+
+        // Spawn 4-6 zombies in each selected cell
+        foreach (MazeCell cell in selectedCells)
+        {
+            int zombiesToSpawnInCell = 1;
+            for (int i = 0; i < zombiesToSpawnInCell; i++)
+            {
+                Vector3 spawnPosition = cell.transform.position + GetRandomOffset(); // Slightly randomize the spawn position
+                GameObject zombie = Instantiate(zombiePrefab, spawnPosition, Quaternion.identity);
+                MiniEnemyAIController miniEnemy = zombie.GetComponent<MiniEnemyAIController>();
+                miniEnemy.player=playerTransform;
+                activeZombies.Add(zombie); // Track the spawned zombie
+            }
+        }
+    }
+
+    private Vector3 GetRandomOffset()
+    {
+        float offsetX = Random.Range(-1f, 1f); // Random offset in X direction
+        float offsetZ = Random.Range(-1f, 1f); // Random offset in Z direction
+        return new Vector3(offsetX, 0, offsetZ); // No Y offset to keep on the same plane
+    }
+
+
+    private List<MazeCell> GetMazeCellsWithinRadius(Vector3 center, float radius)
+    {
+        float minRadius = 5f;
+        List<MazeCell> validCells = new List<MazeCell>();
+
+        foreach (MazeCell cell in _mazeGrid)
+        {
+            if (cell == null || cell.IsRoom) // Skip null or non-walkable cells
+                continue;
+
+            float distance = Vector3.Distance(center, cell.transform.position);
+            if (distance <= radius && distance > minRadius)
+            {
+                validCells.Add(cell);
+            }
+        }
+
+        return validCells;
+    }
 
     void Start()
 {
@@ -244,7 +344,8 @@ private void SpawnPlayerAndEnemy()
     if (_rooms.Count > 0)
     {
         Room firstRoom = _rooms[0];
-        Vector3 roomCenter = firstRoom.RoomPrefabInstance.transform.position;
+        Vector3 roomCenter = firstRoom.position;
+        roomCenter.y=2f;
         if (enemy != null)
         {
             Debug.Log($"Setting Enemy position to: {roomCenter}");
@@ -501,7 +602,7 @@ private void ReplaceWallsInMaze()
         List<Vector2Int> frontEdgeCells = new List<Vector2Int>();
 
         // Determine the z position of the front of the room (using the prefab instance position)
-        float roomFrontZ = room.RoomPrefabInstance.transform.position.z;
+        float roomFrontZ = room.position.z;
 
         // Collect valid front edge cells
         for (int dx = 0; dx < room.Width; dx++)
@@ -541,93 +642,55 @@ private void ReplaceWallsInMaze()
 
 
     private void GenerateRooms()
-{
-    int attempts = 0; // Track attempts to avoid infinite loops
-    int maxAttempts = _roomCount * 10; // A safe limit for retries
-
-    while (_rooms.Count < _roomCount && attempts < maxAttempts)
     {
-        // Randomly determine room size
-        int roomWidth = Random.Range(_minRoomSize, _maxRoomSize + 1);
-        int roomDepth = Random.Range(_minRoomSize, _maxRoomSize + 1);
+        int attempts = 0; // Track attempts to avoid infinite loops
+        int maxAttempts = _roomCount * 10; // A safe limit for retries
 
-        // Randomly determine room position
-        int x = Random.Range(1, _mazeWidth - roomWidth - 1);
-        int z = Random.Range(1, _mazeDepth - roomDepth - 1);
-
-        Room newRoom = new Room(x, z, roomWidth, roomDepth);
-
-        // Check for overlaps
-        // Check for overlaps
-        if (!DoesRoomOverlap(newRoom))
+        while (_rooms.Count < _roomCount && attempts < maxAttempts)
         {
-            _rooms.Add(newRoom);
+            // Randomly determine room size
+            int roomWidth = Random.Range(_minRoomSize, _maxRoomSize + 1);
+            int roomDepth = Random.Range(_minRoomSize, _maxRoomSize + 1);
 
-            // Get the position of the top-left cell (or any reference cell for the room)
-            MazeCell referenceCell = _mazeGrid[x, z];
-            Vector3 basePosition = referenceCell.transform.position;
+            // Randomly determine room position
+            int x = Random.Range(1, _mazeWidth - roomWidth - 1);
+            int z = Random.Range(1, _mazeDepth - roomDepth - 1);
 
-            // Instantiate room prefab at the base position
-            GameObject roomInstance = Instantiate(roomPrefab, basePosition, Quaternion.identity);
+            Room newRoom = new Room(x, z, roomWidth, roomDepth);
 
-            // Adjust the scale of the room prefab
-            Vector3 finalScale = new Vector3(
-                3.8f,  // Increased width
-                1,     // Keep original height
-                3.7f   // Increased depth
-            );
-            roomInstance.transform.localScale = finalScale;
-
-            if(cellSizeX==30){
-                // Adjust position to center the prefab based on its size
-                roomInstance.transform.position = new Vector3(
-                    basePosition.x +14.8f, //
-                    basePosition.y,
-                    basePosition.z +15.4f 
-                );
-            }
-
-            else if(cellSizeX==15){
-                // Adjust position to center the prefab based on its size
-                roomInstance.transform.position = new Vector3(
-                    basePosition.x +20.6f, //
-                    basePosition.y,
-                    basePosition.z +21.6f
-                );
-            }
-
-            else{
-                // Adjust position to center the prefab based on its size
-                roomInstance.transform.position = new Vector3(
-                    basePosition.x +18.7f, //
-                    basePosition.y,
-                    basePosition.z +20.3f 
-                );
-            }
-
-            // Store a reference to the instance in the room object
-            newRoom.RoomPrefabInstance = roomInstance;
-
-            // Mark cells as rooms and clear their walls
-            for (int dx = 0; dx < roomWidth; dx++)
+            // Check for overlaps
+            // Check for overlaps
+            if (!DoesRoomOverlap(newRoom))
             {
-                for (int dz = 0; dz < roomDepth; dz++)
+                _rooms.Add(newRoom);
+
+                // Get the position of the top-left cell (or any reference cell for the room)
+                MazeCell referenceCell = _mazeGrid[x, z];
+                Vector3 basePosition = referenceCell.transform.position;
+
+                // Store a reference to the instance in the room object
+                newRoom.position = basePosition;
+
+                // Mark cells as rooms and clear their walls
+                for (int dx = 0; dx < roomWidth; dx++)
                 {
-                    MazeCell cell = _mazeGrid[x + dx, z + dz];
-                    cell.MarkAsRoom();
-                    cell.Visit(); // Prevent maze generation here
+                    for (int dz = 0; dz < roomDepth; dz++)
+                    {
+                        MazeCell cell = _mazeGrid[x + dx, z + dz];
+                        cell.MarkAsRoom();
+                        cell.Visit(); // Prevent maze generation here
+                    }
                 }
             }
+
+            attempts++;
         }
 
-        attempts++;
+        if (_rooms.Count < _roomCount)
+        {
+            Debug.LogWarning($"Only {_rooms.Count} rooms were placed out of {_roomCount} due to space constraints.");
+        }
     }
-
-    if (_rooms.Count < _roomCount)
-    {
-        Debug.LogWarning($"Only {_rooms.Count} rooms were placed out of {_roomCount} due to space constraints.");
-    }
-}
 
 
     private bool DoesRoomOverlap(Room room)
@@ -653,9 +716,6 @@ private void ReplaceWallsInMaze()
         if (!(currentCell.IsVisited && currentCell.IsRoom)){
             currentCell.Visit();
             ClearWalls(previousCell, currentCell);
-
-            
-
             MazeCell nextCell;
 
             do
@@ -774,7 +834,7 @@ public class Room
     public int Z; // Top-left corner Z
     public int Width;
     public int Depth;
-    public GameObject RoomPrefabInstance;
+    public Vector3 position;
 
     public Room(int x, int z, int width, int depth)
     {

@@ -9934,7 +9934,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!95 &700651913
 Animator:
   serializedVersion: 7
@@ -11788,6 +11788,7 @@ GameObject:
   m_Component:
   - component: {fileID: 780562484}
   - component: {fileID: 780562483}
+  - component: {fileID: 780562485}
   m_Layer: 5
   m_Name: MAIN
   m_TagString: Untagged
@@ -11840,6 +11841,20 @@ RectTransform:
   m_AnchoredPosition: {x: -617, y: -277}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &780562485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780562482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36536f8b4b1d4a55be46f8014d3eb26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 0}
+  isAnimating: 0
 --- !u!1 &787932358
 GameObject:
   m_ObjectHideFlags: 0
@@ -13478,10 +13493,10 @@ RectTransform:
   - {fileID: 88245513}
   m_Father: {fileID: 2092127135}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 77.3}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 261, y: -38.65}
+  m_SizeDelta: {x: 522, y: 77.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &880591731
 MonoBehaviour:
@@ -13580,7 +13595,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: andrej
+          m_StringArgument: DevScene_Andrej NEW
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &880591734
@@ -21388,10 +21403,10 @@ RectTransform:
   - {fileID: 701354595}
   m_Father: {fileID: 2092127135}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 77.3}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 261, y: -122.950005}
+  m_SizeDelta: {x: 522, y: 77.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1373240655
 MonoBehaviour:

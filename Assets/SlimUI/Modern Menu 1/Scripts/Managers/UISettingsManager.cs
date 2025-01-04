@@ -31,7 +31,7 @@ namespace SlimUI.ModernMenu{
 		public GameObject texturelowtextLINE;
 		public GameObject texturemedtextLINE;
 		public GameObject texturehightextLINE;
-		public GameObject cameraeffectstext; 
+		// public GameObject cameraeffectstext; 
 
 		[Header("GAME SETTINGS")]
 		// public GameObject showhudtext;
@@ -462,16 +462,16 @@ namespace SlimUI.ModernMenu{
 			}
 		}
 
-		public void CameraEffects (){
-			if(PlayerPrefs.GetInt("CameraEffects")==0){
-				PlayerPrefs.SetInt("CameraEffects",1);
-				cameraeffectstext.GetComponent<TMP_Text>().text = "on";
-			}
-			else if(PlayerPrefs.GetInt("CameraEffects")==1){
-				PlayerPrefs.SetInt("CameraEffects",0);
-				cameraeffectstext.GetComponent<TMP_Text>().text = "off";
-			}
-		}
+		// public void CameraEffects (){
+		// 	if(PlayerPrefs.GetInt("CameraEffects")==0){
+		// 		PlayerPrefs.SetInt("CameraEffects",1);
+		// 		cameraeffectstext.GetComponent<TMP_Text>().text = "on";
+		// 	}
+		// 	else if(PlayerPrefs.GetInt("CameraEffects")==1){
+		// 		PlayerPrefs.SetInt("CameraEffects",0);
+		// 		cameraeffectstext.GetComponent<TMP_Text>().text = "off";
+		// 	}
+		// }
 
 		public void TexturesLow (){
 			PlayerPrefs.SetInt("Textures",0);

@@ -89,6 +89,6 @@ public class PauseMenuManager : MonoBehaviour
         }
 
         // Load the main menu scene
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("New menu");
     }
 }

@@ -7,12 +7,19 @@ public class EnemyAudioController : MonoBehaviour
     // Reference to the AudioSource component
     public AudioSource audioSource;
     public AudioClip roarSound; // The sound clip for this weather condition
+    public AudioClip enemyBackgroundClip; // The
 
     public float fadeDuration = 2.0f; // Duration of the fade-out in seconds
 
     public void playRoar()
     {
         audioSource.clip = roarSound;
+        audioSource.Play();
+    }
+
+
+    public void playBackgroundMusic(){
+        audioSource.clip = enemyBackgroundClip;
         audioSource.Play();
     }
 

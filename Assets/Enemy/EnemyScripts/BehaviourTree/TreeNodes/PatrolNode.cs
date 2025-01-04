@@ -129,6 +129,5 @@ public class PatrolNode : Node
         enemyAgent.ResetPath();
         animator.SetBool("IsRoaring", true);
         enemyAI.isRoaring = true;
-        audio_controller.playRoar();
     }
 }

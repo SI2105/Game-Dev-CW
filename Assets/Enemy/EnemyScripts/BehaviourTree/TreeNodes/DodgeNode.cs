@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class DodgeNode : Node
 {
     private EnemyAIController enemyAI;
-    private float dodgeProbability = 0.5f; // Set the dodge probability here (e.g., 50%)
+    private float dodgeProbability = 0.4f; // Set the dodge probability here (e.g., 50%)
     private Animator animator;
     private NavMeshAgent enemyAgent;
     private bool isDodging = false;
@@ -28,6 +28,11 @@ public class DodgeNode : Node
             return node_state;
         }
 
+        if(enemyAI.isComboAttacking){
+             node_state = State.FAILURE;
+            return node_state;
+        }
+
         // 4) If not dodging, always rotate to face the player
         Vector3 toPlayer = (enemyAI.playerTransform.position - enemyAgent.transform.position).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(toPlayer);
@@ -45,7 +50,7 @@ public class DodgeNode : Node
             enemyAgent.transform.position += direction * dodgeSpeed * Time.deltaTime;
 
             // Check if dodge is complete
-            if (Vector3.Distance(enemyAgent.transform.position, dodgeDestination) < 1f)
+            if (Vector3.Distance(enemyAgent.transform.position, dodgeDestination) < 2f)
             {
                 Debug.Log("Dodging completed");
                 isDodging = false;

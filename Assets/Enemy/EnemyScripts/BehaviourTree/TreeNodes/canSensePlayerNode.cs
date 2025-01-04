@@ -20,7 +20,8 @@ public class canSensePlayerNode : Node
         // Check if the player is detected by the sensor or within the sensing distance
         float distanceToPlayer = Vector3.Distance(enemy.transform.position, player.position);
         if (enemy.player_sensor.objects.Count > 0)
-        {
+        {  
+            enemy.isPlayedSensed=true;
             node_state = State.SUCCESS;
             return State.SUCCESS;
         }

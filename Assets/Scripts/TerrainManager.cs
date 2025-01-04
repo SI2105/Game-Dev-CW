@@ -28,6 +28,7 @@ public class TerrainManager : MonoBehaviour
                 Vector3 position = new Vector3(x, terrain.transform.position.y + 0.1f, z);
                 GameObject tileToPlace = GetRandomTile();
                 Instantiate(tileToPlace, position, Quaternion.identity, this.transform);
+                tileToPlace.SetActive(false);
             }
         }
     }

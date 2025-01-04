@@ -1,9 +1,12 @@
 using System.Collections;
 using UnityEngine;
 using System;
+using UnityEngine.Rendering.PostProcessing;
 
 namespace SG
 {
+
+
     public class PlayerAttributesManager : MonoBehaviour
     {
         #region Inventory
@@ -13,6 +16,14 @@ namespace SG
             get => inventoryManager;
             set => inventoryManager = value;
         }
+        private enum VignetteEffectState
+        {
+            None,
+            Damage,
+            Recovery
+        }
+
+        private VignetteEffectState currentVignetteEffectState = VignetteEffectState.None;
 
         #endregion
         #region Objectives
@@ -31,6 +42,10 @@ namespace SG
         public SkillTreeManager SkillTreeManager { get => skillTreeManager; 
             set => skillTreeManager = value; 
         }
+
+        public float intensity = 0f;
+        public PostProcessVolume _volume;
+        Vignette _vignette;
 
         //void OnEnable()
         //{
@@ -65,8 +80,8 @@ namespace SG
         public float MaxHealth { get; set; } = 100f;
         public float HealthRegenRate { get; set; } = 10f;
         public float MaxStamina { get; set; } = 100f;
-        public float StaminaCostPerSecond { get; set; } = 25f;
-        public float StaminaRegenRate { get; set; } = 15f;
+        public float StaminaCostPerSecond { get; set; } = 1f;
+        public float StaminaRegenRate { get; set; } = 20f;
         private float currentStamina;
         public float CurrentStamina
         {
@@ -78,7 +93,7 @@ namespace SG
             }
         }
 
-        private float currentHealth;
+        public float currentHealth;
         public float CurrentHealth
         {
             get => currentHealth;
@@ -133,20 +148,23 @@ namespace SG
             }
         }
 
-        private IEnumerator RecoveryCoroutine(System.Func<float> getResource, System.Action<float> setResource, float maxResource, float regenRate, float delay, System.Action onStartRecovery)
+        private IEnumerator RecoveryCoroutine(Func<float> getResource, Action<float> setResource, float targetResource, float regenRate, float delay, Action onStartRecovery)
         {
             // Wait for the delay
             yield return new WaitForSeconds(delay);
 
             onStartRecovery?.Invoke();
 
-            // Gradually recover the resource
-            while (getResource() < maxResource)
+            // Gradually recover the resource up to the target
+            while (getResource() < targetResource)
             {
-                setResource(Mathf.Min(getResource() + regenRate * Time.deltaTime, maxResource));
+                float newValue = Mathf.Min(getResource() + regenRate * Time.deltaTime, targetResource);
+                setResource(newValue);
+
                 yield return null;
             }
 
+            // Stop the recovery coroutine
             recoveryCoroutine = null;
         }
 
@@ -168,7 +186,7 @@ namespace SG
                     MaxStamina,
                     -amount,
                     StaminaRegenRate,
-                    2f,
+                    1f,
                     () => {},
                     null  // Don't start a new coroutine in the callback
                 );
@@ -177,6 +195,152 @@ namespace SG
             }
 
             return false;
+        }
+        private Coroutine lowHealthPulseCoroutine;
+        private PlayerSoundManager soundEffectManager;
+        void Start(){
+            soundEffectManager = GetComponent<PlayerSoundManager>();
+            _volume.profile.TryGetSettings(out _vignette);
+            if (_vignette != null){
+                _vignette.enabled.Override(false);
+                _vignette.intensity.Override(0f);
+            }
+        }
+        private Coroutine damageEffectCoroutine;
+        private Coroutine recoveryEffectCoroutine;
+        private float lastInjuredSoundTime = 0f;
+        private float injuredSoundCooldown = 7.5f; // Adjust this value to control how often the sound can play
+
+        private IEnumerator DamageEffectCoroutine()
+        {
+            if (_vignette == null) yield break;
+
+            // Set state to Damage
+            currentVignetteEffectState = VignetteEffectState.Damage;
+
+            float lowHealthThreshold = MaxHealth * 0.3f; // 30% health threshold
+            _vignette.enabled.Override(true);
+            _vignette.color.Override(Color.red); // Red tint for damage
+
+            if (currentHealth <= lowHealthThreshold)
+            {
+                // Low health pulse (intense, repeats)
+                float pulseSpeed = 2f;
+                float minIntensity = 0.2f;
+                float maxIntensity = 0.3f;
+
+                // Play the injured sound if cooldown is met
+                if (lastInjuredSoundTime == 0f || Time.time - lastInjuredSoundTime >= injuredSoundCooldown)
+                {
+                    Debug.Log("Playing injured sound for low health.");
+                    soundEffectManager?.PlayInjuredClip();
+                    lastInjuredSoundTime = Time.time;
+                }
+                while (currentHealth <= lowHealthThreshold && currentVignetteEffectState == VignetteEffectState.Damage)
+                {
+                    // Pulse effect
+                    float elapsed = 0f;
+                    while (elapsed < 1f / pulseSpeed)
+                    {
+                        elapsed += Time.deltaTime;
+                        _vignette.intensity.Override(Mathf.Lerp(minIntensity, maxIntensity, elapsed * pulseSpeed));
+                        yield return null;
+                    }
+
+                    elapsed = 0f;
+                    while (elapsed < 1f / pulseSpeed)
+                    {
+                        elapsed += Time.deltaTime;
+                        _vignette.intensity.Override(Mathf.Lerp(maxIntensity, minIntensity, elapsed * pulseSpeed));
+                        yield return null;
+                    }
+                }
+
+                // Stop the injured sound if the player exits low health
+                soundEffectManager?.StopInjuredClip();
+            }
+            else
+            {
+                // Normal damage pulse (less intense, occurs once)
+                float pulseSpeed = 2f;
+                float minIntensity = 0.1f;
+                float maxIntensity = 0.2f;
+
+                // Single pulse effect
+                float elapsed = 0f;
+                while (elapsed < 1f / pulseSpeed)
+                {
+                    elapsed += Time.deltaTime;
+                    _vignette.intensity.Override(Mathf.Lerp(minIntensity, maxIntensity, elapsed * pulseSpeed));
+                    yield return null;
+                }
+
+                elapsed = 0f;
+                while (elapsed < 1f / pulseSpeed)
+                {
+                    elapsed += Time.deltaTime;
+                    _vignette.intensity.Override(Mathf.Lerp(maxIntensity, minIntensity, elapsed * pulseSpeed));
+                    yield return null;
+                }
+            }
+
+            // Clean up after the effect
+            _vignette.intensity.Override(0f);
+            _vignette.enabled.Override(false);
+            currentVignetteEffectState = VignetteEffectState.None;
+        }
+
+
+
+        private IEnumerator RecoveryEffectCoroutine()
+        {
+            if (_vignette == null) yield break;
+
+            // Set state to Recovery
+            currentVignetteEffectState = VignetteEffectState.Recovery;
+
+            _vignette.enabled.Override(true);
+            _vignette.color.Override(Color.green); // Green tint for recovery
+
+            float duration = 0.5f;
+            float holdTime = 0.2f;
+            float fadeOutDuration = 0.5f;
+            float targetIntensity = 0.3f;
+
+            // Fade In
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                if (currentVignetteEffectState != VignetteEffectState.Recovery) yield break;
+
+                elapsed += Time.deltaTime;
+                _vignette.intensity.Override(Mathf.Lerp(0f, targetIntensity, elapsed / duration));
+                yield return null;
+            }
+
+            _vignette.intensity.Override(targetIntensity);
+
+            // Hold
+            yield return new WaitForSeconds(holdTime);
+
+            // Fade Out
+            elapsed = 0f;
+            while (elapsed < fadeOutDuration)
+            {
+                if (currentVignetteEffectState != VignetteEffectState.Recovery) yield break;
+
+                elapsed += Time.deltaTime;
+                _vignette.intensity.Override(Mathf.Lerp(targetIntensity, 0f, elapsed / fadeOutDuration));
+                yield return null;
+            }
+
+            // Clean up if the state is still Recovery
+            if (currentVignetteEffectState == VignetteEffectState.Recovery)
+            {
+                _vignette.intensity.Override(0f);
+                _vignette.enabled.Override(false);
+                currentVignetteEffectState = VignetteEffectState.None;
+            }
         }
 
         public bool TakeDamage(float damage)
@@ -189,12 +353,14 @@ namespace SG
                     value => CurrentHealth = value,
                     MaxHealth,
                     -damage,
-                    0f, // No health regeneration rate here (set to 0 if you don’t want auto-regen)
-                    0f, // No delay for health regen (set a delay if regen is required)
+                    0f, // No health regeneration rate here
+                    0f, // No delay for health regen
                     null, // No recovery stop callback for health damage
                     null  // No recovery start callback for health damage
                 );
 
+                // Trigger Damage Vignette Effect
+                ApplyDamageEffect();
                 // Return true to indicate damage was successfully taken
                 return true;
             }
@@ -202,6 +368,28 @@ namespace SG
             // Return false if the player is already at 0 health
             return false;
         }
+
+        /// <summary>
+        /// Initiates the Damage Vignette Effect.
+        /// </summary>
+        private void ApplyDamageEffect()
+        {
+            if (_vignette == null) return;
+
+            // Stop conflicting effects
+            if (currentVignetteEffectState != VignetteEffectState.None && damageEffectCoroutine != null)
+            {
+                StopCoroutine(damageEffectCoroutine);
+            }
+            if (currentVignetteEffectState == VignetteEffectState.Recovery && recoveryEffectCoroutine != null)
+            {
+                StopCoroutine(recoveryEffectCoroutine);
+            }
+
+            // Start damage effect
+            damageEffectCoroutine = StartCoroutine(DamageEffectCoroutine());
+        }
+
 
         private void StopStaminaRecovery()
         {
@@ -222,23 +410,113 @@ namespace SG
             Debug.Log("Starting stamina recovery process now.");
         }
 
-        private void StopHealthRecovery()
+        public void StartHealthRecovery(float targetHealth)
         {
-            if (recoveryCoroutine != null)
+            // Ensure target health does not exceed MaxHealth
+            targetHealth = Mathf.Clamp(targetHealth, currentHealth, MaxHealth);
+
+            if (currentHealth < targetHealth)
             {
-                StopCoroutine(recoveryCoroutine);
-                recoveryCoroutine = null;
+                // Stop any ongoing recovery
+                if (recoveryCoroutine != null)
+                {
+                    StopCoroutine(recoveryCoroutine);
+                }
+
+                // Start new recovery coroutine
+                recoveryCoroutine = StartCoroutine(RecoveryCoroutine(
+                    () => currentHealth,
+                    value => CurrentHealth = value,
+                    targetHealth, // Use targetHealth as the limit
+                    HealthRegenRate,
+                    0f, // No delay before starting recovery
+                    null
+                ));
+
+                // Trigger Recovery Vignette Effect
+                ApplyRecoveryEffect();
+
+                Debug.Log($"Starting health recovery up to {targetHealth}.");
             }
-            Debug.Log("Health recovery manually interrupted. Ongoing recovery halted.");
+            else
+            {
+                Debug.Log("Health recovery not started because current health exceeds target health.");
+            }
         }
 
-        private void StartHealthRecovery()
+        /// <summary>
+        /// Initiates the Recovery Vignette Effect.
+        /// </summary>
+        private void ApplyRecoveryEffect()
         {
-            if (currentHealth < MaxHealth)
+            if (_vignette == null) return;
+
+            // Stop conflicting effects
+            if (currentVignetteEffectState != VignetteEffectState.None && recoveryEffectCoroutine != null)
             {
-                recoveryCoroutine = StartCoroutine(RecoveryCoroutine(() => currentHealth, v => CurrentHealth = v, MaxHealth, HealthRegenRate, 0f, null));
+                StopCoroutine(recoveryEffectCoroutine);
             }
-            Debug.Log("Starting health recovery process now.");
+            if (currentVignetteEffectState == VignetteEffectState.Damage && damageEffectCoroutine != null)
+            {
+                StopCoroutine(damageEffectCoroutine);
+            }
+
+            // Start recovery effect
+            recoveryEffectCoroutine = StartCoroutine(RecoveryEffectCoroutine());
+        }
+
+        public void GainHealth(float amount)
+        {
+            // Immediately gain health
+            ModifyResource(
+                () => currentHealth,
+                value => CurrentHealth = value,
+                MaxHealth,
+                amount,
+                HealthRegenRate,
+                0f
+            );
+
+            // Calculate the target health
+            float targetHealth = Mathf.Clamp(currentHealth + amount, currentHealth, MaxHealth);
+
+            // Start recovery if not already at max health
+            if (currentHealth < targetHealth)
+            {
+                StartHealthRecovery(targetHealth);
+            }
+        }
+
+
+        /// <summary>
+        /// Generic coroutine to handle Vignette intensity transition.
+        /// </summary>
+        private IEnumerator VignetteEffectCoroutine(Color effectColor, float targetIntensity, float duration)
+        {
+            if (_vignette == null)
+                yield break;
+
+            // Set Vignette color
+            _vignette.color.Override(effectColor);
+
+            // Enable Vignette
+            _vignette.enabled.Override(true);
+
+            // Set initial intensity
+            _vignette.intensity.Override(targetIntensity);
+
+            // Gradually decrease intensity to 0
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                _vignette.intensity.Override(Mathf.Lerp(targetIntensity, 0f, elapsed / duration));
+                yield return null;
+            }
+
+            // Ensure intensity is set to 0 and disable Vignette
+            _vignette.intensity.Override(0f);
+            _vignette.enabled.Override(false);
         }
 
         public void GainExperience(float xp)
@@ -257,6 +535,8 @@ namespace SG
                 LevelUp();
             }
         }
+        public event Action<int> OnLevelChanged;
+
         public void LevelUp()
         {
             CurrentXP -= XPToNextLevel;
@@ -275,6 +555,7 @@ namespace SG
 
             // Recalculate derived attributes
             RecalculateAttributes();
+            OnLevelChanged?.Invoke(CurrentLevel);
 
             Debug.Log($"Leveled up! Current Level: {CurrentLevel}. XP for next level: {XPToNextLevel}");
         }
@@ -301,7 +582,115 @@ namespace SG
 
             Debug.Log("Attributes recalculated based on level and stats.");
         }
+       #region Events for Attribute Boosts
+        // For the "all attributes" 5-point boost over 30s
+        public event Action<float> OnAllAttributesBoostCountdownChanged; // Time left
+        public event Action OnAllAttributesBoostEnded;                   // Boost ended
 
+        // For the "strength only" 10-point boost over 15s
+        public event Action<float> OnStrengthBoostCountdownChanged; 
+        public event Action OnStrengthBoostEnded;
+        #endregion
+
+        /// <summary>
+        /// Temporarily boosts all attributes by 5 points for 30 seconds.
+        /// </summary>
+        public void BoostAllAttributesTemporarily()
+        {
+            // Store the original attribute values
+            float originalStrength = Strength;
+            float originalAgility = Agility;
+            float originalEndurance = Endurance;
+            float originalIntelligence = Intelligence;
+
+            // Apply the temporary boost
+            Strength += 5f;
+            Agility += 5f;
+            Endurance += 5f;
+            Intelligence += 5f;
+
+            // Recalculate attributes and start the timer
+            RecalculateAttributes();
+            Debug.Log("All attributes boosted by 5 points for 30 seconds.");
+
+            StartCoroutine(BoostAllAttributesCoroutine(
+                30f,
+                originalStrength,
+                originalAgility,
+                originalEndurance,
+                originalIntelligence
+            ));
+        }
+
+        private IEnumerator BoostAllAttributesCoroutine(
+            float duration,
+            float originalStrength,
+            float originalAgility,
+            float originalEndurance,
+            float originalIntelligence
+        )
+        {
+            float timeLeft = duration;
+            while (timeLeft > 0f)
+            {
+                // Notify subscribers how many seconds remain
+                OnAllAttributesBoostCountdownChanged?.Invoke(timeLeft);
+
+                yield return null; 
+                timeLeft -= Time.deltaTime;
+            }
+
+            // Boost has ended
+            OnAllAttributesBoostEnded?.Invoke();
+
+            // Reset attributes to their original values
+            Strength = originalStrength;
+            Agility = originalAgility;
+            Endurance = originalEndurance;
+            Intelligence = originalIntelligence;
+
+            RecalculateAttributes();
+            Debug.Log("All attributes reverted to their original values.");
+        }
+
+        /// <summary>
+        /// Temporarily grants 10 additional points of strength for 15 seconds.
+        /// </summary>
+        public void GrantTemporaryStrengthBoost()
+        {
+            // Store the original strength value
+            float originalStrength = Strength;
+
+            // Apply the temporary boost
+            Strength += 10f;
+
+            // Recalculate attributes and start the timer
+            RecalculateAttributes();
+            Debug.Log("Strength boosted by 10 points for 15 seconds.");
+
+            StartCoroutine(BoostStrengthCoroutine(15f, originalStrength));
+        }
+
+        private IEnumerator BoostStrengthCoroutine(float duration, float originalStrength)
+        {
+            float timeLeft = duration;
+            while (timeLeft > 0f)
+            {
+                // Notify subscribers how many seconds remain
+                OnStrengthBoostCountdownChanged?.Invoke(timeLeft);
+
+                yield return null;
+                timeLeft -= Time.deltaTime;
+            }
+
+            // Strength boost ended
+            OnStrengthBoostEnded?.Invoke();
+
+            // Reset strength to its original value
+            Strength = originalStrength;
+            RecalculateAttributes();
+            Debug.Log("Strength reverted to its original value.");
+        }
 
         #region Exploration and Survival Attributes
         public float TorchFuel { get; set; } = 100f;

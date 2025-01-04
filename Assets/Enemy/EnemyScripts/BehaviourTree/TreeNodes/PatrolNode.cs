@@ -68,17 +68,45 @@ public class PatrolNode : Node
                 -enemyAgent.transform.forward
             };
 
+            Vector3 bestDirection = Vector3.zero;
+            float maxDistance = float.MinValue;
+
             foreach (Vector3 direction in directions)
             {
-                Vector3 potentialPosition = enemyAgent.transform.position + direction * 5f;
+                RaycastHit hit;
+                float distance;
+
+                // Cast a ray to measure distance to obstacle in the direction
+                if (Physics.Raycast(enemyAgent.transform.position, direction, out hit, Mathf.Infinity))
+                {
+                    distance = hit.distance;
+                }
+                else
+                {
+                    // If no obstacle is detected, consider it as infinite distance
+                    distance = Mathf.Infinity;
+                }
+
+                // Update the best direction if this direction has the maximum distance
+                if (distance > maxDistance)
+                {
+                    maxDistance = distance;
+                    bestDirection = direction;
+                }
+            }
+
+            // Set destination in the direction with maximum distance
+            if (bestDirection != Vector3.zero)
+            {
+                Vector3 potentialPosition = enemyAgent.transform.position + bestDirection * 5f;
                 NavMeshHit hit;
                 if (NavMesh.SamplePosition(potentialPosition, out hit, 10f, NavMesh.AllAreas))
                 {
                     enemyAgent.SetDestination(hit.position);
-                    break;
                 }
             }
         }
+
         else if (!enemyAgent.hasPath || enemyAgent.remainingDistance <= enemyAgent.stoppingDistance)
         {
             Vector3 randomDirection = Random.insideUnitSphere * 10f;
@@ -101,6 +129,5 @@ public class PatrolNode : Node
         enemyAgent.ResetPath();
         animator.SetBool("IsRoaring", true);
         enemyAI.isRoaring = true;
-        audio_controller.playRoar();
     }
 }

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: cf384f0d2ce565b4eaf074a63f64ac39
+timeCreated: 1512951955
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 106912
+  packageName: Blue Dungeon
+  packageVersion: 1.0
+  assetPath: Assets/Triple Dungeon Pack/Blue Dungeon/prefabs/specials/pylon_1 (7).prefab
+  uploadId: 223459

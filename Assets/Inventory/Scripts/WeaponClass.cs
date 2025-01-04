@@ -18,4 +18,5 @@ public class WeaponClass : ItemClass
     public override WeaponClass GetWeapon() { return this;  }
     public override ConsumableClass GetConsumable() { return null;  }
     public override MiscClass GetMisc() { return null;  }
+    public override Collectible GetCollectible() { return null;  }
 }

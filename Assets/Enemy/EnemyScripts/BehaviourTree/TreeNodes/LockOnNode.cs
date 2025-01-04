@@ -10,6 +10,24 @@ public class LockOnNode : Node
     private Animator animator;
     private Transform player;
 
+    // Animator velocities
+    private float velocityX;
+    private float velocityY;
+
+    // Dodging
+    private bool isDodging = false;
+    private Vector3 dodgeDestination;
+    private float dodgeSpeed = 10f;
+
+    enum MovementState
+    {
+        Forward,
+        StrafeRight,
+        StrafeLeft
+    }
+
+    MovementState currentState = MovementState.Forward;
+
     public LockOnNode(NavMeshAgent enemyAgent, EnemyAIController enemyAI, Animator animator, Transform player)
     {
         this.enemyAgent = enemyAgent;
@@ -20,104 +38,118 @@ public class LockOnNode : Node
 
     public override State Evaluate()
     {
+        
+        // 4) If not dodging, always rotate to face the player
+        Vector3 toPlayer = (player.position - enemyAgent.transform.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(toPlayer);
+        enemyAgent.transform.rotation = Quaternion.Slerp(
+            enemyAgent.transform.rotation,
+            targetRotation,
+            Time.deltaTime * 2f
+        );
 
-        animator.SetBool("IsPlayingAction", false);
-      
-        // Check if locked on
-        if (enemyAI.lockOnSensor.objects.Count > 0)
-        {
-                enemyAgent.isStopped=true;
-                float velocityX = animator.GetFloat("velocityX");
-                float velocityY = animator.GetFloat("velocityY");
-                velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
-                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
-                animator.SetFloat("velocityX", velocityX);
-                animator.SetFloat("velocityY", velocityY);
-                node_state = State.SUCCESS;
-                return node_state;
+        if(enemyAI.isComboAttacking){
+            // Update animator smoothly
+            animator.SetFloat("velocityX", 0.0f);
+            animator.SetFloat("velocityY", 0.5f);
+            node_state = State.SUCCESS;
+            return node_state;
         }
 
 
-        float distanceToPlayer = Vector3.Distance(enemyAgent.transform.position, player.position);
-
-        if (distanceToPlayer > 4f)
+        // 2) If currently attacking, do nothing else
+        if (enemyAI.isAttacking)
         {
-            enemyAgent.isStopped=false;
-            // Move towards the player
-            enemyAgent.speed=1.5f;
-            enemyAgent.SetDestination(player.position);
+            // Update animator smoothly
+            animator.SetFloat("velocityX", 0.0f);
+            animator.SetFloat("velocityY", 0.5f);
+            node_state = State.SUCCESS;
+            return node_state;
+        }
 
-            // Adjust animator parameters for walking
-            float velocityY = animator.GetFloat("velocityY");
-            float velocityX = animator.GetFloat("velocityX");
 
-            velocityY = Mathf.Lerp(velocityY, 0.5f, Time.deltaTime * 2f);
-            velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
+        float distance = Vector3.Distance(enemyAgent.transform.position, player.position);
 
-            animator.SetFloat("velocityY", velocityY);
-            animator.SetFloat("velocityX", velocityX);
+        if (enemyAI.lockOnSensor.objects.Count > 0) // Lock on if sensor detects the player
+        {
+            enemyAgent.isStopped = true;
+            enemyAgent.ResetPath();
+            node_state = State.SUCCESS;
+            return node_state;
+        }
+        
+        enemyAgent.ResetPath();
 
-            node_state = State.FAILURE;
+        // 5) Determine front vs. left vs. right via dot products
+        float dotForward = Vector3.Dot(enemyAgent.transform.forward, toPlayer);
+        float dotRight   = Vector3.Dot(enemyAgent.transform.right,   toPlayer);
+
+        // Decide which way to move
+        //   Front if dotForward is fairly high (say > 0.5)
+        //   Right if dotRight   > 0
+        //   Left  otherwise
+        float moveSpeed = 2f; // Adjust strafe/walk speed as desired
+
+        // Apply movement based on state
+        switch (currentState)
+        {
+            case MovementState.Forward:
+                velocityY = Mathf.Lerp(velocityY, 0.5f, Time.deltaTime);
+                velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime);
+                if(enemyAI.attackSensor.objects.Count==0){
+                    enemyAgent.transform.position += enemyAgent.transform.forward * moveSpeed * Time.deltaTime;
+                }
+                break;
+
+            case MovementState.StrafeRight:
+                velocityX = Mathf.Lerp(velocityX, 0.5f, Time.deltaTime);
+                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime);
+                if(enemyAI.attackSensor.objects.Count==0){
+                    enemyAgent.transform.position += enemyAgent.transform.right * moveSpeed * Time.deltaTime;
+                 }
+                break;
+
+            case MovementState.StrafeLeft:
+                velocityX = Mathf.Lerp(velocityX, -0.5f, Time.deltaTime);
+                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime);
+                if(enemyAI.attackSensor.objects.Count==0){
+                    enemyAgent.transform.position -= enemyAgent.transform.right * moveSpeed * Time.deltaTime;
+                }
+                break;
+        }
+
+       
+        if (dotForward > 0.95f)
+        {
+            if (currentState != MovementState.Forward)
+            {
+                currentState = MovementState.Forward;
+                
+            }
+        }
+        else if (dotRight > 0f)
+        {
+            if (currentState != MovementState.StrafeRight)
+            {
+                currentState = MovementState.StrafeRight;
+                
+            }
         }
         else
         {
-            // Lock on logic
-            Vector3 directionToPlayer = (player.position - enemyAgent.transform.position).normalized;
-            float angleToPlayer = Vector3.SignedAngle(enemyAgent.transform.forward, directionToPlayer, Vector3.up);
-
-            if (Mathf.Abs(angleToPlayer) > 5f) // If not facing the player (within a tolerance of 5 degrees)
+            if (currentState != MovementState.StrafeLeft)
             {
-                RotateTowardsPlayer(directionToPlayer);
+                currentState = MovementState.StrafeLeft;
                 
-                if (angleToPlayer < 0) // Player is on the left
-                {
-                    Debug.LogError("Strafing left");
-                    float velocityX = animator.GetFloat("velocityX");
-                    float velocityY = animator.GetFloat("velocityY");
-
-                    velocityX = Mathf.Lerp(velocityX, -0.5f, Time.deltaTime * 2f);
-                    velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
-
-                    animator.SetFloat("velocityX", velocityX);
-                    animator.SetFloat("velocityY", velocityY);
-                }
-                else // Player is on the right
-                {
-                    Debug.LogError("Strafing right");
-                    float velocityX = animator.GetFloat("velocityX");
-                    float velocityY = animator.GetFloat("velocityY");
-
-                    velocityX = Mathf.Lerp(velocityX, 0.5f, Time.deltaTime * 2f);
-                    velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
-
-                    animator.SetFloat("velocityX", velocityX);
-                    animator.SetFloat("velocityY", velocityY);
-                }
             }
-            else // Player is directly in front
-            {
-                Debug.LogError("Player in front");
-                enemyAgent.isStopped = true;
-
-                float velocityX = animator.GetFloat("velocityX");
-                float velocityY = animator.GetFloat("velocityY");
-
-                velocityX = Mathf.Lerp(velocityX, 0.0f, Time.deltaTime * 2f);
-                velocityY = Mathf.Lerp(velocityY, 0.0f, Time.deltaTime * 2f);
-
-                animator.SetFloat("velocityX", velocityX);
-                animator.SetFloat("velocityY", velocityY);
-            }
-
-            node_state = State.FAILURE;
         }
+   
+        // Update animator smoothly
+        animator.SetFloat("velocityX", velocityX);
+        animator.SetFloat("velocityY", velocityY);
 
+        // 8) Default
+        node_state = State.FAILURE;
         return node_state;
-    }
-
-    private void RotateTowardsPlayer(Vector3 directionToPlayer)
-    {
-        Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
-        enemyAgent.transform.rotation = Quaternion.Lerp(enemyAgent.transform.rotation, targetRotation, Time.deltaTime * 5f);
     }
 }

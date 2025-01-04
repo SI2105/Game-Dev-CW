@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4847643549659240}
+  - component: {fileID: 1638531202717924755}
+  - component: {fileID: 8371126442829757905}
   m_Layer: 0
   m_Name: Axe_DS
   m_TagString: Untagged
@@ -32,6 +34,50 @@ Transform:
   - {fileID: 3503919196562908734}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1638531202717924755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948186286613674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d34d8610b2c602478d7dbbf7ec83b9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerState: {fileID: 0}
+  hitSounds:
+  - {fileID: 8300000, guid: 889b551e7e3fae743a799e5f1039b426, type: 3}
+  - {fileID: 8300000, guid: 5c21d32a1d6ce9542b59515fbd4419ed, type: 3}
+  hitVolume: 0.5
+--- !u!54 &8371126442829757905
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948186286613674}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
 --- !u!1 &3601253459091608436
 GameObject:
   m_ObjectHideFlags: 0
@@ -41,6 +87,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3503919196562908734}
+  - component: {fileID: 4412161556396526062}
   m_Layer: 0
   m_Name: Pivot
   m_TagString: Untagged
@@ -64,6 +111,27 @@ Transform:
   - {fileID: 3942714930481638057}
   m_Father: {fileID: 4847643549659240}
   m_LocalEulerAnglesHint: {x: -12.554, y: -91.359, z: 80.154}
+--- !u!65 &4412161556396526062
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3601253459091608436}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.33, y: 0.16, z: 0.42}
+  m_Center: {x: 0, y: 0, z: 0.69}
 --- !u!1 &4039861286127491818
 GameObject:
   m_ObjectHideFlags: 0

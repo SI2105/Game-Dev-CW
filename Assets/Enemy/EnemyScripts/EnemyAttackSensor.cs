@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class EnemyAttackSensor : MonoBehaviour
 {
     public float distance;
@@ -46,19 +47,17 @@ public class EnemyAttackSensor : MonoBehaviour
         Vector3 dest = obj.transform.position;
         Vector3 direction=dest-origin;
 
-        // if(direction.y<0 || direction.y> height){
-        //     return false;
-        // }
-
         direction.y = 0;
 
+        origin.y +=height/2;
+        dest.y = origin.y;
+
         float deltaAngle = Vector3.Angle(direction, transform.forward);
+
         if(deltaAngle>angle){
             return false;
         }
 
-        origin.y +=height/2;
-        dest.y = origin.y;
 
         if(Physics.Linecast(origin, dest, occlusionLayers)){
             return false;
@@ -163,6 +162,11 @@ public class EnemyAttackSensor : MonoBehaviour
 
             for(int i=0; i<count; i++){
                 Gizmos.DrawSphere(colliders[i].transform.position, 0.2f);
+            }
+
+            Gizmos.color=Color.black;
+            foreach(var obj in objects){
+                Gizmos.DrawSphere(obj.transform.position, 0.2f);
             }
 
         }

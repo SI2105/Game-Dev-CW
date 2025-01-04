@@ -50,6 +50,7 @@ public class EnemyLockOnSensor : MonoBehaviour
         direction.y = 0;
 
         float deltaAngle = Vector3.Angle(direction, transform.forward);
+
         if(deltaAngle>angle){
             return false;
         }
@@ -59,16 +60,9 @@ public class EnemyLockOnSensor : MonoBehaviour
 
         if (Physics.Linecast(origin, dest, occlusionLayers))
         {
-            // Draw the line in red if the linecast hits something
-            Debug.DrawLine(origin, dest, Color.red, 0.1f);
             return false;
         }
-        else
-        {
-            // Draw the line in green if the linecast does not hit anything
-            Debug.DrawLine(origin, dest, Color.green, 0.1f);
-        }
-
+       
         return true;
     }
 
@@ -166,15 +160,9 @@ public class EnemyLockOnSensor : MonoBehaviour
 
             Gizmos.DrawWireSphere(transform.position, distance);
 
-            for(int i=0; i<count; i++){
-                Gizmos.DrawSphere(colliders[i].transform.position, 0.2f);
-            }
-
-            Gizmos.color=Color.green;
-            foreach(var obj in objects){
-                Gizmos.DrawSphere(obj.transform.position, 0.2f);
-            }
-
+            // for(int i=0; i<count; i++){
+            //     Gizmos.DrawSphere(colliders[i].transform.position, 0.2f);
+            // }
         }
     }
 }

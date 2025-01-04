@@ -120,7 +120,6 @@ namespace SG{
         [Header("References")]
         [SerializeField] private Transform idleTransform;
         [SerializeField] private Transform cameraTransform;
-        public CinemachineVirtualCamera mainVC;
 
         [Header("Rotation Settings")]
         [SerializeField] private float rotationSpeed = 10f;
@@ -177,6 +176,7 @@ namespace SG{
         #endregion
 
         private PlayerLockOn playerLockOn;
+        public CinemachineCameraSwitcher cameraSwitcher;
 
 
         #region Skills
@@ -201,18 +201,25 @@ namespace SG{
 
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                Time.timeScale = 0f;
             }
             else
             {
 
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
+                Time.timeScale = 1f;
             }
 
             attributesManager.SkillTreeManager.ToggleSkillTree();
         }
 
         #endregion
+        private CinemachinePOV mainCamPov;  // reference to your main camera's POV
+        public CinemachineVirtualCamera mainVC;
+
+// e.g. in Awake/Start:
+
         private void Awake()
         {
             inputActions = new GameDevCW();
@@ -237,7 +244,6 @@ namespace SG{
             inputActions.Player.Pause.canceled += HandlePause;
 
             inputActions.Player.LockOn.performed += HandleLockOn;
-            inputActions.Player.LockOn.canceled += HandleLockOn;
 
             inputActions.Player.DodgeForward.performed += HandleDodgeForward;
             inputActions.Player.DodgeBackward.performed += HandleDodgeBackward;
@@ -247,12 +253,11 @@ namespace SG{
             attributesManager = GetComponent<PlayerAttributesManager>();
             _playerState = GetComponent<PlayerState>();
             playerLockOn = GetComponent<PlayerLockOn>();
+            mainCamPov = mainVC.GetCinemachineComponent<CinemachinePOV>();
 
             if (attributesManager) {
                 Debug.Log("Inventory Manager found");
-                inputActions.UI.Click.performed += attributesManager.InventoryManager.OnClick;
                 inputActions.UI.HotBarSelector.performed += attributesManager.InventoryManager.OnHotBarSelection;
-                inputActions.UI.Click.canceled += attributesManager.InventoryManager.OnClick;
                 inputActions.UI.HotBarSelector.canceled += attributesManager.InventoryManager.OnHotBarSelection;
                 inputActions.Player.Objective.performed += onObjective;
                 inputActions.Player.Objective.canceled += onObjective;
@@ -262,6 +267,7 @@ namespace SG{
                 UpdatePlayerStats();
             }
         }
+
 
 
         public void onObjective(InputAction.CallbackContext context)
@@ -279,14 +285,16 @@ namespace SG{
 
             if (objectiveVisible)
             {
-
+               
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                Time.timeScale = 0f;
             }
             else {
                 
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
+                Time.timeScale = 1f;
             }
 
             attributesManager.ObjectiveManager.ToggleObjectivePanel();
@@ -299,12 +307,25 @@ namespace SG{
 
             }
         }
-
-        private void HandleLockOn(InputAction.CallbackContext context) {
-            if (context.performed) {
-                playerLockOn.LockOn();
-            } else {
-                playerLockOn.LockOn();
+        private bool isLockedOn = false;
+        private void HandleLockOn(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                if (isLockedOn)
+                {
+                    // If already locked on, cancel lock-on
+                    playerLockOn.LockOn();
+                    isLockedOn = false;
+                    Debug.Log("Lock-on canceled.");
+                }
+                else
+                {
+                    // If not locked on, activate lock-on
+                    playerLockOn.LockOn();
+                    isLockedOn = true;
+                    Debug.Log("Lock-on activated.");
+                }
             }
         }
 
@@ -313,7 +334,10 @@ namespace SG{
             InventoryVisible = !InventoryVisible;
             if (InventoryVisible)
             {
+                inputActions.UI.Click.performed += attributesManager.InventoryManager.OnClick;
                 //attributesManager.InventoryManager.CraftTest();
+                inputActions.UI.Click.performed += attributesManager.InventoryManager.OnClick;
+                inputActions.UI.Click.canceled += attributesManager.InventoryManager.OnClick;
                 UpdatePlayerStats();
                 attributesManager.InventoryManager.InventoryPanel.SetActive(true);
                 attributesManager.InventoryManager.PlayerStatsPanel.SetActive(true);
@@ -323,8 +347,12 @@ namespace SG{
                 attributesManager.InventoryManager.HotBarSelector.SetActive(false);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                Time.timeScale = 0f;
             }
             else {
+                
+                inputActions.UI.Click.performed -= attributesManager.InventoryManager.OnClick;
+                inputActions.UI.Click.canceled -= attributesManager.InventoryManager.OnClick;
                 attributesManager.InventoryManager.InventoryPanel.SetActive(false);
                 attributesManager.InventoryManager.PlayerStatsPanel.SetActive(false);
                 attributesManager.InventoryManager.CraftingPanel.SetActive(false);
@@ -332,7 +360,8 @@ namespace SG{
                 attributesManager.InventoryManager.HotBar.SetActive(true);
                 attributesManager.InventoryManager.HotBarSelector.SetActive(true);
                 Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false; 
+                Cursor.visible = false;
+                Time.timeScale = 1f;
             }
         }
 
@@ -358,6 +387,8 @@ namespace SG{
                         
             if (cameraTransform == null && Camera.main != null)
                 cameraTransform = Camera.main.transform;
+
+            cameraSwitcher = FindObjectOfType<CinemachineCameraSwitcher>();
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -428,7 +459,6 @@ namespace SG{
             
             // HandleRotation();
             Movement();
-            HandleMovement();
             UpdateAnimatorParameters();
             UpdateMovementState();
         }
@@ -500,30 +530,149 @@ namespace SG{
             );
         }
 
-        private void HandleRotation()
+        private bool wasLocked; // Tracks if the player was previously locked on
+        [SerializeField] private float verticalClampMin = -80f;
+        [SerializeField] private float verticalClampMax = 80f;
+        [SerializeField] private float lockOnRotationSpeed = 5f;
+        // Tracks the current yaw and pitch
+        private float currentYaw;
+        private float currentPitch;
+        private float oldPitch;
+        private float oldYaw;
+        // Add this variable at the top of the class to track the lock-on state change
+
+
+        private bool hasPrintedTransformAfterLocking = false;
+
+       private void HandleRotation()
         {
-            if (cameraTransform == null || InventoryVisible) return;
+            // Safety check
+            if (cameraTransform == null || InventoryVisible) 
+                return;
 
             if (playerLockOn != null && playerLockOn.IsTargetLocked && playerLockOn.CurrentTarget != null)
             {
-                // When locked on, align player and camera with the target
-                Vector3 directionToTarget = playerLockOn.CurrentTarget.transform.position - idleTransform.position;
-                directionToTarget.y = 0; // Keep rotation on horizontal plane
+                // --- Lock-On Logic ---
+                // Find the UpperHalfPoint child transform
+                Transform upperHalfTransform = playerLockOn.CurrentTarget.transform.Find("UpperHalfPoint");
+                if (upperHalfTransform != null)
+                {
+                    // Set the camera's LookAt to the UpperHalfPoint
+                    playerLockOn.lockOnCamera.LookAt = upperHalfTransform;
+                }
+                else
+                {
+                    // Fallback: Calculate an upper half position
+                    Vector3 upperHalfPosition = GetUpperHalfPosition(playerLockOn.CurrentTarget);
+                    playerLockOn.lockOnCamera.LookAt = CreateTemporaryTarget(upperHalfPosition);
+                }
 
+                // Optional: Smoothly rotate the player to face the target
+                // If you still want the player to face the target without snapping
+                Vector3 directionToTarget = playerLockOn.CurrentTarget.transform.position - transform.position;
+                directionToTarget.y = 0f; // Ignore vertical difference
                 if (directionToTarget != Vector3.zero)
                 {
-                    Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-                    idleTransform.rotation = Quaternion.Slerp(idleTransform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                    Quaternion targetRotation = Quaternion.LookRotation(directionToTarget, Vector3.up);
+                    transform.rotation = targetRotation;
                 }
+
+                wasLocked = true;
             }
             else
             {
-                // Normal rotation when not locked on
-                float mouseX = lookInput.x * rotationSpeed * Time.deltaTime;
-                targetRotation += mouseX * 60f;
-                idleTransform.rotation = Quaternion.Euler(0f, targetRotation, 0f);
+                // --- Transition Logic ---
+                if (wasLocked)
+                {
+                    // Unlock the target
+                    wasLocked = false;
+                    if (playerLockOn.lockOnCamera != null)
+                    {
+                        playerLockOn.lockOnCamera.Priority = 0;
+                        mainVC.Priority = 60;
+                        playerLockOn.lockOnCamera.LookAt = null; // Reset LookAt
+                    }
+                    Debug.Log("Target unlocked.");
+                }
+
+                // --- Free-Look Logic ---
+                if (!wasLocked)
+                {
+                    hasPrintedTransformAfterLocking = false;
+
+                    float mouseX = lookInput.x * rotationSpeed * Time.deltaTime;
+                    currentYaw += mouseX * 60f; 
+                    transform.rotation = Quaternion.Euler(0f, currentYaw, 0f);
+
+                    float mouseY = lookInput.y * rotationSpeed * Time.deltaTime;
+                    currentPitch -= mouseY * 60f;
+                    currentPitch = Mathf.Clamp(currentPitch, verticalClampMin, verticalClampMax);
+
+                    cameraTransform.localRotation = Quaternion.Euler(currentPitch, 0f, 0f);
+                }
             }
         }
+
+        /// <summary>
+        /// Calculates an upper half position based on the target's Renderer bounds.
+        /// </summary>
+        /// <param name="target">The target GameObject.</param>
+        /// <returns>The upper half position.</returns>
+        private Vector3 GetUpperHalfPosition(GameObject target)
+        {
+            Renderer renderer = target.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                return renderer.bounds.center + Vector3.up * (renderer.bounds.size.y / 4);
+            }
+            else
+            {
+                // Fallback position if Renderer is not found
+                return target.transform.position + Vector3.up * 1.0f;
+            }
+        }
+
+        /// <summary>
+        /// Creates a temporary GameObject at the specified position for the camera to look at.
+        /// </summary>
+        /// <param name="position">The position to place the temporary target.</param>
+        /// <returns>The Transform of the temporary target.</returns>
+        private Transform CreateTemporaryTarget(Vector3 position)
+        {
+            GameObject tempTarget = new GameObject("TempLookAtTarget");
+            tempTarget.transform.position = position;
+            Destroy(tempTarget, 2f); // Destroy after 2 seconds or when no longer needed
+            return tempTarget.transform;
+        }
+
+
+        private void OverrideCinemachineRotation(CinemachineVirtualCamera vCam, Quaternion newRotation, bool reattach = true)
+        {
+            // Temporarily detach LookAt and Follow
+            Transform originalLookAt = vCam.LookAt;
+            Transform originalFollow = vCam.Follow;
+
+            vCam.LookAt = null;
+            vCam.Follow = originalFollow;
+
+            // Manually set the rotation
+            vCam.enabled = false;
+            // Set the rotation
+            vCam.transform.rotation = newRotation;
+            // Re-enable
+            vCam.enabled = true;
+
+            // Optionally reattach LookAt and Follow targets
+            if (reattach)
+            {
+                vCam.Follow = originalFollow;
+                vCam.LookAt = originalLookAt;
+
+                // Reapply the rotation after reattaching
+                vCam.transform.rotation = newRotation;
+            }
+        }
+
 
         private void Movement(){
             // Determine current maximum velocities based on sprinting
@@ -626,6 +775,7 @@ namespace SG{
 
         private void LateUpdate()
         {
+            
             HandleRotation(); // Update camera and player rotation
         }
 
@@ -634,7 +784,10 @@ namespace SG{
             CheckGrounded();
             ClampVerticalVelocity();
             PreventSliding();
+            Movement();
+            HandleMovement(); // your rb.MovePosition in here
         }
+
         
         [SerializeField] private CinemachineVirtualCamera virtualCamera; // Reference to the virtual camera
 
@@ -685,7 +838,7 @@ namespace SG{
 
         private void HandleLook(InputAction.CallbackContext context){
 
-            if (InventoryVisible)
+            if (InventoryVisible || isSkillTreeVisible || objectiveVisible)
             {
                 return;
             }
@@ -720,33 +873,103 @@ namespace SG{
                 }
             }
         }
+
+        [SerializeField] private float dodgeDistance = 0.75f; // Reduced by half (was 3.0f)
+        [SerializeField] private float dodgeDuration = 0.075f; // Reduced by half (was 0.3f)
+        [SerializeField] private float dodgeForce = 4f; // Adjusted proportionally to fit the reduced distance
+        [SerializeField] private float dodgeStaminaCost = 1f; // Optional: lower stamina cost if desired
+        [SerializeField] private float dodgeCooldown = 0.05f; // Slightly shorter cooldown to match reduced dodge
+
+        private bool canDodge = true; // Tracks whether the player can dodge
+
+        private void HandleDodge(Vector3 direction, string animationHash)
+        {
+            // 1. Check if player can dodge at all
+            if (!canDodge)
+            {
+                Debug.Log("Dodge is on cooldown!");
+                return;
+            }
+            // attributesManager.TakeDamage(20f);
+
+            // 2. Check stamina
+            if (attributesManager.CurrentStamina < dodgeStaminaCost)
+            {
+                Debug.Log("Not enough stamina to dodge!");
+                return;
+            }
+
+            // 3. Player can dodge here
+            attributesManager.UseStamina(dodgeStaminaCost);
+
+            // 4. Mark that we’re now in dodge cooldown
+            canDodge = false;
+
+            // 5. Trigger dodge animation
+            SetDodgeState(direction, animationHash, true);
+
+            // 6. Perform the dodge
+            StartCoroutine(DodgeRoutine(direction, animationHash));
+        }
+
+        private IEnumerator DodgeRoutine(Vector3 direction, string animationHash)
+        {
+            // Optional small delay before movement
+            yield return new WaitForSeconds(0.1f);
+
+            Vector3 startPosition = rb.position;
+            Vector3 targetPosition = CalculateFinalPosition(startPosition, direction, dodgeDistance);
+            float elapsedTime = 0f;
+
+            while (elapsedTime < dodgeDuration)
+            {
+                rb.MovePosition(Vector3.Lerp(startPosition, targetPosition, elapsedTime / dodgeDuration));
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            // Ensure the final position is exact
+            rb.MovePosition(targetPosition);
+
+            // Reset dodge state
+            SetDodgeState(direction, animationHash, false);
+
+            // 7. After the dodge completes, wait for the remaining cooldown
+            yield return new WaitForSeconds(dodgeCooldown);
+
+            // 8. Re-enable dodging
+            canDodge = true;
+        }
+
+        private Vector3 CalculateFinalPosition(Vector3 startPosition, Vector3 direction, float distance)
+        {
+            Vector3 targetPosition = startPosition + direction.normalized * distance;
+
+            // Optional: use raycast for obstacles
+            if (Physics.Raycast(startPosition, direction, out RaycastHit hit, distance))
+            {
+                targetPosition = hit.point - direction.normalized * 0.1f;
+            }
+
+            return targetPosition;
+        }
+
+        private void SetDodgeState(Vector3 direction, string animationHash, bool state)
+        {
+            if (direction == transform.forward)      isDodgingForward  = state;
+            if (direction == -transform.forward)     isDodgingBackward = state;
+            if (direction == transform.right)        isDodgingRight    = state;
+            if (direction == -transform.right)       isDodgingLeft     = state;
+
+            animator.SetBool(animationHash, state);
+        }
+
+        // Individual dodge handlers
         private void HandleDodgeForward(InputAction.CallbackContext ctx)
         {
             if (ctx.performed)
             {
-                isDodgingForward = true;
-                animator.SetBool(isDodgingForwardHash, isDodgingForward);
-                ResetDodgeState("Forward"); // Reset state after dodge animation
-            }
-        }
-
-        private void HandleDodgeRight(InputAction.CallbackContext context)
-        {
-            if (context.performed)
-            {
-                isDodgingRight = true;
-                animator.SetBool(isDodgingRightHash, isDodgingRight);
-                ResetDodgeState("Right"); // Reset state after dodge animation
-            }
-        }
-
-        private void HandleDodgeLeft(InputAction.CallbackContext context)
-        {
-            if (context.performed)
-            {
-                isDodgingLeft = true;
-                animator.SetBool(isDodgingLeftHash, isDodgingLeft);
-                ResetDodgeState("Left"); // Reset state after dodge animation
+                HandleDodge(transform.forward, "isDodgingForward");
             }
         }
 
@@ -754,43 +977,24 @@ namespace SG{
         {
             if (ctx.performed)
             {
-                isDodgingBackward = true;
-                animator.SetBool(isDodgingBackwardHash, isDodgingBackward);
-                ResetDodgeState("Backward"); // Reset state after dodge animation
+                HandleDodge(-transform.forward, "isDodgingBackward");
             }
         }
 
-        private void ResetDodgeState(string direction)
+        private void HandleDodgeLeft(InputAction.CallbackContext ctx)
         {
-            float dodgeAnimationDuration = 0.5f; // Replace with actual dodge animation length
-
-            StartCoroutine(ResetDodgeCoroutine(direction, dodgeAnimationDuration));
-        }
-
-        private IEnumerator ResetDodgeCoroutine(string direction, float delay)
-        {
-            yield return new WaitForSeconds(delay);
-
-            switch (direction)
+            if (ctx.performed)
             {
-                case "Forward":
-                    isDodgingForward = false;
-                    animator.SetBool(isDodgingForwardHash, isDodgingForward);
-                    break;
-                case "Right":
-                    isDodgingRight = false;
-                    animator.SetBool(isDodgingRightHash, isDodgingRight);
-                    break;
-                case "Left":
-                    isDodgingLeft = false;
-                    animator.SetBool(isDodgingLeftHash, isDodgingLeft);
-                    break;
-                case "Backward":
-                    isDodgingBackward = false;
-                    animator.SetBool(isDodgingBackwardHash, isDodgingBackward);
-                    break;
+                HandleDodge(-transform.right, "isDodgingLeft");
             }
         }
 
+        private void HandleDodgeRight(InputAction.CallbackContext ctx)
+        {
+            if (ctx.performed)
+            {
+                HandleDodge(transform.right, "isDodgingRight");
+            }
         }
     }
+}

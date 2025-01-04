@@ -33,7 +33,7 @@ public class PCG_Generator : MonoBehaviour
     [SerializeField]
     private Wall _wall;
 
-
+    
     [SerializeField]
     private GameObject roomPrefab;
 
@@ -47,8 +47,10 @@ public class PCG_Generator : MonoBehaviour
     private GameObject _plainWallPrefab;
 
     [SerializeField]
-    private int _roomBufferSize = 2; // Minimum buffer between rooms    
+    private int _roomBufferSize = 2; // Minimum buffer between rooms  
 
+
+    public Transform enemy;
 
     [SerializeField]
     private float _maze_configuration = 6f; // Minimum buffer between rooms    
@@ -75,14 +77,79 @@ public class PCG_Generator : MonoBehaviour
 
     public MazeCell[,] _mazeGrid;
 
-    
+    private List<GameObject> allObjects = new List<GameObject>();
+    public float activationRadius = 20f; // Radius around the player for activation
+    public Transform playerTransform; // Reference to the player's transform
+
+  
     [SerializeField]
     public Terrain terrain;
 
     private float cellSizeX;
 
     private float cellSizeZ;
+
+    void Update(){
+        foreach (GameObject obj in allObjects)
+        {
+            if (obj == null) continue; // Skip if object is destroyed
+
+            float distanceToPlayer = Vector3.Distance(playerTransform.position, obj.transform.position);
+
+            // Activate objects within the radius, deactivate objects outside
+            if (distanceToPlayer <= activationRadius)
+            {
+                if (!obj.activeSelf) // Only activate if not already active
+                {
+                    obj.SetActive(true);
+                }
+            }
+            else
+            {
+                if (obj.activeSelf) // Only deactivate if currently active
+                {
+                    obj.SetActive(false);
+                }
+            }
+        }
+
+        for (int x = 0; x < _mazeWidth; x++)
+        {
+            for (int z = 0; z < _mazeDepth; z++)
+            {
+                MazeCell cell =_mazeGrid[x, z];
+              
+
+                GameObject floor = cell.floorObj;
+
+                Debug.Log(floor);
+               
+                float distanceToPlayerFloor = Vector3.Distance(playerTransform.position, floor.transform.position);
+
+                    // Activate objects within the radius, deactivate objects outside
+                if (distanceToPlayerFloor <= activationRadius)
+                {
+                    if (!cell.floorObj.activeSelf) // Only activate if not already active
+                    {
+                        cell.floorObj.SetActive(true);
+                        cell.ceilingObject.SetActive(true);
+                    }
+                }
+                else
+                {
+                    if (cell.floorObj.activeSelf) // Only activate if not already active
+                    {
+                        cell.floorObj.SetActive(false);
+                        cell.ceilingObject.SetActive(false);
+                    }
+                }
+                
+            }
+        }
+
+    }
     
+
     void Start()
 {
     _mazeGrid = new MazeCell[_mazeWidth, _mazeDepth];
@@ -118,7 +185,6 @@ public class PCG_Generator : MonoBehaviour
 
             // Instantiate the maze cell
             MazeCell cell = Instantiate(_mazeCellPrefab, cellPosition, Quaternion.identity);
-
             // Set grid indices for this cell
             cell.GridX = x;
             cell.GridZ = z;
@@ -140,8 +206,63 @@ public class PCG_Generator : MonoBehaviour
     GenerateMaze(null, _mazeGrid[0, 0]);
 
     ReplaceWallsInMaze();
+
+    SpawnPlayerAndEnemy();
     
 }
+
+    private void SpawnPlayerAndEnemy()
+{
+    // Spawn Player in a random cell
+    MazeCell randomCell = _mazeGrid[Random.Range(0, _mazeWidth), Random.Range(0, _mazeDepth)];
+    Vector3 playerPosition = randomCell.transform.position;
+
+    if (playerTransform != null)
+    {
+        Debug.Log($"Setting Player position to: {playerPosition}");
+        if (playerTransform.TryGetComponent<Rigidbody>(out Rigidbody playerRb))
+        {
+            playerRb.MovePosition(playerPosition);
+        }
+        else
+        {
+            playerTransform.position = playerPosition;
+        }
+    }
+    else
+    {
+        Debug.LogError("Player object is not assigned in the Inspector!");
+    }
+
+    // Spawn Enemy in the middle of the first room
+    if (_rooms.Count > 0)
+    {
+        Room firstRoom = _rooms[0];
+        Vector3 roomCenter = firstRoom.RoomPrefabInstance.transform.position;
+        if (enemy != null)
+        {
+            Debug.Log($"Setting Enemy position to: {roomCenter}");
+            if (enemy.TryGetComponent<Rigidbody>(out Rigidbody enemyRb))
+            {
+                enemyRb.MovePosition(roomCenter);
+            }
+            else
+            {
+                enemy.position = roomCenter;
+            }
+        }
+        else
+        {
+            Debug.LogError("Enemy object is not assigned in the Inspector!");
+        }
+    }
+    else
+    {
+        Debug.LogWarning("No rooms available to spawn the enemy.");
+    }
+}
+
+
 
     public MazeCell[,] GetMazeGrid()
     {
@@ -228,11 +349,15 @@ private void ReplaceWallsInMaze()
                     {
                         // Place an archway with door prefab
                         archway = Instantiate(_archwayWithDoorPrefab, currentPosition, rotation);
+                        archway.SetActive(false);
+                        allObjects.Add(archway);
                     }
                     else
                     {
                         // Place an archway prefab
                         archway = Instantiate(_archwayPrefab, currentPosition, rotation);
+                        archway.SetActive(false);
+                        allObjects.Add(archway);
                     }
 
                     archway.transform.localScale = scale; // Adjust the scale of the archway if needed
@@ -252,6 +377,8 @@ private void ReplaceWallsInMaze()
                     while (fullWalls > 0)
                     {
                         GameObject newWall = Instantiate(_plainWallPrefab, currentPosition, rotation);
+                        newWall.SetActive(false);
+                        allObjects.Add(newWall);
                         newWall.transform.localScale = scale; // Use the original scale for each wall
 
                         // Update the position for the next wall
@@ -286,6 +413,8 @@ private void ReplaceWallsInMaze()
                         // Place the remainder wall
                         GameObject remainderWall = Instantiate(_plainWallPrefab, adjustedPosition, rotation);
                         remainderWall.transform.localScale = new Vector3(remainder, scale.y, scale.z);
+                        remainderWall.SetActive(false);
+                        allObjects.Add(remainderWall);
                     }
                 }
                 continue;
@@ -314,6 +443,8 @@ private void ReplaceWallsInMaze()
             {
                 
                 GameObject newWall = Instantiate(_wall.wallPrefab, currentPosition, rotation);
+                newWall.SetActive(false);
+                allObjects.Add(newWall);
                 newWall.transform.localScale = scale; // Use the original scale for each wall
 
                 // Update the position for the next wall
@@ -352,6 +483,8 @@ private void ReplaceWallsInMaze()
                 // Place the remainder wall
                 GameObject remainderWall = Instantiate(_plainWallPrefab, adjustedPosition, rotation);
                 remainderWall.transform.localScale = new Vector3(remainder, scale.y, scale.z);
+                remainderWall.SetActive(false);
+                allObjects.Add(remainderWall);
             }
         }
     }
@@ -441,37 +574,36 @@ private void ReplaceWallsInMaze()
 
             // Adjust the scale of the room prefab
             Vector3 finalScale = new Vector3(
-                4.2f,  // Increased width
+                3.8f,  // Increased width
                 1,     // Keep original height
-                3.5f   // Increased depth
+                3.7f   // Increased depth
             );
             roomInstance.transform.localScale = finalScale;
 
             if(cellSizeX==30){
                 // Adjust position to center the prefab based on its size
                 roomInstance.transform.position = new Vector3(
-                    basePosition.x -46.3f, //
+                    basePosition.x -39.4f, //
                     basePosition.y,
-                    basePosition.z +43.8f 
+                    basePosition.z +47.4f 
                 );
             }
 
             else if(cellSizeX==15){
                 // Adjust position to center the prefab based on its size
                 roomInstance.transform.position = new Vector3(
-                    basePosition.x -38.9f, //
+                    basePosition.x -32.2f, //
                     basePosition.y,
-                    basePosition.z +50.9f 
+                    basePosition.z +54.9f 
                 );
             }
 
             else{
-                Debug.LogWarning("Here");
                 // Adjust position to center the prefab based on its size
                 roomInstance.transform.position = new Vector3(
-                    basePosition.x -36.6f, //
+                    basePosition.x -35.8f, //
                     basePosition.y,
-                    basePosition.z +53.7f 
+                    basePosition.z +52.9f 
                 );
             }
 

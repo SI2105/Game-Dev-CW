@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: ec116df1728c8a543bd621c12aa237d6
+timeCreated: 1515688856
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 106912
+  packageName: Blue Dungeon
+  packageVersion: 1.0
+  assetPath: Assets/Triple Dungeon Pack/Blue Dungeon/prefabs/walls/pylon-corner.prefab
+  uploadId: 223459

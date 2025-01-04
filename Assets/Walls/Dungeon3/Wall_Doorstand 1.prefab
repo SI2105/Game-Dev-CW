@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5699148819886501098}
   - component: {fileID: 3816237031668863247}
   - component: {fileID: 2287538323594298461}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Door_Basement_Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,7 +119,8 @@ GameObject:
   - component: {fileID: 1808132965496819400}
   - component: {fileID: 8920411615077386955}
   - component: {fileID: 6484883675071336545}
-  m_Layer: 0
+  - component: {fileID: 848254029693454701}
+  m_Layer: 8
   m_Name: Wall_Doorstand 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -215,3 +216,19 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: e4c1478afa5fde545a56b911de996bf9, type: 3}
+--- !u!208 &848254029693454701
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6562238645584231251}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 3.0770001, y: 2, z: 0.22500001}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.014, y: 1.8750001, z: 0.004}
+  m_TimeToStationary: 0.5

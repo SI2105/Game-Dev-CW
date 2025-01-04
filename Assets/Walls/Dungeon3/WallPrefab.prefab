@@ -5263,7 +5263,8 @@ GameObject:
   - component: {fileID: 970378041007396307}
   - component: {fileID: 2664712487255521282}
   - component: {fileID: 727852871132603205}
-  m_Layer: 0
+  - component: {fileID: -2307928862261207287}
+  m_Layer: 8
   m_Name: WallPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5386,6 +5387,22 @@ MonoBehaviour:
   pot1: {fileID: 3251114940625847582}
   pot2: {fileID: 8649854418657010347}
   wallPrefab: {fileID: 4217734822591684848}
+--- !u!208 &-2307928862261207287
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4217734822591684848}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 3.0600002, y: 2, z: 0.11100001}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.014, y: 1.8750001, z: 0.002}
+  m_TimeToStationary: 0.5
 --- !u!1 &4591783144760042338
 GameObject:
   m_ObjectHideFlags: 0

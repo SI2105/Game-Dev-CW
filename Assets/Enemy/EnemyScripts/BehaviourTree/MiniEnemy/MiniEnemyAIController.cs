@@ -13,6 +13,8 @@ public class MiniEnemyAIController : MonoBehaviour
     public float startingHealth;
     public float currentHealth;
     public bool hit{get;set;}
+
+    public MiniEnemyAudioController audio_controller;
     //variable for top node in the behaviour tree
     Node topNode;
     
@@ -20,6 +22,7 @@ public class MiniEnemyAIController : MonoBehaviour
         miniEnemyAgent= GetComponent<NavMeshAgent>();
         miniEnemyAnimator = GetComponent<Animator>();
         player_sensor = GetComponent<MiniEnemyPlayerSensor>();
+        audio_controller = GetComponent<MiniEnemyAudioController>();
     }
 
     void Start(){
@@ -58,12 +61,19 @@ public class MiniEnemyAIController : MonoBehaviour
         topNode.Evaluate();
     }
 
-
     private void endAttack(){
         attack=false;
     }
 
     private void endHit(){
         hit=false;
+    }
+
+    private void playWalk(){
+        audio_controller.playWalk();
+    }
+
+    private void playAttack(){
+        audio_controller.playAttack();
     }
 }

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5478496307011490295}
   m_Layer: 12
-  m_Name: RoomPrefab#1
+  m_Name: RoomPrefab#1 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48,6 +48,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 12
       objectReference: {fileID: 0}
+    - target: {fileID: 8328509268577167364, guid: 3e4d0cbe63c4d4d49ad383443cb04b1c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5f50285553487418d8d0851f96b66892, type: 2}
     - target: {fileID: 8378305016021551963, guid: 3e4d0cbe63c4d4d49ad383443cb04b1c, type: 3}
       propertyPath: m_LocalScale.x
       value: 3.6

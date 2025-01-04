@@ -11,7 +11,9 @@ GameObject:
   - component: {fileID: 9151734313451203660}
   - component: {fileID: 6387945128524031017}
   - component: {fileID: 1317261873195775481}
-  m_Layer: 0
+  - component: {fileID: -541281850151486684}
+  - component: {fileID: 2561584528212390870}
+  m_Layer: 8
   m_Name: Wall_DoorStand 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,6 +88,44 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &-541281850151486684
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586035234153134435}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300192, guid: 4e15996ba1e2f4b4392985ef6ac6b27c, type: 3}
+--- !u!208 &2561584528212390870
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586035234153134435}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 4.007, y: 3.2940001, z: 1.6250001}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 3.2940001, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &1625880074967092343
 GameObject:
   m_ObjectHideFlags: 0
@@ -97,7 +137,7 @@ GameObject:
   - component: {fileID: 8481674804600578521}
   - component: {fileID: 1213494509359840138}
   - component: {fileID: 9012616240103513898}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube_025
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -180,7 +220,7 @@ GameObject:
   - component: {fileID: 8046463846780529388}
   - component: {fileID: 128257448542380134}
   - component: {fileID: 8464633110407498174}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube_028
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,7 +303,7 @@ GameObject:
   - component: {fileID: 622684782647592018}
   - component: {fileID: 4066266885822402083}
   - component: {fileID: 7109371702050923830}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: arch_wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}

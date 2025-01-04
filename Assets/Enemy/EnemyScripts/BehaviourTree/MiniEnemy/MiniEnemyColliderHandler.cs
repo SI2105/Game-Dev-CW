@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SG
 {
-    public class WeaponColliderHandler : MonoBehaviour
+    public class MiniEnemyColliderHandler : MonoBehaviour
     {
         public float damage;
 
@@ -14,8 +14,8 @@ namespace SG
             if (collision.gameObject.CompareTag("Player"))
             {
                 // Get the EnemyAIController from the parent
-                EnemyAIController enemyAI = GetComponentInParent<EnemyAIController>();
-                if (enemyAI != null && (enemyAI.isAttacking || enemyAI.isComboAttacking))
+                MiniEnemyAIController enemyAI = GetComponentInParent<MiniEnemyAIController>();
+                if (enemyAI != null && (enemyAI.attack))
                 {
                     // If the enemy is attacking, apply damage to the player
                     PlayerAttributesManager playerAttributes = collision.gameObject.GetComponent<PlayerAttributesManager>();

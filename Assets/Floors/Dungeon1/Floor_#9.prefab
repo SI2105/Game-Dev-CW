@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5274450248136224166}
   - component: {fileID: 8328509268577167364}
   - component: {fileID: 4282854172872116063}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Floor_#9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -165,6 +165,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chain_Metal (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 4740405957763486878, guid: 00ea8881b0f20774797427ba811f2e66, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -186,6 +190,10 @@ PrefabInstance:
     - target: {fileID: 181300, guid: a90ee9a0a54eeb2438f28f411e0a8f8d, type: 3}
       propertyPath: m_Name
       value: Screaming statue
+      objectReference: {fileID: 0}
+    - target: {fileID: 181300, guid: a90ee9a0a54eeb2438f28f411e0a8f8d, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 481300, guid: a90ee9a0a54eeb2438f28f411e0a8f8d, type: 3}
       propertyPath: m_LocalScale.x
@@ -305,6 +313,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chain_Metal (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 4740405957763486878, guid: 00ea8881b0f20774797427ba811f2e66, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -366,6 +378,10 @@ PrefabInstance:
     - target: {fileID: 4740405957763486878, guid: 00ea8881b0f20774797427ba811f2e66, type: 3}
       propertyPath: m_Name
       value: Chain_Metal (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740405957763486878, guid: 00ea8881b0f20774797427ba811f2e66, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -429,6 +445,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chain_Metal (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 4740405957763486878, guid: 00ea8881b0f20774797427ba811f2e66, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -491,6 +511,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chain_Metal (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 4740405957763486878, guid: 00ea8881b0f20774797427ba811f2e66, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -552,6 +576,10 @@ PrefabInstance:
     - target: {fileID: 4740405957763486878, guid: 00ea8881b0f20774797427ba811f2e66, type: 3}
       propertyPath: m_Name
       value: Chain_Metal (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4740405957763486878, guid: 00ea8881b0f20774797427ba811f2e66, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

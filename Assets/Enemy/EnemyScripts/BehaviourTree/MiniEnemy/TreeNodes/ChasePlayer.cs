@@ -40,7 +40,7 @@ public class ChasePlayer : Node
        
 
         if(enemyController.attack==true){
-            node_state=State.SUCCESS;
+            node_state=State.FAILURE;
             return node_state;
         }
         // Check the distance to the player

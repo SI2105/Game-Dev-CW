@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5274450248136224166}
   - component: {fileID: 8328509268577167364}
   - component: {fileID: 4282854172872116063}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Floor_#2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -122,6 +122,10 @@ PrefabInstance:
     - target: {fileID: 836683784093283753, guid: 237f7219ddf7c064e85f5158a48f6bbc, type: 3}
       propertyPath: m_Name
       value: Sand_B
+      objectReference: {fileID: 0}
+    - target: {fileID: 836683784093283753, guid: 237f7219ddf7c064e85f5158a48f6bbc, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6568287097518112350, guid: 237f7219ddf7c064e85f5158a48f6bbc, type: 3}
       propertyPath: m_LocalScale.x
@@ -233,6 +237,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chair_Small.001
       objectReference: {fileID: 0}
+    - target: {fileID: 3146705093901032357, guid: e0b2491dfd0bb9d4c9007eb87e252f4b, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -295,6 +303,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Table.003
       objectReference: {fileID: 0}
+    - target: {fileID: 6967361487159559488, guid: c533c10f37d12c941bf5dfea26e26cac, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -316,6 +328,10 @@ PrefabInstance:
     - target: {fileID: 7212807089758395303, guid: 587911d8e2e27694daaec695bc48f418, type: 3}
       propertyPath: m_Name
       value: Book_Holy_C
+      objectReference: {fileID: 0}
+    - target: {fileID: 7212807089758395303, guid: 587911d8e2e27694daaec695bc48f418, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 8408384421787346338, guid: 587911d8e2e27694daaec695bc48f418, type: 3}
       propertyPath: m_LocalPosition.x
@@ -418,6 +434,10 @@ PrefabInstance:
     - target: {fileID: 3146705093901032357, guid: e0b2491dfd0bb9d4c9007eb87e252f4b, type: 3}
       propertyPath: m_Name
       value: Chair_Small.001 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3146705093901032357, guid: e0b2491dfd0bb9d4c9007eb87e252f4b, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

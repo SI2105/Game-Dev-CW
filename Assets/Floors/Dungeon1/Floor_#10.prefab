@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5274450248136224166}
   - component: {fileID: 8328509268577167364}
   - component: {fileID: 4282854172872116063}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Floor_#10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,6 +120,10 @@ PrefabInstance:
     - target: {fileID: 1385233971182700358, guid: 760c802c9bcad6e4c98ab4909f7e92da, type: 3}
       propertyPath: m_Name
       value: Throne
+      objectReference: {fileID: 0}
+    - target: {fileID: 1385233971182700358, guid: 760c802c9bcad6e4c98ab4909f7e92da, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 1761618123306720764, guid: 760c802c9bcad6e4c98ab4909f7e92da, type: 3}
       propertyPath: m_LocalScale.x
@@ -255,6 +259,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Carpet_Red
       objectReference: {fileID: 0}
+    - target: {fileID: 9218377935294861655, guid: 1e711044cbc639d44aa004669771969e, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -332,6 +340,10 @@ PrefabInstance:
     - target: {fileID: 490335350711660523, guid: 0a7f51b5f4ba6294a889f661114da0d3, type: 3}
       propertyPath: m_Name
       value: Table_Big
+      objectReference: {fileID: 0}
+    - target: {fileID: 490335350711660523, guid: 0a7f51b5f4ba6294a889f661114da0d3, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

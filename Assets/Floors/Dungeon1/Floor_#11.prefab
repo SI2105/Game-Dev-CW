@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5274450248136224166}
   - component: {fileID: 8328509268577167364}
   - component: {fileID: 4282854172872116063}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Floor_#11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -118,6 +118,18 @@ PrefabInstance:
     - target: {fileID: 4970249122120520736, guid: d6d4f087fe30dc847b05c292be5eb484, type: 3}
       propertyPath: m_Name
       value: Lod_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4970249122120520736, guid: d6d4f087fe30dc847b05c292be5eb484, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4970249122120520738, guid: d6d4f087fe30dc847b05c292be5eb484, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4970249122120520742, guid: d6d4f087fe30dc847b05c292be5eb484, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 4970249122120943616, guid: d6d4f087fe30dc847b05c292be5eb484, type: 3}
       propertyPath: m_LocalScale.x

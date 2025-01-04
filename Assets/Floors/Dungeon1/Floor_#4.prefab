@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5274450248136224166}
   - component: {fileID: 8328509268577167364}
   - component: {fileID: 4282854172872116063}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Floor_#4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -167,6 +167,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Potion_Red
       objectReference: {fileID: 0}
+    - target: {fileID: 6961769210357640265, guid: 44e723b3d5b0e8c478e3b502b94369d5, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -229,6 +233,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chain_Metal (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 4740405957763486878, guid: 00ea8881b0f20774797427ba811f2e66, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -250,6 +258,10 @@ PrefabInstance:
     - target: {fileID: 836683784093283753, guid: 237f7219ddf7c064e85f5158a48f6bbc, type: 3}
       propertyPath: m_Name
       value: Sand_B
+      objectReference: {fileID: 0}
+    - target: {fileID: 836683784093283753, guid: 237f7219ddf7c064e85f5158a48f6bbc, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6568287097518112350, guid: 237f7219ddf7c064e85f5158a48f6bbc, type: 3}
       propertyPath: m_LocalScale.x
@@ -324,6 +336,10 @@ PrefabInstance:
     - target: {fileID: 4453110336206570162, guid: ee13540b11108664bb2cd5974d81a24d, type: 3}
       propertyPath: m_Name
       value: Potion_Blue (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4453110336206570162, guid: ee13540b11108664bb2cd5974d81a24d, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 5701486891652077847, guid: ee13540b11108664bb2cd5974d81a24d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -427,6 +443,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chain_Metal
       objectReference: {fileID: 0}
+    - target: {fileID: 4740405957763486878, guid: 00ea8881b0f20774797427ba811f2e66, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -488,6 +508,10 @@ PrefabInstance:
     - target: {fileID: 4302944737786620945, guid: d429c8a2280208c43ace747d82fa1864, type: 3}
       propertyPath: m_Name
       value: Cauldron
+      objectReference: {fileID: 0}
+    - target: {fileID: 4302944737786620945, guid: d429c8a2280208c43ace747d82fa1864, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -551,6 +575,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chain_Metal (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 4740405957763486878, guid: 00ea8881b0f20774797427ba811f2e66, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -572,6 +600,10 @@ PrefabInstance:
     - target: {fileID: 836683784093283753, guid: 237f7219ddf7c064e85f5158a48f6bbc, type: 3}
       propertyPath: m_Name
       value: Sand_B (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 836683784093283753, guid: 237f7219ddf7c064e85f5158a48f6bbc, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6568287097518112350, guid: 237f7219ddf7c064e85f5158a48f6bbc, type: 3}
       propertyPath: m_LocalScale.x
@@ -646,6 +678,10 @@ PrefabInstance:
     - target: {fileID: 4453110336206570162, guid: ee13540b11108664bb2cd5974d81a24d, type: 3}
       propertyPath: m_Name
       value: Potion_Blue
+      objectReference: {fileID: 0}
+    - target: {fileID: 4453110336206570162, guid: ee13540b11108664bb2cd5974d81a24d, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 5701486891652077847, guid: ee13540b11108664bb2cd5974d81a24d, type: 3}
       propertyPath: m_LocalPosition.x

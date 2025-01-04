@@ -619,7 +619,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -5.1871424, y: 817.0006}
+  m_AnchoredPosition: {x: -5.1871424, y: 817}
   m_SizeDelta: {x: 5.1871, y: 1000}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &36988176
@@ -15695,7 +15695,7 @@ Transform:
   m_GameObject: {fileID: 446663348}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 12, y: 11.6, z: 5}
+  m_LocalPosition: {x: 5, y: 1, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -15717,7 +15717,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79c6734d94fe54d9b943df3b6ef658d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 697972143}
 --- !u!1 &467823813
 GameObject:
   m_ObjectHideFlags: 0
@@ -18296,7 +18296,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightHandSlot: {fileID: 390961911}
   rightHandWeaponModel: {fileID: 0}
-  popupMessageManager: {fileID: 0}
   unsheathAnimationDuration: 0.24
 --- !u!114 &697972136
 MonoBehaviour:
@@ -20281,8 +20280,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 420662290}
   m_HandleRect: {fileID: 420662289}
   m_Direction: 0
-  m_Value: 1.0000088
-  m_Size: 0.97554165
+  m_Value: 1.0000103
+  m_Size: 0.9755417
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -31366,8 +31365,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 308218381}
   m_HandleRect: {fileID: 308218380}
   m_Direction: 2
-  m_Value: -0.00000074706435
-  m_Size: 0.1757781
+  m_Value: 0.00000007470644
+  m_Size: 0.17544982
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -61941,7 +61940,7 @@ SceneRoots:
   - {fileID: 820454848}
   - {fileID: 92922973}
   - {fileID: 1822333675}
-  - {fileID: 446663349}
   - {fileID: 364832136}
   - {fileID: 1804391968}
+  - {fileID: 446663349}
   - {fileID: 697972143}

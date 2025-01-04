@@ -89,7 +89,7 @@ public class PCG_Generator : MonoBehaviour
 
     private float cellSizeZ;
 
-    void LateUpdate(){
+    void Update(){
         foreach (GameObject obj in allObjects)
         {
             if (obj == null) continue; // Skip if object is destroyed
@@ -118,8 +118,11 @@ public class PCG_Generator : MonoBehaviour
             for (int z = 0; z < _mazeDepth; z++)
             {
                 MazeCell cell =_mazeGrid[x, z];
+              
 
                 GameObject floor = cell.floorObj;
+
+                Debug.Log(floor);
                
                 float distanceToPlayerFloor = Vector3.Distance(playerTransform.position, floor.transform.position);
 
@@ -209,28 +212,56 @@ public class PCG_Generator : MonoBehaviour
 }
 
     private void SpawnPlayerAndEnemy()
-    {
-        // Spawn Player in a random cell
-        MazeCell randomCell = _mazeGrid[Random.Range(0, _mazeWidth), Random.Range(0, _mazeDepth)];
-        Vector3 playerPosition = randomCell.transform.position;
-        Debug.Log($"Before: Player position: {playerTransform.position}");
-        playerTransform.position = playerPosition;
-        Debug.Log($"After: Player position: {playerTransform.position}");
-            
+{
+    // Spawn Player in a random cell
+    MazeCell randomCell = _mazeGrid[Random.Range(0, _mazeWidth), Random.Range(0, _mazeDepth)];
+    Vector3 playerPosition = randomCell.transform.position;
 
-        // Spawn Enemy in the middle of the first room
-        if (_rooms.Count > 0)
+    if (playerTransform != null)
+    {
+        Debug.Log($"Setting Player position to: {playerPosition}");
+        if (playerTransform.TryGetComponent<Rigidbody>(out Rigidbody playerRb))
         {
-            Room firstRoom = _rooms[0];
-            Vector3 roomCenter = firstRoom.RoomPrefabInstance.transform.position;
-            enemy.position = roomCenter;
-            Debug.LogError($"Enemy spawned at room center: {roomCenter}");
+            playerRb.MovePosition(playerPosition);
         }
         else
         {
-            Debug.LogError("No rooms available to spawn the enemy.");
+            playerTransform.position = playerPosition;
         }
     }
+    else
+    {
+        Debug.LogError("Player object is not assigned in the Inspector!");
+    }
+
+    // Spawn Enemy in the middle of the first room
+    if (_rooms.Count > 0)
+    {
+        Room firstRoom = _rooms[0];
+        Vector3 roomCenter = firstRoom.RoomPrefabInstance.transform.position;
+        if (enemy != null)
+        {
+            Debug.Log($"Setting Enemy position to: {roomCenter}");
+            if (enemy.TryGetComponent<Rigidbody>(out Rigidbody enemyRb))
+            {
+                enemyRb.MovePosition(roomCenter);
+            }
+            else
+            {
+                enemy.position = roomCenter;
+            }
+        }
+        else
+        {
+            Debug.LogError("Enemy object is not assigned in the Inspector!");
+        }
+    }
+    else
+    {
+        Debug.LogWarning("No rooms available to spawn the enemy.");
+    }
+}
+
 
 
     public MazeCell[,] GetMazeGrid()

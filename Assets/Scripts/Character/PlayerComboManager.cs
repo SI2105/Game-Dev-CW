@@ -366,6 +366,7 @@ namespace SG
                     Debug.Log($"Using consumable: {consumable.name}");
                     float healthToGain = consumable.healAmount;
                     attributesManager.GainHealth(healthToGain);
+                    attributesManager.inventoryManager.RefreshInterface();
 
                     animator.SetBool(isPlayingActionHash, true); // Prevent other actions during healing
                     animator.SetTrigger("HealTrigger");
@@ -422,12 +423,18 @@ namespace SG
             }
         }
 
+        public void cancelPowerUp2()
+        {
+            animator.SetBool("PowerUp2", false);
+            animator.SetBool(isPlayingActionHash, false);
+        }
+
         /// <summary>
         /// Handles PowerUp2 actions based on input context.
         /// </summary>
         private void HandlePowerUp2(InputAction.CallbackContext context)
         {
-            if (context.performed && !powerUpLocked && !isPowerUpOnCooldown)
+            if (context.performed  && !isPowerUpOnCooldown)
             {
                 if (attributesManager.UseStamina(staminaCostPerAttack))
                 {

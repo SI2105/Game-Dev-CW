@@ -37,6 +37,7 @@ namespace SG{
         private bool isDodgingLeft;
         private bool isDodgingRight;
         private bool isDodgingBackward;
+        private bool isDead;
         private PlayerState _playerState;
         #endregion
 
@@ -398,6 +399,140 @@ namespace SG{
             Movement();
             UpdateAnimatorParameters();
             UpdateMovementState();
+            if (checkIsDead())
+            {
+                if (!isDead)
+                {
+                    isDead = true;
+                    OnPlayerDeath();
+                }
+            }
+        }
+        private void OnPlayerDeath()
+        {
+
+            // Reset input states
+            moveInput = Vector2.zero;
+            lookInput = Vector2.zero;
+            isSprinting = false;
+            forwardPressed = false;
+            backwardPressed = false;
+            leftPressed = false;
+            rightPressed = false;
+            InventoryVisible = false;
+            objectiveVisible = false;
+            PauseVisible = false;
+            isLockedOn = false;
+
+            // Reset Animator parameters (optional)
+            animator.SetBool(isIdleHash, true);
+            animator.SetBool(isWalkingHash, false);
+            animator.SetBool(isRunningHash, false);
+            animator.SetBool(isJumpingHash, false);
+            animator.SetBool(isDodgingForwardHash, false);
+            animator.SetBool(isDodgingBackwardHash, false);
+            animator.SetBool(isDodgingLeftHash, false);
+            animator.SetBool(isDodgingRightHash, false);
+
+            // Unsubscribe from input actions
+            inputActions.Player.Move.performed -= HandleMove;
+            inputActions.Player.Move.canceled -= HandleMove;
+            inputActions.Player.Look.performed -= HandleLook;
+            inputActions.Player.Look.canceled -= HandleLook;
+            inputActions.Player.Sprint.performed -= ctx => isSprinting = true;
+            inputActions.Player.Sprint.canceled -= ctx => isSprinting = false;
+            inputActions.Player.Inventory.performed -= HandleInventory;
+            inputActions.Player.Inventory.canceled -= HandleInventory;
+            inputActions.Player.Pause.performed -= HandlePause;
+            inputActions.Player.Pause.canceled -= HandlePause;
+            inputActions.Player.LockOn.performed -= HandleLockOn;
+            inputActions.Player.DodgeForward.performed -= HandleDodgeForward;
+            inputActions.Player.DodgeBackward.performed -= HandleDodgeBackward;
+            inputActions.Player.DodgeLeft.performed -= HandleDodgeLeft;
+            inputActions.Player.DodgeRight.performed -= HandleDodgeRight;
+
+            if (attributesManager)
+            {
+                inputActions.UI.HotBarSelector.performed -= attributesManager.InventoryManager.OnHotBarSelection;
+                inputActions.UI.HotBarSelector.canceled -= attributesManager.InventoryManager.OnHotBarSelection;
+                inputActions.Player.Objective.performed -= onObjective;
+                inputActions.Player.Objective.canceled -= onObjective;
+                inputActions.UI.Skills.performed -= HandleSkills;
+                inputActions.UI.Skills.canceled -= HandleSkills;
+            }
+
+            // Disable the input system
+            inputActions.Disable();
+        }
+
+        private void OnPlayerRespawn()
+        {
+            Debug.Log("Player respawned. Re-enabling inputs and resetting variables.");
+
+            // Reset player states
+            isDead = false;
+            moveInput = Vector2.zero;
+            lookInput = Vector2.zero;
+            isSprinting = false;
+            forwardPressed = false;
+            backwardPressed = false;
+            leftPressed = false;
+            rightPressed = false;
+            InventoryVisible = false;
+            objectiveVisible = false;
+            PauseVisible = false;
+            isLockedOn = false;
+
+            // Reset Animator parameters
+            animator.SetBool(isIdleHash, true);
+            animator.SetBool(isWalkingHash, false);
+            animator.SetBool(isRunningHash, false);
+            animator.SetBool(isJumpingHash, false);
+            animator.SetBool(isDodgingForwardHash, false);
+            animator.SetBool(isDodgingBackwardHash, false);
+            animator.SetBool(isDodgingLeftHash, false);
+            animator.SetBool(isDodgingRightHash, false);
+
+            // Re-subscribe to input actions
+            inputActions.Player.Move.performed += HandleMove;
+            inputActions.Player.Move.canceled += HandleMove;
+            inputActions.Player.Look.performed += HandleLook;
+            inputActions.Player.Look.canceled += HandleLook;
+            inputActions.Player.Sprint.performed += ctx => isSprinting = true;
+            inputActions.Player.Sprint.canceled += ctx => isSprinting = false;
+            inputActions.Player.Inventory.performed += HandleInventory;
+            inputActions.Player.Inventory.canceled += HandleInventory;
+            inputActions.Player.Pause.performed += HandlePause;
+            inputActions.Player.Pause.canceled += HandlePause;
+            inputActions.Player.LockOn.performed += HandleLockOn;
+            inputActions.Player.DodgeForward.performed += HandleDodgeForward;
+            inputActions.Player.DodgeBackward.performed += HandleDodgeBackward;
+            inputActions.Player.DodgeLeft.performed += HandleDodgeLeft;
+            inputActions.Player.DodgeRight.performed += HandleDodgeRight;
+
+            if (attributesManager)
+            {
+                inputActions.UI.HotBarSelector.performed += attributesManager.InventoryManager.OnHotBarSelection;
+                inputActions.UI.HotBarSelector.canceled += attributesManager.InventoryManager.OnHotBarSelection;
+                inputActions.Player.Objective.performed += onObjective;
+                inputActions.Player.Objective.canceled += onObjective;
+                inputActions.UI.Skills.performed += HandleSkills;
+                inputActions.UI.Skills.canceled += HandleSkills;
+            }
+
+            // Re-enable the input system
+            inputActions.Enable();
+
+            // Reset any player-specific states or attributes
+            _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
+
+            Debug.Log("Inputs re-enabled and player state reset.");
+        }
+
+
+
+        private bool checkIsDead(){
+            return attributesManager.CurrentHealth <= 0f;
         }
 
         private void OnEnable()
@@ -447,6 +582,7 @@ namespace SG{
             Vector3 lateralVelocity = new Vector3(velocityX, 0f, velocityZ);
             return lateralVelocity.magnitude > 0;
         }
+
         private int groundContacts = 0;
 
         private void CheckGrounded()
@@ -828,6 +964,7 @@ namespace SG{
                 return;
             }
             // attributesManager.TakeDamage(20f);
+            attributesManager.LevelUp();
 
             // 2. Check stamina
             if (attributesManager.CurrentStamina < dodgeStaminaCost)

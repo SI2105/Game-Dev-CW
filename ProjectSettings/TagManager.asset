@@ -4,9 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Ennemy
   - Enemy
   - PostProcessing
+  - Poulet
   layers:
   - Default
   - TransparentFX

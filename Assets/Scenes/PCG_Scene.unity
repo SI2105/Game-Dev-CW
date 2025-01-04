@@ -17366,6 +17366,7 @@ MonoBehaviour:
   runningAudioSource: {fileID: 164941096}
   attackAudioSource: {fileID: 790308309}
   effectAudioSource: {fileID: 2056510283}
+  injuredAudioSource: {fileID: 0}
   breathing_0_100: {fileID: 8300000, guid: e2672d6c957754744926af4ac47fd952, type: 3}
   breathing_0_100Volume: 0.713
   breathing_50_100: {fileID: 8300000, guid: 16c6a9e06b913a741903aab8a9ab5371, type: 3}
@@ -17410,6 +17411,7 @@ MonoBehaviour:
   powerup1Volume: 0.9
   powerup2: {fileID: 8300000, guid: e9ee329301dc83e4aaed597eb30cc0e1, type: 3}
   powerup2Volume: 0.9
+  injuredClip: {fileID: 0}
 --- !u!136 &622168166
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -17569,6 +17571,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightHandSlot: {fileID: 929522638}
   rightHandWeaponModel: {fileID: 0}
+  popupMessageManager: {fileID: 0}
   unsheathAnimationDuration: 0.24
 --- !u!114 &622168174
 MonoBehaviour:
@@ -17724,6 +17727,9 @@ MonoBehaviour:
   inventoryManager: {fileID: 1657510063}
   objectiveManager: {fileID: 0}
   skillTreeManager: {fileID: 0}
+  intensity: 0
+  _volume: {fileID: 0}
+  currentHealth: 0
 --- !u!4 &622168181
 Transform:
   m_ObjectHideFlags: 0
@@ -30520,6 +30526,67 @@ Transform:
   - {fileID: 1078568409}
   m_Father: {fileID: 858174856}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1046437094
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 778029418579591857, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_Name
+      value: Ganfaul M Aure
+      objectReference: {fileID: 0}
+    - target: {fileID: 4344648472805752734, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: playerTransform
+      value: 
+      objectReference: {fileID: 622168181}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
 --- !u!1 &1050588098
 GameObject:
   m_ObjectHideFlags: 0
@@ -32024,7 +32091,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 862700291}
   m_Direction: 2
   m_Value: 1.0000001
-  m_Size: 0.18300001
+  m_Size: 0.18300003
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -33896,6 +33963,11 @@ Transform:
   - {fileID: 1694319852}
   m_Father: {fileID: 446663349}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1383117177 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+  m_PrefabInstance: {fileID: 1046437094}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1388458523
 GameObject:
   m_ObjectHideFlags: 0
@@ -34011,7 +34083,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 80328584}
   m_Direction: 0
   m_Value: 1.0000088
-  m_Size: 0.97554165
+  m_Size: 0.97554183
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -52987,6 +53059,8 @@ MonoBehaviour:
   staminaBar: {fileID: 371251600}
   healthBar: {fileID: 463960730}
   playerLevelText: {fileID: 257667870}
+  selectorDot: {fileID: 0}
+  onHit: {fileID: 0}
   icon: {fileID: 1275035718}
   allAttributesBoostTimerText: {fileID: 993824959}
   strengthBoostTimerText: {fileID: 0}
@@ -53384,7 +53458,7 @@ MonoBehaviour:
   _plainWallPrefab: {fileID: 1159351990771520630, guid: 91ad7bf144749b04ab484a680630a040, type: 3}
   _roomBufferSize: 2
   _maze_configuration: 6
-  _roomCount: 2
+  _roomCount: 1
   _minRoomSize: 3
   _maxRoomSize: 3
   _mazeCellPrefab: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
@@ -53392,6 +53466,7 @@ MonoBehaviour:
   _mazeDepth: 15
   activationRadius: 40
   playerTransform: {fileID: 622168181}
+  enemy: {fileID: 1383117177}
   terrain: {fileID: 1822333674}
 --- !u!154 &1822333673
 TerrainCollider:
@@ -61872,3 +61947,4 @@ SceneRoots:
   - {fileID: 446663349}
   - {fileID: 364832136}
   - {fileID: 622168181}
+  - {fileID: 1046437094}

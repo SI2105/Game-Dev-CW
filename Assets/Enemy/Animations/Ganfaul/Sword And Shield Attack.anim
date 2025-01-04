@@ -72756,7 +72756,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 1.3
-    functionName: stopCombo
+    functionName: stopAttack
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

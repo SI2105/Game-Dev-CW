@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Cinemachine;
+using SlimUI.ModernMenu;
 
 namespace SG{
 
@@ -239,6 +240,7 @@ namespace SG{
 
             KeybindsPanel =GameObject.Find("KeybindsPanel");
             KeybindsPanel.SetActive(false);
+            
             // Subscribe to the Move action's performed and canceled events
             inputActions.Player.Move.performed += HandleMove;
             inputActions.Player.Move.canceled += HandleMove;
@@ -405,6 +407,66 @@ namespace SG{
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+
+            LoadGameDifficulty();
+            SetGameParametersBasedOnDifficulty();
+        }
+
+        private string currentDifficulty;
+
+        private void LoadGameDifficulty()
+        {
+            if (PlayerPrefs.GetInt("EasyDifficulty") == 1)
+            {
+                currentDifficulty = "Easy";
+            }
+            else if (PlayerPrefs.GetInt("NormalDifficulty") == 1)
+            {
+                currentDifficulty = "Normal";
+            }
+            else if (PlayerPrefs.GetInt("AdvancedDifficulty") == 1)
+            {
+                currentDifficulty = "Advanced";
+            }
+            else if (PlayerPrefs.GetInt("HardCoreDifficulty") == 1)
+            {
+                currentDifficulty = "Hardcore";
+            }
+            else
+            {
+                currentDifficulty = "Unknown"; // Default or fallback value
+            }
+        }
+
+        private void SetGameParametersBasedOnDifficulty()
+        {
+            switch (currentDifficulty)
+            {
+                case "Easy":
+                    Debug.Log("Setting game parameters for Easy difficulty...");
+                    // Set parameters for Easy difficulty
+                    break;
+
+                case "Normal":
+                    Debug.Log("Setting game parameters for Normal difficulty...");
+                    // Set parameters for Normal difficulty
+                    break;
+
+                case "Advanced":
+                    Debug.Log("Setting game parameters for Advanced difficulty...");
+                    // Set parameters for Advanced difficulty
+                    break;
+
+                case "Hardcore":
+                    Debug.Log("Setting game parameters for Hardcore difficulty...");
+                    // Set parameters for Hardcore difficulty
+                    break;
+
+                default:
+                    Debug.LogWarning("No valid difficulty found. Default settings applied.");
+                    // Apply default or fallback parameters
+                    break;
+            }
         }
 
         private void Update()
@@ -945,7 +1007,26 @@ namespace SG{
                 return;
             }
             
-            lookInput = context.ReadValue<Vector2>();
+            // lookInput = context.ReadValue<Vector2>();
+            // Read raw input
+            Vector2 rawLookInput = context.ReadValue<Vector2>();
+
+            // Apply mouse sensitivity from SettingsManager
+            float sensitivityX = SettingsManager.Instance?.MouseSensitivityX ?? 1.0f; // Fallback to 1.0f if null
+            float sensitivityY = SettingsManager.Instance?.MouseSensitivityY ?? 1.0f;
+
+            // Apply mouse smoothing
+            float smoothing = SettingsManager.Instance?.MouseSmoothing ?? 0.05f;
+
+            // Smooth look input using Vector2.SmoothDamp
+            smoothedLookInput = Vector2.SmoothDamp(
+                smoothedLookInput,
+                rawLookInput * new Vector2(sensitivityX, sensitivityY),
+                ref lookInputVelocity,
+                smoothing
+            );
+
+            lookInput = smoothedLookInput;
         }
 
         private void HandlePause(InputAction.CallbackContext context)

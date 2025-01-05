@@ -15,10 +15,10 @@ EditorBuildSettings:
     path: Assets/Scenes/MainScene.unity
     guid: cefe1a1eaefe84f6c8ad8606de3eed90
   - enabled: 0
-    path: Assets/Scenes/Win Screen.unity
+    path: Assets/Scenes/Win Screen - beatten all enemies.unity
     guid: 170d713ae903248bd8805490e943cc17
   - enabled: 0
-    path: Assets/Scenes/Lose Screen.unity
+    path: Assets/Scenes/Lose Screen - OLD.unity
     guid: b3d82187ef78146ba887f65b16e7565f
   - enabled: 1
     path: Assets/Scenes/New menu.unity

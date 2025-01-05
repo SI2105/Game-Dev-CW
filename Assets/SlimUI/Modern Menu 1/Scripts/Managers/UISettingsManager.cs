@@ -32,18 +32,22 @@ namespace SlimUI.ModernMenu{
 		public GameObject texturelowtextLINE;
 		public GameObject texturemedtextLINE;
 		public GameObject texturehightextLINE;
-		public GameObject cameraeffectstext; 
+		// public GameObject cameraeffectstext; 
 
 		[Header("GAME SETTINGS")]
-		public GameObject showhudtext;
-		public GameObject tooltipstext;
+		// public GameObject showhudtext;
+		// public GameObject tooltipstext;
+		public GameObject difficultyeasyttext;
+		public GameObject difficultyeasytextLINE;
 		public GameObject difficultynormaltext;
 		public GameObject difficultynormaltextLINE;
+		public GameObject difficultyadvancedtext;
+		public GameObject difficultyadvancedtextLINE;
 		public GameObject difficultyhardcoretext;
 		public GameObject difficultyhardcoretextLINE;
 
 		[Header("CONTROLS SETTINGS")]
-		public GameObject invertmousetext;
+		// public GameObject invertmousetext;
 
 		// sliders
 		public GameObject musicSlider;
@@ -69,17 +73,33 @@ namespace SlimUI.ModernMenu{
         }
 
 
-
 		public void  Start (){
+			var settingsManager = SettingsManager.Instance;
 			// check difficulty
-			if(PlayerPrefs.GetInt("NormalDifficulty") == 1){
+			if(PlayerPrefs.GetInt("EasyDifficulty") == 1){
+				difficultyeasytextLINE.gameObject.SetActive(true);
+				difficultynormaltextLINE.gameObject.SetActive(false);
+				difficultyadvancedtextLINE.gameObject.SetActive(false);
+				difficultyhardcoretextLINE.gameObject.SetActive(false);
+			}
+			else if(PlayerPrefs.GetInt("NormalDifficulty") == 1){
+				difficultyeasytextLINE.gameObject.SetActive(false);
 				difficultynormaltextLINE.gameObject.SetActive(true);
+				difficultyadvancedtextLINE.gameObject.SetActive(false);
+				difficultyhardcoretextLINE.gameObject.SetActive(false);
+			}
+			else if(PlayerPrefs.GetInt("AdvancedDifficulty") == 1){
+				difficultyeasytextLINE.gameObject.SetActive(false);
+				difficultynormaltextLINE.gameObject.SetActive(false);
+				difficultyadvancedtextLINE.gameObject.SetActive(true);
 				difficultyhardcoretextLINE.gameObject.SetActive(false);
 			}
 			else
 			{
-				difficultyhardcoretextLINE.gameObject.SetActive(true);
+				difficultyeasytextLINE.gameObject.SetActive(false);
 				difficultynormaltextLINE.gameObject.SetActive(false);
+				difficultyadvancedtextLINE.gameObject.SetActive(false);
+				difficultyhardcoretextLINE.gameObject.SetActive(true);
 			}
 
 			// check slider values
@@ -97,20 +117,20 @@ namespace SlimUI.ModernMenu{
 			}
 
 			// check hud value
-			if(PlayerPrefs.GetInt("ShowHUD")==0){
-				showhudtext.GetComponent<TMP_Text>().text = "off";
-			}
-			else{
-				showhudtext.GetComponent<TMP_Text>().text = "on";
-			}
+			// if(PlayerPrefs.GetInt("ShowHUD")==0){
+			// 	showhudtext.GetComponent<TMP_Text>().text = "off";
+			// }
+			// else{
+			// 	showhudtext.GetComponent<TMP_Text>().text = "on";
+			// }
 
 			// check tool tip value
-			if(PlayerPrefs.GetInt("ToolTips")==0){
-				tooltipstext.GetComponent<TMP_Text>().text = "off";
-			}
-			else{
-				tooltipstext.GetComponent<TMP_Text>().text = "on";
-			}
+			// if(PlayerPrefs.GetInt("ToolTips")==0){
+			// 	tooltipstext.GetComponent<TMP_Text>().text = "off";
+			// }
+			// else{
+			// 	tooltipstext.GetComponent<TMP_Text>().text = "on";
+			// }
 
 			// check shadow distance/enabled
 			if(platform == Platform.Desktop){
@@ -169,12 +189,12 @@ namespace SlimUI.ModernMenu{
 			}
 
 			// check mouse inverse
-			if(PlayerPrefs.GetInt("Inverted")==0){
-				invertmousetext.GetComponent<TMP_Text>().text = "off";
-			}
-			else if(PlayerPrefs.GetInt("Inverted")==1){
-				invertmousetext.GetComponent<TMP_Text>().text = "on";
-			}
+			// if(PlayerPrefs.GetInt("Inverted")==0){
+			// 	invertmousetext.GetComponent<TMP_Text>().text = "off";
+			// }
+			// else if(PlayerPrefs.GetInt("Inverted")==1){
+			// 	invertmousetext.GetComponent<TMP_Text>().text = "on";
+			// }
 
 			// check motion blur
 			if(PlayerPrefs.GetInt("MotionBlur")==0){
@@ -232,8 +252,21 @@ namespace SlimUI.ModernMenu{
 		}
 
 		public void MusicSlider (){
-			//PlayerPrefs.SetFloat("MusicVolume", sliderValue);
-			PlayerPrefs.SetFloat("MusicVolume", musicSlider.GetComponent<Slider>().value);
+			float volume = musicSlider.GetComponent<Slider>().value;
+			PlayerPrefs.SetFloat("MusicVolume", volume);
+			PlayerPrefs.Save(); // Ensure the value is saved immediately
+
+			if (SettingsManager.Instance != null)
+			{
+				SettingsManager.Instance.SetMusicVolume(volume);
+			}
+
+			// Update the audio source volume in the main menu
+			AudioSource audioSource = GetComponent<AudioSource>();
+			if (audioSource != null)
+			{
+				audioSource.volume = volume;
+			}
 		}
 
 		public void SensitivityXSlider (){
@@ -250,16 +283,16 @@ namespace SlimUI.ModernMenu{
 		}
 
 		// the playerprefs variable that is checked to enable hud while in game
-		public void ShowHUD (){
-			if(PlayerPrefs.GetInt("ShowHUD")==0){
-				PlayerPrefs.SetInt("ShowHUD",1);
-				showhudtext.GetComponent<TMP_Text>().text = "on";
-			}
-			else if(PlayerPrefs.GetInt("ShowHUD")==1){
-				PlayerPrefs.SetInt("ShowHUD",0);
-				showhudtext.GetComponent<TMP_Text>().text = "off";
-			}
-		}
+		// public void ShowHUD (){
+		// 	if(PlayerPrefs.GetInt("ShowHUD")==0){
+		// 		PlayerPrefs.SetInt("ShowHUD",1);
+		// 		showhudtext.GetComponent<TMP_Text>().text = "on";
+		// 	}
+		// 	else if(PlayerPrefs.GetInt("ShowHUD")==1){
+		// 		PlayerPrefs.SetInt("ShowHUD",0);
+		// 		showhudtext.GetComponent<TMP_Text>().text = "off";
+		// 	}
+		// }
 
 		// the playerprefs variable that is checked to enable mobile sfx while in game
 		public void MobileSFXMute (){
@@ -285,29 +318,63 @@ namespace SlimUI.ModernMenu{
 		}
 
 		// show tool tips like: 'How to Play' control pop ups
-		public void ToolTips (){
-			if(PlayerPrefs.GetInt("ToolTips")==0){
-				PlayerPrefs.SetInt("ToolTips",1);
-				tooltipstext.GetComponent<TMP_Text>().text = "on";
-			}
-			else if(PlayerPrefs.GetInt("ToolTips")==1){
-				PlayerPrefs.SetInt("ToolTips",0);
-				tooltipstext.GetComponent<TMP_Text>().text = "off";
-			}
-		}
+		// public void ToolTips (){
+		// 	if(PlayerPrefs.GetInt("ToolTips")==0){
+		// 		PlayerPrefs.SetInt("ToolTips",1);
+		// 		tooltipstext.GetComponent<TMP_Text>().text = "on";
+		// 	}
+		// 	else if(PlayerPrefs.GetInt("ToolTips")==1){
+		// 		PlayerPrefs.SetInt("ToolTips",0);
+		// 		tooltipstext.GetComponent<TMP_Text>().text = "off";
+		// 	}
+		// }
 
 		public void NormalDifficulty (){
+			difficultyeasytextLINE.gameObject.SetActive(false);
+			difficultyadvancedtextLINE.gameObject.SetActive(false);
 			difficultyhardcoretextLINE.gameObject.SetActive(false);
 			difficultynormaltextLINE.gameObject.SetActive(true);
+			PlayerPrefs.SetInt("EasyDifficulty",0);
 			PlayerPrefs.SetInt("NormalDifficulty",1);
+			PlayerPrefs.SetInt("AdvancedDifficulty",0);
 			PlayerPrefs.SetInt("HardCoreDifficulty",0);
+			PlayerPrefs.Save();
 		}
 
 		public void HardcoreDifficulty (){
+			difficultyeasytextLINE.gameObject.SetActive(false);
+			difficultyadvancedtextLINE.gameObject.SetActive(false);
 			difficultyhardcoretextLINE.gameObject.SetActive(true);
 			difficultynormaltextLINE.gameObject.SetActive(false);
+			PlayerPrefs.SetInt("EasyDifficulty",0);
 			PlayerPrefs.SetInt("NormalDifficulty",0);
+			PlayerPrefs.SetInt("AdvancedDifficulty",0);
 			PlayerPrefs.SetInt("HardCoreDifficulty",1);
+			PlayerPrefs.Save();
+		}
+
+		public void EasyDifficulty (){
+			difficultyeasytextLINE.gameObject.SetActive(true);
+			difficultyadvancedtextLINE.gameObject.SetActive(false);
+			difficultyhardcoretextLINE.gameObject.SetActive(false);
+			difficultynormaltextLINE.gameObject.SetActive(false);
+			PlayerPrefs.SetInt("EasyDifficulty",1);
+			PlayerPrefs.SetInt("NormalDifficulty",0);
+			PlayerPrefs.SetInt("AdvancedDifficulty",0);
+			PlayerPrefs.SetInt("HardCoreDifficulty",0);
+			PlayerPrefs.Save();
+		}
+
+		public void AdvancedDifficulty (){
+			difficultyeasytextLINE.gameObject.SetActive(false);
+			difficultyadvancedtextLINE.gameObject.SetActive(true);
+			difficultyhardcoretextLINE.gameObject.SetActive(false);
+			difficultynormaltextLINE.gameObject.SetActive(false);
+			PlayerPrefs.SetInt("EasyDifficulty",0);
+			PlayerPrefs.SetInt("NormalDifficulty",0);
+			PlayerPrefs.SetInt("AdvancedDifficulty",1);
+			PlayerPrefs.SetInt("HardCoreDifficulty",0);
+			PlayerPrefs.Save();
 		}
 
 		public void ShadowsOff (){
@@ -375,16 +442,16 @@ namespace SlimUI.ModernMenu{
 			}
 		}
 
-		public void InvertMouse (){
-			if(PlayerPrefs.GetInt("Inverted")==0){
-				PlayerPrefs.SetInt("Inverted",1);
-				invertmousetext.GetComponent<TMP_Text>().text = "on";
-			}
-			else if(PlayerPrefs.GetInt("Inverted")==1){
-				PlayerPrefs.SetInt("Inverted",0);
-				invertmousetext.GetComponent<TMP_Text>().text = "off";
-			}
-		}
+		// public void InvertMouse (){
+		// 	if(PlayerPrefs.GetInt("Inverted")==0){
+		// 		PlayerPrefs.SetInt("Inverted",1);
+		// 		invertmousetext.GetComponent<TMP_Text>().text = "on";
+		// 	}
+		// 	else if(PlayerPrefs.GetInt("Inverted")==1){
+		// 		PlayerPrefs.SetInt("Inverted",0);
+		// 		invertmousetext.GetComponent<TMP_Text>().text = "off";
+		// 	}
+		// }
 
 		public void MotionBlur (){
 			if(PlayerPrefs.GetInt("MotionBlur")==0){
@@ -408,16 +475,16 @@ namespace SlimUI.ModernMenu{
 			}
 		}
 
-		public void CameraEffects (){
-			if(PlayerPrefs.GetInt("CameraEffects")==0){
-				PlayerPrefs.SetInt("CameraEffects",1);
-				cameraeffectstext.GetComponent<TMP_Text>().text = "on";
-			}
-			else if(PlayerPrefs.GetInt("CameraEffects")==1){
-				PlayerPrefs.SetInt("CameraEffects",0);
-				cameraeffectstext.GetComponent<TMP_Text>().text = "off";
-			}
-		}
+		// public void CameraEffects (){
+		// 	if(PlayerPrefs.GetInt("CameraEffects")==0){
+		// 		PlayerPrefs.SetInt("CameraEffects",1);
+		// 		cameraeffectstext.GetComponent<TMP_Text>().text = "on";
+		// 	}
+		// 	else if(PlayerPrefs.GetInt("CameraEffects")==1){
+		// 		PlayerPrefs.SetInt("CameraEffects",0);
+		// 		cameraeffectstext.GetComponent<TMP_Text>().text = "off";
+		// 	}
+		// }
 
 		public void TexturesLow (){
 			PlayerPrefs.SetInt("Textures",0);

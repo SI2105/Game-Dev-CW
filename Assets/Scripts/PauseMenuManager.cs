@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using SG;
 public class PauseMenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject pauseMenuPanel; // Reference to the pause menu UI
     private bool isPaused = false;
     private GameDevCW inputActions; // Input Actions reference
+    private SaveLoadManager saveLoadManager; // Save/load manager reference
     public void Awake()
     {
         inputActions = new GameDevCW(); // Initialize input actions

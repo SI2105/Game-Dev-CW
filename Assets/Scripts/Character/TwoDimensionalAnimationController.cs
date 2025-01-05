@@ -79,7 +79,7 @@ namespace SG{
 
         #region Player Stats Display
         [SerializeField] private TextMeshProUGUI PlayerStatsText;
-        private PlayerAttributesManager attributesManager;
+        public PlayerAttributesManager attributesManager;
 
         public void UpdatePlayerStats() {
             if (PlayerStatsText != null) {
@@ -124,10 +124,10 @@ namespace SG{
 
         [Header("Rotation Settings")]
         [SerializeField] private float rotationSpeed = 10f;
-        [SerializeField] private float verticalRotationSpeed = 180f;
+        public float verticalRotationSpeed { get; set; } = 180f;
         [SerializeField] private float smoothRotationTime = 0.05f;
         [SerializeField] private float inputSmoothTime = 0.02f;
-        [SerializeField] private float mouseSensitivity = 2.0f;
+        [SerializeField] public float mouseSensitivity  { get; set; } = 2.0f;
         public float RotationMismatch {get; private set;} = 0f;
         public bool IsRotatingToTarget {get; private set;} = false;
         public float rotateToTargetTime = 0.25f;

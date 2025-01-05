@@ -29,8 +29,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BURAK 1.unity
     guid: 99348ede7447c8842ba757142c3b016c
-  - enabled: 1
-    path: Assets/Scenes/BURAK.unity
+  - enabled: 0
+    path: Assets/Scenes/BURAK2.unity
     guid: 7ce1412f706973c45b0b7f2e813db89d
+  - enabled: 1
+    path: Assets/Scenes/BURAK 2.unity
+    guid: 9398ecbf059288640827696e86038de8
+  - enabled: 1
+    path: Assets/Win.unity
+    guid: c9f9fd8bfd7859c4bb3cd4242f40aff4
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

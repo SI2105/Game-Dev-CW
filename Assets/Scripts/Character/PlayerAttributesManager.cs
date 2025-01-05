@@ -466,6 +466,11 @@ namespace SG
             Debug.Log("Stamina recovery manually interrupted. Ongoing recovery halted.");
         }
 
+        public void OnEnemyDefeated(bool isBoss)
+        {
+            throw new NotImplementedException("The method OnEnemyDefeated is not implemented yet.");
+        }
+
         private void StartStaminaRecovery()
         {
             if (currentStamina < MaxStamina)

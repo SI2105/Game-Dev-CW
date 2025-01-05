@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using System;
 public class EnemyAIController : MonoBehaviour
 {
     //serializable field for the enemy starting health, will be 100
@@ -22,10 +23,12 @@ public class EnemyAIController : MonoBehaviour
     public bool isDodging{get;set;}
     public bool shouldDodge{get;set;}
     public bool isDead{get;set;}
-
+    public string enemyObjective;
+    public EnemyUIHudManager hudManager;
+    public string enemyName;
     public bool isPlayedSensed;
     public bool isMusicPlaying=false;
-
+    public event Action<float, float> OnHealthChanged;
     public bool isRoaring;
 
     public EnemyAudioController audio_controller;
@@ -60,6 +63,7 @@ public class EnemyAIController : MonoBehaviour
         attackSensor=GetComponent<EnemyAttackSensor>();
         audio_controller= GetComponent<EnemyAudioController>();
         playerState = playerTransform.GetComponent<PlayerState>();
+        hudManager=GetComponent<EnemyUIHudManager>();
     }
 
     void Start(){
@@ -85,6 +89,15 @@ public class EnemyAIController : MonoBehaviour
         }
     }
 
+    private void Die(){
+        
+        SG.ObjectiveManager.Instance.SetEventComplete(enemyObjective);
+
+        SG.PlayerAttributesManager pam = playerTransform.GetComponent<SG.PlayerAttributesManager>();
+
+        pam.OnEnemyDefeated(true);
+    }
+
     void Update(){
         topNode.Evaluate();
         if(isPlayedSensed){
@@ -92,6 +105,10 @@ public class EnemyAIController : MonoBehaviour
                 audio_controller.playBackgroundMusic();
                 isMusicPlaying=true;
             }
+            hudManager.enemyBar.SetActive(true);
+        }
+        else{
+            hudManager.enemyBar.SetActive(false);
         }
     }
     //method for assembling the behaviour tree from defined nodes
@@ -164,15 +181,18 @@ public class EnemyAIController : MonoBehaviour
     public Vector3 getPosition(){
         return enemyTransform.position;
     }
-
+    
   
     //method for taking damage to be used by player class
     public void takeDamage(float damage){
+
         enemyCurrentHealth-=damage;
         //check if health is below 0 and if so reset it
         if(enemyCurrentHealth<0.0f){
             enemyCurrentHealth=0.0f;
         }
+
+        OnHealthChanged?.Invoke(enemyCurrentHealth, enemyStartingHealth);
     }
 
     private void stopRoaring(){

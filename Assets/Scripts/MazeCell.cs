@@ -100,6 +100,7 @@ public class MazeCell : MonoBehaviour
         newCeiling.transform.Rotate(0, 0, -180f);
 
         ceilingObject=newCeiling;
+        ceilingObject.SetActive(false);
     }
 
    // Replace the floor object with a single random tile

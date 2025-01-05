@@ -531,7 +531,7 @@ GameObject:
   - component: {fileID: 2173071431495209991}
   m_Layer: 0
   m_Name: Mutant
-  m_TagString: Player
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -571,6 +571,7 @@ MonoBehaviour:
   wall_sensor: {fileID: 0}
   lockOnSensor: {fileID: 0}
   attackSensor: {fileID: 0}
+  enemyObjective: 
   hudManager: {fileID: 0}
   enemyName: '                 Mutant'
   isPlayedSensed: 0

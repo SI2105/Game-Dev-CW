@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5424692806598654285}
   - component: {fileID: 9156946683314870800}
   - component: {fileID: 2803020181379937793}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ChestPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 5489929350476249851}
   - component: {fileID: 7135457777280458547}
   - component: {fileID: 4704544643972492253}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: chest_open.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -175,7 +175,7 @@ GameObject:
   - component: {fileID: 25603918024855124}
   - component: {fileID: 1745127440782427853}
   - component: {fileID: 2028756082420036438}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: chest_open
   m_TagString: Untagged
   m_Icon: {fileID: 0}

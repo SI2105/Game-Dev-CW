@@ -90,15 +90,25 @@ namespace SG
                     Debug.LogError("PlayerState is not assigned.");
                     return;
                 }
+                print("player state is assinged" + _playerState);
                 EnemyAIController enemy = other.GetComponent<EnemyAIController>();
+                MiniEnemyAIController miniEnemy = other.GetComponent<MiniEnemyAIController>();
 
                 print($"Hit {other.name} with damage: {temporaryDamage}");
-                if (_playerState.IsInState(PlayerAttackState.Attacking))
-                {
-                    OnHit?.Invoke();
+                // if (_playerState.IsInState(PlayerAttackState.Attacking))
+                // {
+                OnHit?.Invoke();
+                if (enemy != null) {
                     enemy.takeDamage(temporaryDamage);
-                    PlayHitSound();
                 }
+
+                if (miniEnemy != null)
+                {
+                    print("here");
+                    miniEnemy.takeDamage(temporaryDamage);
+                }
+                PlayHitSound();
+                // }
             }
         }
 

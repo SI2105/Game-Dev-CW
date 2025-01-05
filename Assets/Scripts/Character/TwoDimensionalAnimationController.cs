@@ -414,7 +414,6 @@ namespace SG{
             Movement();
             UpdateAnimatorParameters();
             UpdateMovementState();
-            HandleMovement();
             if (checkIsDead())
             {
                 if (!isDead)
@@ -880,6 +879,7 @@ namespace SG{
             ClampVerticalVelocity();
             PreventSliding();
             Movement();
+            HandleMovement();
             
         }
 

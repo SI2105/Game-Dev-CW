@@ -126,7 +126,7 @@ public class PCG_Generator : MonoBehaviour
                     if (!cell.floorObj.activeSelf) // Only activate if not already active
                     {
                         cell.floorObj.SetActive(true);
-                        // cell.ceilingObject.SetActive(true);
+                        cell.ceilingObject.SetActive(true);
                     }
                 }
                 else

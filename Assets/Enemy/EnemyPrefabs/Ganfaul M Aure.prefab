@@ -377,9 +377,10 @@ GameObject:
   - component: {fileID: 8109542009000489584}
   - component: {fileID: 3681924685660898564}
   - component: {fileID: 3828679493163487794}
+  - component: {fileID: -8163255802215745326}
   m_Layer: 0
   m_Name: Ganfaul M Aure
-  m_TagString: Player
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -463,6 +464,7 @@ MonoBehaviour:
   wall_sensor: {fileID: 0}
   lockOnSensor: {fileID: 0}
   attackSensor: {fileID: 0}
+  enemyObjective: 
   hudManager: {fileID: 0}
   enemyName: '                Ganfaul'
   isPlayedSensed: 0
@@ -602,6 +604,27 @@ MonoBehaviour:
   EnemyHealthBar: {fileID: 0}
   EnemyName: {fileID: 0}
   enemyBar: {fileID: 0}
+--- !u!65 &-8163255802215745326
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 778029418579591857}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1282690920939605867
 GameObject:
   m_ObjectHideFlags: 0

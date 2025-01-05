@@ -651,7 +651,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -5.1871424, y: 816.9999}
+  m_AnchoredPosition: {x: -5.1871424, y: 817.0005}
   m_SizeDelta: {x: 5.1871, y: 1000}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &36988176
@@ -1146,7 +1146,7 @@ Transform:
   m_GameObject: {fileID: 49332743}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0061678886, y: 1.6625295, z: 0.006143093}
+  m_LocalPosition: {x: -0.0061678886, y: 1.6625293, z: 0.006143093}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2098,7 +2098,7 @@ Transform:
   m_GameObject: {fileID: 110260986}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0061678886, y: 1.6625295, z: 0.006143093}
+  m_LocalPosition: {x: -0.0061678886, y: 1.6625293, z: 0.006143093}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12693,7 +12693,7 @@ PrefabInstance:
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[0]'
       value: 
-      objectReference: {fileID: 2416784190440744716, guid: 8e17e6f92c38af9498ce41a76692093b, type: 3}
+      objectReference: {fileID: 5030460649487007353, guid: 4749e40a230d7496f8111b123c4f1f6e, type: 3}
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[1]'
       value: 
@@ -12721,15 +12721,15 @@ PrefabInstance:
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[7]'
       value: 
-      objectReference: {fileID: 5030460649487007353, guid: 4749e40a230d7496f8111b123c4f1f6e, type: 3}
+      objectReference: {fileID: 8288261727852810387, guid: 69b65844224074e57aa1e8032612c9f9, type: 3}
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[8]'
       value: 
-      objectReference: {fileID: 4954390725058725916, guid: b063b61c1f2916845a016067dc50dc17, type: 3}
+      objectReference: {fileID: 8288261727852810387, guid: 69b65844224074e57aa1e8032612c9f9, type: 3}
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[9]'
       value: 
-      objectReference: {fileID: 1746134095381147815, guid: d52e1bde9d5f88447b0d529376e76068, type: 3}
+      objectReference: {fileID: 8288261727852810387, guid: 69b65844224074e57aa1e8032612c9f9, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13879,7 +13879,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 5, y: 1, z: 4}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 110260991}
@@ -15257,76 +15257,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 847983312}
   m_CullTransparentMesh: 1
---- !u!1001 &853229066
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 778029418579591857, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-      propertyPath: m_Name
-      value: Ganfaul M Aure
-      objectReference: {fileID: 0}
-    - target: {fileID: 4344648472805752734, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-      propertyPath: playerTransform
-      value: 
-      objectReference: {fileID: 697972143}
-    - target: {fileID: 4344648472805752734, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-      propertyPath: enemyCurrentHealth
-      value: 100
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
---- !u!4 &853229067 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
-  m_PrefabInstance: {fileID: 853229066}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &853871884
 GameObject:
   m_ObjectHideFlags: 0
@@ -15795,8 +15725,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 420662290}
   m_HandleRect: {fileID: 420662289}
   m_Direction: 0
-  m_Value: 1.0000088
-  m_Size: 0.9755417
+  m_Value: 1.000003
+  m_Size: 0.9755416
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -16085,6 +16015,76 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 966956811}
   m_CullTransparentMesh: 1
+--- !u!1001 &973922686
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 778029418579591857, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_Name
+      value: Ganfaul M Aure
+      objectReference: {fileID: 0}
+    - target: {fileID: 778029418579591857, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4344648472805752734, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: playerTransform
+      value: 
+      objectReference: {fileID: 697972143}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+--- !u!4 &973922687 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 110282179489945611, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+  m_PrefabInstance: {fileID: 973922686}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &981814710
 GameObject:
   m_ObjectHideFlags: 0
@@ -17208,7 +17208,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 308218381}
   m_HandleRect: {fileID: 308218380}
   m_Direction: 2
-  m_Value: 0.00000022411932
+  m_Value: -0.00000048559184
   m_Size: 0.18300001
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -17950,7 +17950,7 @@ Transform:
   m_GameObject: {fileID: 1132883625}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0061678886, y: 1.6625295, z: 0.006143093}
+  m_LocalPosition: {x: -0.0061678886, y: 1.6625293, z: 0.006143093}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -19206,6 +19206,7 @@ MonoBehaviour:
   playerLevelText: {fileID: 1067575656}
   selectorDot: {fileID: 0}
   onHit: {fileID: 0}
+  LevelUpText: {fileID: 0}
   icon: {fileID: 2139371824}
   allAttributesBoostTimerText: {fileID: 659899295}
   strengthBoostTimerText: {fileID: 0}
@@ -33252,7 +33253,7 @@ Transform:
   m_GameObject: {fileID: 1769611388}
   serializedVersion: 2
   m_LocalRotation: {x: -0.000000007450581, y: 7.2333255e-12, z: 1.0572876e-10, w: 1}
-  m_LocalPosition: {x: -0.0050001107, y: 0.17799993, z: 0.05700022}
+  m_LocalPosition: {x: -0.0050001107, y: 0.17799981, z: 0.05700022}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -33825,10 +33826,10 @@ MonoBehaviour:
   _wall: {fileID: -1720509009710389966, guid: 7d6dacf1e814a4580bb8c073983ef390, type: 3}
   roomPrefab: {fileID: 5999752013328667120, guid: e13317052c65aab438a71b77e22f161d, type: 3}
   _archwayPrefab: {fileID: 8644115839786080152, guid: 4963b55652180e946b10fda98efef25e, type: 3}
-  _archwayWithDoorPrefab: {fileID: 8644115839786080152, guid: eedc232f795364935a90ab6adc550a45, type: 3}
+  _archwayWithDoorPrefab: {fileID: 8644115839786080152, guid: 4963b55652180e946b10fda98efef25e, type: 3}
   _plainWallPrefab: {fileID: 1159351990771520630, guid: 91ad7bf144749b04ab484a680630a040, type: 3}
   _roomBufferSize: 2
-  enemy: {fileID: 853229067}
+  enemy: {fileID: 973922687}
   _maze_configuration: 6
   _roomCount: 1
   _minRoomSize: 2
@@ -33836,14 +33837,15 @@ MonoBehaviour:
   _mazeCellPrefab: {fileID: 618961212}
   _mazeWidth: 10
   _mazeDepth: 10
-  activationRadius: 40
+  activationRadius: 60
   playerTransform: {fileID: 697972143}
   terrain: {fileID: 1822333674}
   zombiePrefab: {fileID: 1785754302362930377, guid: 7765f2a87e0c041e2b62e588f00a4c2e, type: 3}
-  zombieSpawnRadius: 20
-  zombieDespawnRadius: 25
+  zombieSpawnRadius: 45
+  zombieDespawnRadius: 45
   maxZombies: 15
-  zombieSpawnInterval: 60
+  zombieSpawnInterval: 20
+  level: 0
 --- !u!154 &1822333673
 TerrainCollider:
   m_ObjectHideFlags: 0
@@ -42896,4 +42898,4 @@ SceneRoots:
   - {fileID: 697972143}
   - {fileID: 618961211}
   - {fileID: 1935845666}
-  - {fileID: 853229066}
+  - {fileID: 973922686}

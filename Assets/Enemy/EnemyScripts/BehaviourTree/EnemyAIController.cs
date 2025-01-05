@@ -23,7 +23,7 @@ public class EnemyAIController : MonoBehaviour
     public bool isDodging{get;set;}
     public bool shouldDodge{get;set;}
     public bool isDead{get;set;}
-
+    public string enemyObjective;
     public EnemyUIHudManager hudManager;
     public string enemyName;
     public bool isPlayedSensed;
@@ -91,6 +91,11 @@ public class EnemyAIController : MonoBehaviour
 
     private void Die(){
         
+        SG.ObjectiveManager.Instance.SetEventComplete(enemyObjective);
+
+        SG.PlayerAttributesManager pam = playerTransform.GetComponent<SG.PlayerAttributesManager>();
+
+        pam.OnEnemyDefeated(true);
     }
 
     void Update(){
@@ -176,7 +181,7 @@ public class EnemyAIController : MonoBehaviour
     public Vector3 getPosition(){
         return enemyTransform.position;
     }
-
+    
   
     //method for taking damage to be used by player class
     public void takeDamage(float damage){

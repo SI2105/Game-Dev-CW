@@ -77,7 +77,7 @@ public class PCG_Generator : MonoBehaviour
     public float zombieDespawnRadius = 25f; // Radius for despawning zombies
     public int maxZombies = 15; // Maximum number of zombies
     public float zombieSpawnInterval = 60f; // Time interval between spawns
-
+    public float level;
     private List<GameObject> activeZombies = new List<GameObject>(); // Track active zombies
     private float zombieSpawnTimer = 0f; // Timer for spawn control
 
@@ -126,7 +126,7 @@ public class PCG_Generator : MonoBehaviour
                     if (!cell.floorObj.activeSelf) // Only activate if not already active
                     {
                         cell.floorObj.SetActive(true);
-                        cell.ceilingObject.SetActive(true);
+                        // cell.ceilingObject.SetActive(true);
                     }
                 }
                 else

@@ -11853,8 +11853,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e36536f8b4b1d4a55be46f8014d3eb26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 0}
-  isAnimating: 0
 --- !u!1 &787932358
 GameObject:
   m_ObjectHideFlags: 0
@@ -13595,7 +13593,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: DevScene_Andrej NEW
+          m_StringArgument: BURAK
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &880591734
@@ -14072,11 +14070,11 @@ MonoBehaviour:
   texturemedtextLINE: {fileID: 2002588177}
   texturehightextLINE: {fileID: 1985421308}
   difficultyeasyttext: {fileID: 0}
-  difficultyeasytextLINE: {fileID: 1177895285}
+  difficultyeasytextLINE: {fileID: 0}
   difficultynormaltext: {fileID: 0}
   difficultynormaltextLINE: {fileID: 928704097}
   difficultyadvancedtext: {fileID: 0}
-  difficultyadvancedtextLINE: {fileID: 35565661}
+  difficultyadvancedtextLINE: {fileID: 0}
   difficultyhardcoretext: {fileID: 0}
   difficultyhardcoretextLINE: {fileID: 1574980}
   musicSlider: {fileID: 1141395588}

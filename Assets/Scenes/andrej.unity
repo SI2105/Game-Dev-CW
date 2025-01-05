@@ -1247,6 +1247,7 @@ MonoBehaviour:
       Craft the Double Sided Axe
     objectiveComplete: 0
   ObjectivePrefab: {fileID: 3025981615596319024, guid: ee1186ec6f82af440a1ec4e410b0421d, type: 3}
+  MiniObjectivePrefab: {fileID: 0}
 --- !u!1 &34891143
 GameObject:
   m_ObjectHideFlags: 0
@@ -1281,7 +1282,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -687.7058, y: 301.9943}
+  m_AnchoredPosition: {x: -687.70483, y: 301.994}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &34891145
@@ -3480,7 +3481,6 @@ MonoBehaviour:
   jumpSpeed: 1
   idleTransform: {fileID: 148324907}
   cameraTransform: {fileID: 0}
-  mainVC: {fileID: 0}
   rotationSpeed: 2
   verticalRotationSpeed: 180
   smoothRotationTime: 0.1
@@ -3489,8 +3489,18 @@ MonoBehaviour:
   rotateToTargetTime: 0.25
   pauseMenuPanel: {fileID: 0}
   movingThreashold: 0.01
+  cameraSwitcher: {fileID: 0}
+  mainVC: {fileID: 0}
+  verticalClampMin: -80
+  verticalClampMax: 80
+  lockOnRotationSpeed: 5
   rb: {fileID: 0}
   virtualCamera: {fileID: 0}
+  dodgeDistance: 0.75
+  dodgeDuration: 0.075
+  dodgeForce: 4
+  dodgeStaminaCost: 1
+  dodgeCooldown: 0.05
 --- !u!114 &148324910
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8645,7 +8655,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1693441168}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.9961178
+  m_Size: 0.999987
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -10308,8 +10318,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1942090500}
   m_HandleRect: {fileID: 1942090499}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.1194353
+  m_Value: 1.0000001
+  m_Size: 0.11989922
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -11636,7 +11646,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -0.00009209109, y: 374.99207}
+  m_AnchoredPosition: {x: -0.00009209109, y: 374.99173}
   m_SizeDelta: {x: -1, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &670271629
@@ -14925,6 +14935,7 @@ MonoBehaviour:
   playerCamera: {fileID: 443063351}
   maxRaycastDistance: 5
   interactableNameUI: {fileID: 0}
+  popupMessageManager: {fileID: 0}
 --- !u!136 &851660871
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -15032,13 +15043,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   comboResetTime: 1.5
   comboWindowTime: 0.4
+  maxComboSteps: 2
+  currentComboStep: 0
+  staminaCostPerAttack: 10
+  staminaCostSpinAttack: 20
+  playerState: {fileID: 0}
+  attributesManager: {fileID: 0}
+  playerEquipmentManager: {fileID: 0}
+  playerController: {fileID: 0}
+  playerLockOn: {fileID: 0}
   maxQueueTime: 0.9
   cameraManager: {fileID: 2074499747}
   defaultCamera: {fileID: 217931799}
   attackCamera: {fileID: 858749427}
-  attributesManager: {fileID: 0}
-  staminaCostPerAttack: 10
-  staminaCostSpinAttack: 20
 --- !u!114 &851660876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15078,6 +15095,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightHandSlot: {fileID: 0}
   rightHandWeaponModel: {fileID: 0}
+  popupMessageManager: {fileID: 0}
+  unsheathAnimationDuration: 0.24
 --- !u!114 &851660879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15117,6 +15136,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <CurrentPlayerMovementState>k__BackingField: 0
+  <CurrentPlayerAttackState>k__BackingField: 0
+  <CurrentPlayerAttackStatusState>k__BackingField: 1
+  attack1_progress: 0
+  attack2_progress: 0
+  attack3_progress: 0
 --- !u!114 &851660882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15146,7 +15170,6 @@ MonoBehaviour:
   jumpSpeed: 1
   idleTransform: {fileID: 851660869}
   cameraTransform: {fileID: 443063348}
-  mainVC: {fileID: 0}
   rotationSpeed: 0.5
   verticalRotationSpeed: 60
   smoothRotationTime: 0.1
@@ -15155,8 +15178,18 @@ MonoBehaviour:
   rotateToTargetTime: 0.25
   pauseMenuPanel: {fileID: 21242645}
   movingThreashold: 0.01
+  cameraSwitcher: {fileID: 0}
+  mainVC: {fileID: 0}
+  verticalClampMin: -80
+  verticalClampMax: 80
+  lockOnRotationSpeed: 5
   rb: {fileID: 851660874}
   virtualCamera: {fileID: 217931799}
+  dodgeDistance: 0.75
+  dodgeDuration: 0.075
+  dodgeForce: 4
+  dodgeStaminaCost: 1
+  dodgeCooldown: 0.05
 --- !u!114 &851660883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15202,6 +15235,9 @@ MonoBehaviour:
   inventoryManager: {fileID: 1697206184}
   objectiveManager: {fileID: 32308881}
   skillTreeManager: {fileID: 878206043}
+  intensity: 0
+  _volume: {fileID: 0}
+  currentHealth: 0
 --- !u!1 &852405080
 GameObject:
   m_ObjectHideFlags: 0
@@ -18409,7 +18445,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -91.499985, y: 91.499985}
+  m_AnchoredPosition: {x: -91.49987, y: 91.49988}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1020247769
@@ -18940,6 +18976,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   staminaBar: {fileID: 1109068902}
   healthBar: {fileID: 910034429}
+  playerLevelText: {fileID: 0}
+  selectorDot: {fileID: 0}
+  onHit: {fileID: 0}
+  icon: {fileID: 0}
+  allAttributesBoostTimerText: {fileID: 0}
+  strengthBoostTimerText: {fileID: 0}
 --- !u!1001 &1084811176
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19354,13 +19396,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   comboResetTime: 0.5
   comboWindowTime: 0.3
+  maxComboSteps: 2
+  currentComboStep: 0
+  staminaCostPerAttack: 10
+  staminaCostSpinAttack: 20
+  playerState: {fileID: 0}
+  attributesManager: {fileID: 0}
+  playerEquipmentManager: {fileID: 0}
+  playerController: {fileID: 0}
+  playerLockOn: {fileID: 0}
   maxQueueTime: 0.5
   cameraManager: {fileID: 863190304}
   defaultCamera: {fileID: 0}
   attackCamera: {fileID: 933760633}
-  attributesManager: {fileID: 0}
-  staminaCostPerAttack: 10
-  staminaCostSpinAttack: 20
 --- !u!114 &1101089542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19414,6 +19462,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightHandSlot: {fileID: 1101089542}
   rightHandWeaponModel: {fileID: 0}
+  popupMessageManager: {fileID: 0}
+  unsheathAnimationDuration: 0.24
 --- !u!114 &1101089546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19469,7 +19519,6 @@ MonoBehaviour:
   jumpSpeed: 1
   idleTransform: {fileID: 1101089538}
   cameraTransform: {fileID: 2077867468}
-  mainVC: {fileID: 0}
   rotationSpeed: 0.5
   verticalRotationSpeed: 60
   smoothRotationTime: 0.1
@@ -19478,8 +19527,18 @@ MonoBehaviour:
   rotateToTargetTime: 0.25
   pauseMenuPanel: {fileID: 206028835}
   movingThreashold: 0.01
+  cameraSwitcher: {fileID: 0}
+  mainVC: {fileID: 0}
+  verticalClampMin: -80
+  verticalClampMax: 80
+  lockOnRotationSpeed: 5
   rb: {fileID: 1101089540}
   virtualCamera: {fileID: 1628224109}
+  dodgeDistance: 0.75
+  dodgeDuration: 0.075
+  dodgeForce: 4
+  dodgeStaminaCost: 1
+  dodgeCooldown: 0.05
 --- !u!114 &1101089549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19525,6 +19584,9 @@ MonoBehaviour:
   inventoryManager: {fileID: 495240614}
   objectiveManager: {fileID: 0}
   skillTreeManager: {fileID: 0}
+  intensity: 0
+  _volume: {fileID: 0}
+  currentHealth: 0
 --- !u!1 &1109068899
 GameObject:
   m_ObjectHideFlags: 0
@@ -21503,7 +21565,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 330349483}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.9961176
+  m_Size: 0.99998695
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -24195,7 +24257,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2009164871}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.99630517
+  m_Size: 0.9999879
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -24292,7 +24354,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.50112915, y: -534.12427}
+  m_AnchoredPosition: {x: 0.5013733, y: -534.12427}
   m_SizeDelta: {x: 650, y: 1068.248}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1339114789
@@ -28753,8 +28815,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1420527399}
   m_HandleRect: {fileID: 1420527398}
   m_Direction: 0
-  m_Value: 0
-  m_Size: 0.98566324
+  m_Value: -0.0000627573
+  m_Size: 0.989492
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -33411,13 +33473,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   comboResetTime: 0.5
   comboWindowTime: 0.3
+  maxComboSteps: 2
+  currentComboStep: 0
+  staminaCostPerAttack: 10
+  staminaCostSpinAttack: 20
+  playerState: {fileID: 0}
+  attributesManager: {fileID: 0}
+  playerEquipmentManager: {fileID: 0}
+  playerController: {fileID: 0}
+  playerLockOn: {fileID: 0}
   maxQueueTime: 0.5
   cameraManager: {fileID: 0}
   defaultCamera: {fileID: 0}
   attackCamera: {fileID: 0}
-  attributesManager: {fileID: 0}
-  staminaCostPerAttack: 10
-  staminaCostSpinAttack: 20
 --- !u!114 &1893680619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35317,7 +35385,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1144156967}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.99611765
+  m_Size: 0.99998707
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -35895,8 +35963,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 526195779}
   m_HandleRect: {fileID: 526195778}
   m_Direction: 2
-  m_Value: 1.0000001
-  m_Size: 0.38661113
+  m_Value: 1.0000004
+  m_Size: 0.38811284
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -36268,7 +36336,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -261.01733, y: 310.49423}
+  m_AnchoredPosition: {x: -261.01733, y: 310.494}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2045677610
@@ -37783,6 +37851,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 223221324}
+  - {fileID: 393989051}
   - {fileID: 1038680909}
   - {fileID: 631358370}
   - {fileID: 851660869}
@@ -37799,4 +37868,3 @@ SceneRoots:
   - {fileID: 1222819895}
   - {fileID: 2023716656}
   - {fileID: 299619323}
-  - {fileID: 393989051}

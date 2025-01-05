@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Cinemachine;
+using SlimUI.ModernMenu;
 
 namespace SG{
 
@@ -224,7 +225,7 @@ namespace SG{
         {
             inputActions = new GameDevCW();
 
-            // settingsManager = SettingsManager.Instance;
+            var settingsManager = SettingsManager.Instance;
             inputActions = InputManager.Instance.inputActions;
 
             // Subscribe to the Move action's performed and canceled events
@@ -843,7 +844,26 @@ namespace SG{
                 return;
             }
             
-            lookInput = context.ReadValue<Vector2>();
+            // lookInput = context.ReadValue<Vector2>();
+            // Read raw input
+            Vector2 rawLookInput = context.ReadValue<Vector2>();
+
+            // Apply mouse sensitivity from SettingsManager
+            float sensitivityX = SettingsManager.Instance?.MouseSensitivityX ?? 1.0f; // Fallback to 1.0f if null
+            float sensitivityY = SettingsManager.Instance?.MouseSensitivityY ?? 1.0f;
+
+            // Apply mouse smoothing
+            float smoothing = SettingsManager.Instance?.MouseSmoothing ?? 0.05f;
+
+            // Smooth look input using Vector2.SmoothDamp
+            smoothedLookInput = Vector2.SmoothDamp(
+                smoothedLookInput,
+                rawLookInput * new Vector2(sensitivityX, sensitivityY),
+                ref lookInputVelocity,
+                smoothing
+            );
+
+            lookInput = smoothedLookInput;
         }
 
         private void HandlePause(InputAction.CallbackContext context)

@@ -621,7 +621,8 @@ namespace SG
             // Recalculate derived attributes
             RecalculateAttributes();
             OnLevelChanged?.Invoke(CurrentLevel);
-            
+
+            SkillTreeManager.instance.AddSkillPoints(1);
 
             Debug.Log($"Leveled up! Current Level: {CurrentLevel}. XP for next level: {XPToNextLevel}");
         }

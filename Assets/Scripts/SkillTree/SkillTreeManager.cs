@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class SkillTreeManager : MonoBehaviour
 {
     public int availableSkillPoints = 5;
-
+    public SkillTreeManager instance;
     [SerializeField] private Skill[] skills;
     [SerializeField]private GameObject SkillPointsHolder;
     [SerializeField] private GameObject SkillsPanel;
@@ -15,6 +15,7 @@ public class SkillTreeManager : MonoBehaviour
 
     private void Start()
     {
+        instance = this;
         SkillsPanel.SetActive(false);
         SetSkillPointText(availableSkillPoints);    
     }

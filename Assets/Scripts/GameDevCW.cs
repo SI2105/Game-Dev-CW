@@ -520,7 +520,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""6bd65a2e-f341-4219-9faa-b386da14fd8e"",
-                    ""path"": ""<Mouse>/middleButton"",
+                    ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
@@ -824,6 +824,15 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""name"": ""Skills"",
                     ""type"": ""Button"",
                     ""id"": ""a7515e71-7ce7-4696-acb1-a71a941c35ae"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Keybinds"",
+                    ""type"": ""Button"",
+                    ""id"": ""60b14265-8a40-48bd-a294-b7604f18982b"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -1314,6 +1323,17 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
                     ""action"": ""Skills"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8d446579-d2c9-48eb-98b7-0569acbd427d"",
+                    ""path"": ""<Keyboard>/v"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keybinds"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -1417,6 +1437,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         m_UI_HotBarSelector = m_UI.FindAction("HotBarSelector", throwIfNotFound: true);
         m_UI_Skills = m_UI.FindAction("Skills", throwIfNotFound: true);
+        m_UI_Keybinds = m_UI.FindAction("Keybinds", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1688,6 +1709,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_TrackedDeviceOrientation;
     private readonly InputAction m_UI_HotBarSelector;
     private readonly InputAction m_UI_Skills;
+    private readonly InputAction m_UI_Keybinds;
     public struct UIActions
     {
         private @GameDevCW m_Wrapper;
@@ -1704,6 +1726,7 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         public InputAction @TrackedDeviceOrientation => m_Wrapper.m_UI_TrackedDeviceOrientation;
         public InputAction @HotBarSelector => m_Wrapper.m_UI_HotBarSelector;
         public InputAction @Skills => m_Wrapper.m_UI_Skills;
+        public InputAction @Keybinds => m_Wrapper.m_UI_Keybinds;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1749,6 +1772,9 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @Skills.started += instance.OnSkills;
             @Skills.performed += instance.OnSkills;
             @Skills.canceled += instance.OnSkills;
+            @Keybinds.started += instance.OnKeybinds;
+            @Keybinds.performed += instance.OnKeybinds;
+            @Keybinds.canceled += instance.OnKeybinds;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -1789,6 +1815,9 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
             @Skills.started -= instance.OnSkills;
             @Skills.performed -= instance.OnSkills;
             @Skills.canceled -= instance.OnSkills;
+            @Keybinds.started -= instance.OnKeybinds;
+            @Keybinds.performed -= instance.OnKeybinds;
+            @Keybinds.canceled -= instance.OnKeybinds;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -1888,5 +1917,6 @@ public partial class @GameDevCW: IInputActionCollection2, IDisposable
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
         void OnHotBarSelector(InputAction.CallbackContext context);
         void OnSkills(InputAction.CallbackContext context);
+        void OnKeybinds(InputAction.CallbackContext context);
     }
 }

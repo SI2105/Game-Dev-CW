@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 798228126060445943}
-  m_Layer: 13
+  m_Layer: 12
   m_Name: Floor_#Chest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,10 +43,6 @@ PrefabInstance:
     - target: {fileID: 5057045411443670754, guid: 4ae413ec35bb0b94db934884db389efb, type: 3}
       propertyPath: m_Name
       value: ChestPrefab
-      objectReference: {fileID: 0}
-    - target: {fileID: 5057045411443670754, guid: 4ae413ec35bb0b94db934884db389efb, type: 3}
-      propertyPath: m_Layer
-      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 5424692806598654285, guid: 4ae413ec35bb0b94db934884db389efb, type: 3}
       propertyPath: m_LocalPosition.x
@@ -87,14 +83,6 @@ PrefabInstance:
     - target: {fileID: 5424692806598654285, guid: 4ae413ec35bb0b94db934884db389efb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6601769450540658182, guid: 4ae413ec35bb0b94db934884db389efb, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 6790869278490422892, guid: 4ae413ec35bb0b94db934884db389efb, type: 3}
-      propertyPath: m_Layer
-      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

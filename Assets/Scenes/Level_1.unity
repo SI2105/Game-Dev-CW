@@ -5037,8 +5037,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 249935249}
   m_HandleRect: {fileID: 249935248}
   m_Direction: 0
-  m_Value: 1
-  m_Size: 0.9998725
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -5802,7 +5802,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1818929121}
   m_HandleRect: {fileID: 1818929120}
   m_Direction: 2
-  m_Value: 1.0000019
+  m_Value: 1.0000015
   m_Size: 0.7020692
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -5992,7 +5992,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2002194612}
   m_Direction: 2
   m_Value: 1.0000002
-  m_Size: 0.5446539
+  m_Size: 0.54472685
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -18299,7 +18299,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6395458222792115072, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -412.6
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 6395458222792115072, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: m_LocalPosition.y
@@ -22116,7 +22116,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 6135
+    m_Bits: 14327
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -26078,7 +26078,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -0.00006866455, y: 374.99173}
+  m_AnchoredPosition: {x: -0.00006866455, y: 374.99167}
   m_SizeDelta: {x: -1, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &933330700
@@ -29743,7 +29743,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -687.70557, y: 301.9942}
+  m_AnchoredPosition: {x: -687.7053, y: 301.99405}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1095947041
@@ -30522,7 +30522,7 @@ MonoBehaviour:
   scanFrequency: 30
   layers:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 4096
   occlusionLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -51122,7 +51122,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -261.01733, y: 310.4942}
+  m_AnchoredPosition: {x: -261.01733, y: 310.4941}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1598453711
@@ -56437,8 +56437,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1704907770}
   m_HandleRect: {fileID: 1704907769}
   m_Direction: 0
-  m_Value: -0.000012551566
-  m_Size: 0.98937243
+  m_Value: -0.000033471122
+  m_Size: 0.98950493
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -56767,10 +56767,10 @@ MonoBehaviour:
   _maze_configuration: 6
   _roomCount: 1
   _minRoomSize: 2
-  _maxRoomSize: 2
+  _maxRoomSize: 5
   _mazeCellPrefab: {fileID: 618961212}
-  _mazeWidth: 8
-  _mazeDepth: 8
+  _mazeWidth: 10
+  _mazeDepth: 10
   activationRadius: 60
   playerTransform: {fileID: 1137174264}
   terrain: {fileID: 1822333674}
@@ -63439,7 +63439,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 440216054}
   m_Direction: 2
   m_Value: 1.0000001
-  m_Size: 0.116170324
+  m_Size: 0.11618584
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -67533,7 +67533,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.5010071, y: -534.12445}
+  m_AnchoredPosition: {x: 0.50112915, y: -534.12445}
   m_SizeDelta: {x: 650, y: 1068.248}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2109005291
@@ -68307,7 +68307,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2023247463}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.9998661
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -68709,9 +68709,9 @@ SceneRoots:
   - {fileID: 820454848}
   - {fileID: 92922973}
   - {fileID: 1822333675}
+  - {fileID: 1935845666}
   - {fileID: 364832136}
   - {fileID: 618961211}
-  - {fileID: 1935845666}
   - {fileID: 973922686}
   - {fileID: 1068179174}
   - {fileID: 1309061922}

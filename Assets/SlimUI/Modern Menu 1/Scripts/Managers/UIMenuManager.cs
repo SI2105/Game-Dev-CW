@@ -141,6 +141,7 @@ namespace SlimUI.ModernMenu{
 			if(scene != ""){
 				StartCoroutine(LoadAsynchronously(scene));
 			}
+			Time.timeScale = 1;
 		}
 
 		public void  DisablePlayCampaign(){
@@ -295,7 +296,7 @@ namespace SlimUI.ModernMenu{
             }
 
             AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
-            operation.allowSceneActivation = false;
+            operation.allowSceneActivation = true;
 
             if (mainCanvas != null)
                 mainCanvas.SetActive(false);

@@ -498,7 +498,7 @@
                 {
                     "name": "",
                     "id": "6bd65a2e-f341-4219-9faa-b386da14fd8e",
-                    "path": "<Mouse>/middleButton",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -802,6 +802,15 @@
                     "name": "Skills",
                     "type": "Button",
                     "id": "a7515e71-7ce7-4696-acb1-a71a941c35ae",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Keybinds",
+                    "type": "Button",
+                    "id": "60b14265-8a40-48bd-a294-b7604f18982b",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -1290,6 +1299,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Skills",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8d446579-d2c9-48eb-98b7-0569acbd427d",
+                    "path": "<Keyboard>/v",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Keybinds",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

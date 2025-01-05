@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 694367267194473236}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: RoomPrefab#2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 1552755866393182385}
   - component: {fileID: 4562063605054456580}
   - component: {fileID: 6462335682466604321}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: ground_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,7 +60,7 @@ Transform:
   m_GameObject: {fileID: 7149058116693378645}
   serializedVersion: 2
   m_LocalRotation: {x: 0.000000021855694, y: -1.134464e-16, z: 1.134464e-16, w: 1}
-  m_LocalPosition: {x: 14.3537, y: 0.2524, z: -8.7676}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.175358, y: 1, z: 2.175717}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -13,6 +13,8 @@ public class MiniEnemyAIController : MonoBehaviour
     public float startingHealth;
     public float currentHealth;
     public bool hit{get;set;}
+
+    public MiniEnemyAudioController audio_controller;
     //variable for top node in the behaviour tree
     Node topNode;
     
@@ -20,6 +22,7 @@ public class MiniEnemyAIController : MonoBehaviour
         miniEnemyAgent= GetComponent<NavMeshAgent>();
         miniEnemyAnimator = GetComponent<Animator>();
         player_sensor = GetComponent<MiniEnemyPlayerSensor>();
+        audio_controller = GetComponent<MiniEnemyAudioController>();
     }
 
     void Start(){
@@ -58,12 +61,40 @@ public class MiniEnemyAIController : MonoBehaviour
         topNode.Evaluate();
     }
 
-
     private void endAttack(){
         attack=false;
     }
 
     private void endHit(){
         hit=false;
+    }
+
+    //method for taking damage to be used by player class
+    public void takeDamage(float damage){
+
+        currentHealth-=damage;
+        //check if health is below 0 and if so reset it
+        if(currentHealth<0.0f){
+            currentHealth=0.0f;
+        }
+        print("health: " + currentHealth);
+    }
+
+
+    private void playWalk(){
+        audio_controller.playWalk();
+    }
+
+   private void Die()
+    {
+        SG.PlayerAttributesManager pam = player.GetComponent<SG.PlayerAttributesManager>();
+
+        pam.OnEnemyDefeated(false);
+
+        Destroy(this.gameObject);
+    }
+    
+    private void playAttack(){
+        audio_controller.playAttack();
     }
 }

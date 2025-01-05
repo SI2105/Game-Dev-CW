@@ -11,7 +11,7 @@ namespace SG
     {
         #region Inventory
         //public GameObject Inventory;
-        [SerializeField] private InventoryManager inventoryManager;
+        [SerializeField] public InventoryManager inventoryManager;
         public InventoryManager InventoryManager {
             get => inventoryManager;
             set => inventoryManager = value;
@@ -47,6 +47,53 @@ namespace SG
         public PostProcessVolume _volume;
         Vignette _vignette;
 
+        [System.Serializable]
+        public class AttributesData
+        {
+            public float MaxHealth;
+            public float CurrentHealth;
+            public float MaxStamina;
+            public float CurrentStamina;
+            public int CurrentLevel;
+            public float CurrentXP;
+            public float Strength;
+            public float Agility;
+            public float Endurance;
+            public float Intelligence;
+        }
+
+        public AttributesData GetAttributesData()
+        {
+            return new AttributesData
+            {
+                MaxHealth = MaxHealth,
+                CurrentHealth = CurrentHealth,
+                MaxStamina = MaxStamina,
+                CurrentStamina = CurrentStamina,
+                CurrentLevel = CurrentLevel,
+                CurrentXP = CurrentXP,
+                Strength = Strength,
+                Agility = Agility,
+                Endurance = Endurance,
+                Intelligence = Intelligence
+            };
+        }
+
+        public void SetAttributesData(AttributesData data)
+        {
+            MaxHealth = data.MaxHealth;
+            CurrentHealth = data.CurrentHealth;
+            MaxStamina = data.MaxStamina;
+            CurrentStamina = data.CurrentStamina;
+            CurrentLevel = data.CurrentLevel;
+            CurrentXP = data.CurrentXP;
+            Strength = data.Strength;
+            Agility = data.Agility;
+            Endurance = data.Endurance;
+            Intelligence = data.Intelligence;
+
+            RecalculateAttributes();
+        }
         //void OnEnable()
         //{
         //    Skill.OnSkillUnlocked += HandleSkillUnlocked;
@@ -80,7 +127,7 @@ namespace SG
         public float MaxHealth { get; set; } = 100f;
         public float HealthRegenRate { get; set; } = 10f;
         public float MaxStamina { get; set; } = 100f;
-        public float StaminaCostPerSecond { get; set; } = 1f;
+        public float StaminaCostPerSecond { get; set; } = 6f;
         public float StaminaRegenRate { get; set; } = 20f;
         private float currentStamina;
         public float CurrentStamina
@@ -112,10 +159,12 @@ namespace SG
 
         private Coroutine recoveryCoroutine;
 
+        private Animator animator;
         private void Awake()
         {
             currentStamina = MaxStamina;
             currentHealth = MaxHealth;
+            animator = GetComponent<Animator>();
         }
 
         public void ModifyResource(
@@ -186,7 +235,7 @@ namespace SG
                     MaxStamina,
                     -amount,
                     StaminaRegenRate,
-                    1f,
+                    0.5f,
                     () => {},
                     null  // Don't start a new coroutine in the callback
                 );
@@ -345,7 +394,7 @@ namespace SG
 
         public bool TakeDamage(float damage)
         {
-            if (currentHealth > 0)
+            if (currentHealth - damage > 0)
             {
                 // Deduct health
                 ModifyResource(
@@ -363,6 +412,21 @@ namespace SG
                 ApplyDamageEffect();
                 // Return true to indicate damage was successfully taken
                 return true;
+            } else {
+                ModifyResource(
+                    () => currentHealth,
+                    value => CurrentHealth = value,
+                    MaxHealth,
+                    -damage,
+                    0f, // No health regeneration rate here
+                    0f, // No delay for health regen
+                    null, // No recovery stop callback for health damage
+                    null  // No recovery start callback for health damage
+                );
+                // Trigger Damage Vignette Effect
+                ApplyDamageEffect();
+                animator.SetBool("isDead", true);
+                
             }
 
             // Return false if the player is already at 0 health
@@ -399,6 +463,11 @@ namespace SG
                 recoveryCoroutine = null;
             }
             Debug.Log("Stamina recovery manually interrupted. Ongoing recovery halted.");
+        }
+
+        public void OnEnemyDefeated(bool isBoss)
+        {
+            throw new NotImplementedException("The method OnEnemyDefeated is not implemented yet.");
         }
 
         private void StartStaminaRecovery()
@@ -537,6 +606,56 @@ namespace SG
         }
         public event Action<int> OnLevelChanged;
 
+        /// <summary>
+        /// Adjusts player attributes based on the difficulty multiplier.
+        /// </summary>
+        /// <param name="difficulty">The difficulty level ("Normal" or "Hardcore").</param>
+        public void SetDifficultyMultiplier(string difficulty)
+        {
+            float healthMultiplier = 1f;
+            float staminaMultiplier = 1f;
+            float damageMultiplier = 1f;
+            float regenMultiplier = 1f;
+
+            switch (difficulty)
+            {
+                case "Normal":
+                    healthMultiplier = 1.0f;
+                    staminaMultiplier = 1.0f;
+                    damageMultiplier = 1.0f;
+                    regenMultiplier = 1.0f;
+                    break;
+
+                case "Hardcore":
+                    healthMultiplier = 0.8f;   // Reduce health by 20%
+                    staminaMultiplier = 0.8f; // Reduce stamina by 20%
+                    damageMultiplier = 0.9f;  // Reduce damage by 10%
+                    regenMultiplier = 0.7f;   // Reduce regen rates by 30%
+                    break;
+
+                default:
+                    Debug.LogWarning($"Unknown difficulty: {difficulty}. Defaulting to Normal.");
+                    break;
+            }
+
+            // Apply multipliers to attributes
+            MaxHealth *= healthMultiplier;
+            CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth); // Adjust current health to fit new max
+            MaxStamina *= staminaMultiplier;
+            CurrentStamina = Mathf.Clamp(CurrentStamina, 0, MaxStamina); // Adjust current stamina to fit new max
+            BaseDamage *= damageMultiplier;
+            StaminaRegenRate *= regenMultiplier;
+            HealthRegenRate *= regenMultiplier;
+
+            // Log changes
+            Debug.Log($"Difficulty set to {difficulty}. Attributes adjusted accordingly:\n" +
+                    $"- MaxHealth: {MaxHealth}\n" +
+                    $"- MaxStamina: {MaxStamina}\n" +
+                    $"- BaseDamage: {BaseDamage}\n" +
+                    $"- StaminaRegenRate: {StaminaRegenRate}\n" +
+                    $"- HealthRegenRate: {HealthRegenRate}");
+        }
+
         public void LevelUp()
         {
             CurrentXP -= XPToNextLevel;
@@ -556,6 +675,8 @@ namespace SG
             // Recalculate derived attributes
             RecalculateAttributes();
             OnLevelChanged?.Invoke(CurrentLevel);
+
+            SkillTreeManager.instance.AddSkillPoints(1);
 
             Debug.Log($"Leveled up! Current Level: {CurrentLevel}. XP for next level: {XPToNextLevel}");
         }
@@ -620,6 +741,10 @@ namespace SG
                 originalEndurance,
                 originalIntelligence
             ));
+        }
+
+        public void ResetHealth(){
+            CurrentHealth = MaxHealth;
         }
 
         private IEnumerator BoostAllAttributesCoroutine(

@@ -266,6 +266,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8218946637717180756}
+  - component: {fileID: 6301938091278127012}
+  - component: {fileID: 8080198071675890690}
+  - component: {fileID: 1249632236828960647}
   m_Layer: 0
   m_Name: mixamorig:LeftHand
   m_TagString: Untagged
@@ -288,6 +291,67 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5684867464442591854}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &6301938091278127012
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608547620150447451}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 1
+--- !u!65 &8080198071675890690
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608547620150447451}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.8, y: 1, z: 0.5}
+  m_Center: {x: 0, y: 0.3, z: 0}
+--- !u!114 &1249632236828960647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608547620150447451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1813d08807aa94ca8a72896e319d20fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 20
 --- !u!1 &1872885109350479503
 GameObject:
   m_ObjectHideFlags: 0
@@ -464,13 +528,14 @@ GameObject:
   - component: {fileID: 6822374459086964871}
   - component: {fileID: 7307387449053106464}
   - component: {fileID: 135918067219138504}
+  - component: {fileID: 2173071431495209991}
   m_Layer: 0
   m_Name: Mutant
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3438865282261181308
 Transform:
   m_ObjectHideFlags: 0
@@ -501,17 +566,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e45b8e59787b40e991e291a60c21cf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyStartingHealth: 40
+  enemyStartingHealth: 100
   player_sensor: {fileID: 0}
   wall_sensor: {fileID: 0}
   lockOnSensor: {fileID: 0}
   attackSensor: {fileID: 0}
+  enemyObjective: 
+  hudManager: {fileID: 0}
+  enemyName: '                 Mutant'
   isPlayedSensed: 0
   isMusicPlaying: 0
   isRoaring: 0
   audio_controller: {fileID: 0}
   enemyTransform: {fileID: 3438865282261181308}
-  enemyCurrentHealth: 40
+  enemyCurrentHealth: 100
   lowHealthThreshold: 50
   senseDistance: 15
   playerState: {fileID: 0}
@@ -672,6 +740,21 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   objects: []
+--- !u!114 &2173071431495209991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2662363423373375942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 685d8ac5848d447d5951bfd909564e26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EnemyHealthBar: {fileID: 0}
+  EnemyName: {fileID: 0}
+  enemyBar: {fileID: 0}
 --- !u!1 &2764535370897731042
 GameObject:
   m_ObjectHideFlags: 0

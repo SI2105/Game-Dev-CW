@@ -4,14 +4,13 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Ennemy
   - Enemy
-  - PostProcessing
+  - Zombie
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - PlayerLayer
+  - 
   - Water
   - UI
   - Pickup
@@ -20,8 +19,8 @@ TagManager:
   - GroundLayer
   - chestLayer
   - PostProcessing
-  - 
-  - 
+  - Floor
+  - Chest
   - 
   - 
   - 

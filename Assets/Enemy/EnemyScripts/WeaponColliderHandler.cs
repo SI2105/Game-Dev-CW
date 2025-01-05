@@ -2,34 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SG{
+namespace SG
+{
     public class WeaponColliderHandler : MonoBehaviour
     {
         public float damage;
 
-        private bool hasCollided = false;
-
         private void OnCollisionEnter(Collision collision)
         {
-            if (hasCollided) return; // Prevent multiple triggers
-            hasCollided = true;
+            // Check if the collided object is the Player
             if (collision.gameObject.CompareTag("Player"))
             {
-                PlayerAttributesManager playerAttributes = collision.gameObject.GetComponent<PlayerAttributesManager>();
-                if (playerAttributes != null)
+                // Get the EnemyAIController from the parent
+                EnemyAIController enemyAI = GetComponentInParent<EnemyAIController>();
+                if (enemyAI != null && (enemyAI.isAttacking || enemyAI.isComboAttacking))
                 {
-                    playerAttributes.TakeDamage(damage);
+                    // If the enemy is attacking, apply damage to the player
+                    PlayerAttributesManager playerAttributes = collision.gameObject.GetComponent<PlayerAttributesManager>();
+                    if (playerAttributes != null)
+                    {
+                        playerAttributes.TakeDamage(damage);
+                    }
+                }
+                else
+                {
+                    Debug.Log("Enemy is not attacking, no damage applied.");
                 }
             }
         }
-
-        private void OnCollisionExit(Collision collision)
-        {
-            if (collision.gameObject.CompareTag("Player"))
-            {
-                hasCollided = false; // Reset the flag when the collision ends
-            }
-        }
-
     }
 }

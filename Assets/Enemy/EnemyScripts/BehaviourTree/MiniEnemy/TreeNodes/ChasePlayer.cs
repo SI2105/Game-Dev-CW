@@ -9,7 +9,7 @@ public class ChasePlayer : Node
     private Animator miniEnemyAnimator;
     private Transform playerTransform;
     private MiniEnemyAIController enemyController;
-    private float chaseDistance = 1f; // Distance within which the chase is considered successful
+    private float chaseDistance = 2f; // Distance within which the chase is considered successful
   
     public ChasePlayer(NavMeshAgent miniEnemyAgent, Animator miniEnemyAnimator, Transform playerTransform, MiniEnemyAIController enemyController)
     {
@@ -21,28 +21,22 @@ public class ChasePlayer : Node
 
     public override State Evaluate()
     {
-        // Rotate to face the player
-        Vector3 directionToPlayer = (playerTransform.position - miniEnemyAgent.transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
-        miniEnemyAgent.transform.rotation = Quaternion.Slerp(
-            miniEnemyAgent.transform.rotation,
-            lookRotation,
-            Time.deltaTime * 10f
-        );
-
+        
         if(enemyController.hit==true){
             node_state=State.FAILURE;
             return node_state;
         }
         
-       
-        miniEnemyAnimator.SetBool("Walk", true);
-       
-
+     
         if(enemyController.attack==true){
-            node_state=State.SUCCESS;
+            node_state=State.FAILURE;
             return node_state;
         }
+
+        if(miniEnemyAnimator.GetBool("Walk") !=true){
+            miniEnemyAnimator.SetBool("Walk", true);
+       }
+
         // Check the distance to the player
         float distanceToPlayer = Vector3.Distance(miniEnemyAgent.transform.position, playerTransform.position);
 

@@ -38,6 +38,7 @@ namespace SG{
         private bool isDodgingLeft;
         private bool isDodgingRight;
         private bool isDodgingBackward;
+        private bool isDead;
         private PlayerState _playerState;
         #endregion
 
@@ -79,7 +80,7 @@ namespace SG{
 
         #region Player Stats Display
         [SerializeField] private TextMeshProUGUI PlayerStatsText;
-        private PlayerAttributesManager attributesManager;
+        public PlayerAttributesManager attributesManager;
 
         public void UpdatePlayerStats() {
             if (PlayerStatsText != null) {
@@ -95,12 +96,12 @@ namespace SG{
                 $"<align=left>Strength:<line-height=0>\n<align=right>{attributesManager.Strength}<line-height=1em>\n" +
                 $"<align=left>Agility:<line-height=0>\n<align=right>{attributesManager.Agility}<line-height=1em>\n" +
                 $"<align=left>Endurance:<line-height=0>\n<align=right>{attributesManager.Endurance}<line-height=1em>\n" +
-                $"<align=left>Intelligence:<line-height=0>\n<align=right>{attributesManager.Intelligence}<line-height=1em>\n" +
+
                 $"<align=left>Base Damage:<line-height=0>\n<align=right>{attributesManager.BaseDamage}<line-height=1em>\n" +
                 $"<align=left>Critical Hit Chance:<line-height=0>\n<align=right>{attributesManager.CriticalHitChance}<line-height=1em>\n" +
                 $"<align=left>Critical Hit Multiplier:<line-height=0>\n<align=right>{attributesManager.CriticalHitMultiplier}<line-height=1em>\n" +
                 $"<align=left>Attack Speed:<line-height=0>\n<align=right>{attributesManager.AttackSpeed}<line-height=1em>\n" +
-                $"<align=left>Armor:<line-height=0>\n<align=right>{attributesManager.Armor}<line-height=1em>\n" +
+              
                 $"<align=left>Block Chance:<line-height=0>\n<align=right>{attributesManager.BlockChance}<line-height=1em>\n" +
                 $"<align=left>Dodge Chance:<line-height=0>\n<align=right>{attributesManager.DodgeChance}<line-height=1em>\n\n";
         }
@@ -124,10 +125,10 @@ namespace SG{
 
         [Header("Rotation Settings")]
         [SerializeField] private float rotationSpeed = 10f;
-        [SerializeField] private float verticalRotationSpeed = 180f;
+        public float verticalRotationSpeed { get; set; } = 180f;
         [SerializeField] private float smoothRotationTime = 0.05f;
         [SerializeField] private float inputSmoothTime = 0.02f;
-        [SerializeField] private float mouseSensitivity = 2.0f;
+        [SerializeField] public float mouseSensitivity  { get; set; } = 2.0f;
         public float RotationMismatch {get; private set;} = 0f;
         public bool IsRotatingToTarget {get; private set;} = false;
         public float rotateToTargetTime = 0.25f;
@@ -219,15 +220,27 @@ namespace SG{
         private CinemachinePOV mainCamPov;  // reference to your main camera's POV
         public CinemachineVirtualCamera mainVC;
 
-// e.g. in Awake/Start:
+        #region KeybindPage
+        private GameObject KeybindsPanel;
+        private void HandleKeybinds(InputAction.CallbackContext context)
+        {
+            // Toggle the visibility of the KeybindsPanel
+            if (KeybindsPanel != null)
+            {
+                KeybindsPanel.SetActive(!KeybindsPanel.activeSelf);
+            }
+        }
+
+        #endregion
+        // e.g. in Awake/Start:
 
         private void Awake()
         {
             inputActions = new GameDevCW();
 
-            var settingsManager = SettingsManager.Instance;
-            inputActions = InputManager.Instance.inputActions;
-
+            KeybindsPanel =GameObject.Find("KeybindsPanel");
+            KeybindsPanel.SetActive(false);
+            
             // Subscribe to the Move action's performed and canceled events
             inputActions.Player.Move.performed += HandleMove;
             inputActions.Player.Move.canceled += HandleMove;
@@ -264,7 +277,8 @@ namespace SG{
                 inputActions.Player.Objective.canceled += onObjective;
                 inputActions.UI.Skills.performed += HandleSkills;
                 inputActions.UI.Skills.canceled += HandleSkills;
-
+                inputActions.UI.Keybinds.performed += HandleKeybinds;
+                inputActions.UI.Keybinds.canceled += HandleKeybinds;
                 UpdatePlayerStats();
             }
         }
@@ -462,6 +476,146 @@ namespace SG{
             Movement();
             UpdateAnimatorParameters();
             UpdateMovementState();
+            if (checkIsDead())
+            {
+                if (!isDead)
+                {
+                    isDead = true;
+                    OnPlayerDeath();
+                }
+            }
+        }
+        private void OnPlayerDeath()
+        {
+
+            // Reset input states
+            moveInput = Vector2.zero;
+            lookInput = Vector2.zero;
+            isSprinting = false;
+            forwardPressed = false;
+            backwardPressed = false;
+            leftPressed = false;
+            rightPressed = false;
+            InventoryVisible = false;
+            objectiveVisible = false;
+            PauseVisible = false;
+            isLockedOn = false;
+
+            // Reset Animator parameters (optional)
+            animator.SetBool(isIdleHash, true);
+            animator.SetBool(isWalkingHash, false);
+            animator.SetBool(isRunningHash, false);
+            animator.SetBool(isJumpingHash, false);
+            animator.SetBool(isDodgingForwardHash, false);
+            animator.SetBool(isDodgingBackwardHash, false);
+            animator.SetBool(isDodgingLeftHash, false);
+            animator.SetBool(isDodgingRightHash, false);
+
+            // Unsubscribe from input actions
+            inputActions.Player.Move.performed -= HandleMove;
+            inputActions.Player.Move.canceled -= HandleMove;
+            inputActions.Player.Look.performed -= HandleLook;
+            inputActions.Player.Look.canceled -= HandleLook;
+            inputActions.Player.Sprint.performed -= ctx => isSprinting = true;
+            inputActions.Player.Sprint.canceled -= ctx => isSprinting = false;
+            inputActions.Player.Inventory.performed -= HandleInventory;
+            inputActions.Player.Inventory.canceled -= HandleInventory;
+            inputActions.Player.Pause.performed -= HandlePause;
+            inputActions.Player.Pause.canceled -= HandlePause;
+            inputActions.Player.LockOn.performed -= HandleLockOn;
+            inputActions.Player.DodgeForward.performed -= HandleDodgeForward;
+            inputActions.Player.DodgeBackward.performed -= HandleDodgeBackward;
+            inputActions.Player.DodgeLeft.performed -= HandleDodgeLeft;
+            inputActions.Player.DodgeRight.performed -= HandleDodgeRight;
+
+            if (attributesManager)
+            {
+                inputActions.UI.HotBarSelector.performed -= attributesManager.InventoryManager.OnHotBarSelection;
+                inputActions.UI.HotBarSelector.canceled -= attributesManager.InventoryManager.OnHotBarSelection;
+                inputActions.Player.Objective.performed -= onObjective;
+                inputActions.Player.Objective.canceled -= onObjective;
+                inputActions.UI.Skills.performed -= HandleSkills;
+                inputActions.UI.Skills.canceled -= HandleSkills;
+            }
+
+            var inventoryManager = attributesManager.InventoryManager;
+            var objectiveManager = attributesManager.ObjectiveManager;
+
+            GameManager.Instance.HandlePlayerDeath(attributesManager, inventoryManager, objectiveManager);
+
+
+            // Disable the input system
+            // inputActions.Disable();
+        }
+
+        private void OnPlayerRespawn()
+        {
+            Debug.Log("Player respawned. Re-enabling inputs and resetting variables.");
+
+            // Reset player states
+            isDead = false;
+            moveInput = Vector2.zero;
+            lookInput = Vector2.zero;
+            isSprinting = false;
+            forwardPressed = false;
+            backwardPressed = false;
+            leftPressed = false;
+            rightPressed = false;
+            InventoryVisible = false;
+            objectiveVisible = false;
+            PauseVisible = false;
+            isLockedOn = false;
+
+            // Reset Animator parameters
+            animator.SetBool(isIdleHash, true);
+            animator.SetBool(isWalkingHash, false);
+            animator.SetBool(isRunningHash, false);
+            animator.SetBool(isJumpingHash, false);
+            animator.SetBool(isDodgingForwardHash, false);
+            animator.SetBool(isDodgingBackwardHash, false);
+            animator.SetBool(isDodgingLeftHash, false);
+            animator.SetBool(isDodgingRightHash, false);
+
+            // Re-subscribe to input actions
+            inputActions.Player.Move.performed += HandleMove;
+            inputActions.Player.Move.canceled += HandleMove;
+            inputActions.Player.Look.performed += HandleLook;
+            inputActions.Player.Look.canceled += HandleLook;
+            inputActions.Player.Sprint.performed += ctx => isSprinting = true;
+            inputActions.Player.Sprint.canceled += ctx => isSprinting = false;
+            inputActions.Player.Inventory.performed += HandleInventory;
+            inputActions.Player.Inventory.canceled += HandleInventory;
+            inputActions.Player.Pause.performed += HandlePause;
+            inputActions.Player.Pause.canceled += HandlePause;
+            inputActions.Player.LockOn.performed += HandleLockOn;
+            inputActions.Player.DodgeForward.performed += HandleDodgeForward;
+            inputActions.Player.DodgeBackward.performed += HandleDodgeBackward;
+            inputActions.Player.DodgeLeft.performed += HandleDodgeLeft;
+            inputActions.Player.DodgeRight.performed += HandleDodgeRight;
+
+            if (attributesManager)
+            {
+                inputActions.UI.HotBarSelector.performed += attributesManager.InventoryManager.OnHotBarSelection;
+                inputActions.UI.HotBarSelector.canceled += attributesManager.InventoryManager.OnHotBarSelection;
+                inputActions.Player.Objective.performed += onObjective;
+                inputActions.Player.Objective.canceled += onObjective;
+                inputActions.UI.Skills.performed += HandleSkills;
+                inputActions.UI.Skills.canceled += HandleSkills;
+            }
+
+            // Re-enable the input system
+            inputActions.Enable();
+
+            // Reset any player-specific states or attributes
+            _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
+
+            Debug.Log("Inputs re-enabled and player state reset.");
+        }
+
+
+
+        private bool checkIsDead(){
+            return attributesManager.CurrentHealth <= 0f;
         }
 
         private void OnEnable()
@@ -511,6 +665,7 @@ namespace SG{
             Vector3 lateralVelocity = new Vector3(velocityX, 0f, velocityZ);
             return lateralVelocity.magnitude > 0;
         }
+
         private int groundContacts = 0;
 
         private void CheckGrounded()
@@ -786,7 +941,8 @@ namespace SG{
             ClampVerticalVelocity();
             PreventSliding();
             Movement();
-            HandleMovement(); // your rb.MovePosition in here
+            HandleMovement();
+            
         }
 
         
@@ -812,15 +968,22 @@ namespace SG{
                 moveDirection.Normalize();
             } else {
                 // Regular movement using player's transform when not locked on
-                moveDirection = (transform.forward * moveInput.y) + (transform.right * moveInput.x);
-                moveDirection.Normalize();
+                Vector3 forward = transform.forward;
+                Vector3 right = transform.right;
+
+                // Combine input with player's facing directions
+                moveDirection = (forward * moveInput.y) + (right * moveInput.x);
+
+                // Normalize the direction to prevent overscaling
+                if (moveDirection != Vector3.zero)
+                    moveDirection.Normalize();
             }
 
             // Handle slope movement
-            RaycastHit slopeHit;
-            if (IsOnSlope(out slopeHit)) {
-                moveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
-            }
+            // RaycastHit slopeHit;
+            // if (IsOnSlope(out slopeHit)) {
+            //     moveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
+            // }
 
             float movementSpeed = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
             Vector3 targetPosition = rb.position + moveDirection * movementSpeed * Time.deltaTime;
@@ -911,6 +1074,7 @@ namespace SG{
                 return;
             }
             // attributesManager.TakeDamage(20f);
+            attributesManager.LevelUp();
 
             // 2. Check stamina
             if (attributesManager.CurrentStamina < dodgeStaminaCost)
@@ -1016,5 +1180,6 @@ namespace SG{
                 HandleDodge(transform.right, "isDodgingRight");
             }
         }
+
     }
 }

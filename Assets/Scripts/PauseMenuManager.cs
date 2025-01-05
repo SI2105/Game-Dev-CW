@@ -69,26 +69,7 @@ public class PauseMenuManager : MonoBehaviour
     }
     public void goBackToMain()
     {
-        // Save the game before returning to the main menu
-        if (saveLoadManager != null)
-        {
-            PlayerAttributesManager player = FindObjectOfType<PlayerAttributesManager>();
-            if (player != null)
-            {
-                saveLoadManager.SaveGame(player);
-                Debug.Log("Game saved before returning to the main menu.");
-            }
-            else
-            {
-                Debug.LogWarning("PlayerAttributesManager not found! Game save skipped.");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("SaveLoadManager not found! Game save skipped.");
-        }
-
-        // Load the main menu scene
-        SceneManager.LoadScene("New menu");
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(0);
     }
 }

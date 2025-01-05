@@ -31,7 +31,12 @@ public class PCG_Generator : MonoBehaviour
 
     [SerializeField]
     private int _roomBufferSize = 2; // Minimum buffer between rooms  
+    [SerializeField]
+    private float bossRoomWidth = 20f; // Fixed width in world units
+    [SerializeField]
+    private float bossRoomDepth = 20f; // Fixed depth in world units
 
+    private bool bossRoomPlaced = false; // Track whether the boss room is placed
 
     public Transform enemy;
 
@@ -126,7 +131,7 @@ public class PCG_Generator : MonoBehaviour
                     if (!cell.floorObj.activeSelf) // Only activate if not already active
                     {
                         cell.floorObj.SetActive(true);
-                        // cell.ceilingObject.SetActive(true);
+                        cell.ceilingObject.SetActive(true);
                     }
                 }
                 else
@@ -340,22 +345,25 @@ private void SpawnPlayerAndEnemy()
         Debug.LogError("Player object is not assigned in the Inspector!");
     }
 
-    // Spawn Enemy in the middle of the first room
     if (_rooms.Count > 0)
     {
-        Room firstRoom = _rooms[0];
-        Vector3 roomCenter = firstRoom.position;
-        roomCenter.y=2f;
+        Room bossRoom = _rooms[0]; // Assume the first room is the boss room
+        Vector3 bossRoomCenter = new Vector3(
+            bossRoom.position.x + bossRoom.Width * cellSizeX / 2,
+            2f, // Adjust height as needed
+            bossRoom.position.z + bossRoom.Depth * cellSizeZ / 2
+        );
+
         if (enemy != null)
         {
-            Debug.Log($"Setting Enemy position to: {roomCenter}");
+            Debug.Log($"Setting Enemy position to: {bossRoomCenter}");
             if (enemy.TryGetComponent<Rigidbody>(out Rigidbody enemyRb))
             {
-                enemyRb.MovePosition(roomCenter);
+                enemyRb.MovePosition(bossRoomCenter);
             }
             else
             {
-                enemy.position = roomCenter;
+                enemy.position = bossRoomCenter;
             }
         }
         else
@@ -363,10 +371,7 @@ private void SpawnPlayerAndEnemy()
             Debug.LogError("Enemy object is not assigned in the Inspector!");
         }
     }
-    else
-    {
-        Debug.LogWarning("No rooms available to spawn the enemy.");
-    }
+
 }
 
     public MazeCell[,] GetMazeGrid()
@@ -645,7 +650,10 @@ private void ReplaceWallsInMaze()
     {
         int attempts = 0; // Track attempts to avoid infinite loops
         int maxAttempts = _roomCount * 10; // A safe limit for retries
-
+        if (!bossRoomPlaced)
+        {
+            PlaceBossRoom();
+        }
         while (_rooms.Count < _roomCount && attempts < maxAttempts)
         {
             // Randomly determine room size
@@ -689,6 +697,49 @@ private void ReplaceWallsInMaze()
         if (_rooms.Count < _roomCount)
         {
             Debug.LogWarning($"Only {_rooms.Count} rooms were placed out of {_roomCount} due to space constraints.");
+        }
+    }
+    private void PlaceBossRoom()
+    {
+        // Convert boss room size from world units to cell count
+        int bossRoomCellWidth = Mathf.CeilToInt(bossRoomWidth / cellSizeX);
+        int bossRoomCellDepth = Mathf.CeilToInt(bossRoomDepth / cellSizeZ);
+
+        // Randomly determine a position for the boss room
+        int x = Random.Range(1, _mazeWidth - bossRoomCellWidth - 1);
+        int z = Random.Range(1, _mazeDepth - bossRoomCellDepth - 1);
+
+        Room bossRoom = new Room(x, z, bossRoomCellWidth, bossRoomCellDepth);
+
+        // Ensure the boss room doesn't overlap with others
+        if (!DoesRoomOverlap(bossRoom))
+        {
+            _rooms.Add(bossRoom);
+
+            // Get the position of the top-left cell (or any reference cell for the room)
+            MazeCell referenceCell = _mazeGrid[x, z];
+            Vector3 basePosition = referenceCell.transform.position;
+
+            // Store a reference to the instance in the room object
+            bossRoom.position = basePosition;
+
+            // Mark cells as part of the boss room
+            for (int dx = 0; dx < bossRoomCellWidth; dx++)
+            {
+                for (int dz = 0; dz < bossRoomCellDepth; dz++)
+                {
+                    MazeCell cell = _mazeGrid[x + dx, z + dz];
+                    cell.MarkAsRoom();
+                    cell.Visit(); // Prevent maze generation here
+                }
+            }
+
+            bossRoomPlaced = true; // Mark the boss room as placed
+            Debug.Log("Boss room placed!");
+        }
+        else
+        {
+            Debug.LogWarning("Failed to place boss room due to overlap. Try increasing maze size.");
         }
     }
 

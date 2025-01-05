@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3563,9 +3563,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58972e15b8623444193ed41065ddf9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  popupPanel: {fileID: 0}
-  popupText: {fileID: 0}
-  icon: {fileID: 0}
+  popupPanel: {fileID: 1787878163}
+  popupText: {fileID: 1113635848}
+  icon: {fileID: 1149883837}
   displayDuration: 2
 --- !u!1 &163027516
 GameObject:
@@ -5156,11 +5156,11 @@ Transform:
   m_GameObject: {fileID: 251310473}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1566, y: 957, z: 0}
+  m_LocalPosition: {x: 1571, y: 957, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1973536173}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &253622816
 GameObject:
@@ -15452,11 +15452,11 @@ Transform:
   m_GameObject: {fileID: 742931237}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1566, y: 957, z: 0}
+  m_LocalPosition: {x: 1571, y: 957, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1973536173}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &747733534
 GameObject:
@@ -17510,7 +17510,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 539921441}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.11581593
+  m_Size: 0.11618584
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -19124,7 +19124,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1822819363}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.99697006
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -19924,7 +19924,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -687.70544, y: 301.9941}
+  m_AnchoredPosition: {x: -687.70557, y: 301.99417}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &958068954
@@ -20681,6 +20681,7 @@ MonoBehaviour:
   maxSlopeAngle: 90
   maxDownwardSpeed: 10
   PlayerStatsText: {fileID: 1649925683}
+  attributesManager: {fileID: 0}
   acceleration: 4
   deceleration: 10
   maxVelocityZ: 2.5
@@ -20692,10 +20693,8 @@ MonoBehaviour:
   idleTransform: {fileID: 984296600}
   cameraTransform: {fileID: 225661374}
   rotationSpeed: 0.5
-  verticalRotationSpeed: 60
   smoothRotationTime: 0.1
   inputSmoothTime: 1
-  mouseSensitivity: 2
   rotateToTargetTime: 0.25
   pauseMenuPanel: {fileID: 952227774}
   movingThreashold: 0.01
@@ -21006,7 +21005,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1387328045}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.9968162
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -25983,7 +25982,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e56a9f3411461f24da0c36e8248c7d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillName: 0
+  skillName: 2
   cost: 3
   isUnlocked: 0
   prerequisites:
@@ -26468,8 +26467,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1362101075}
   m_HandleRect: {fileID: 1362101074}
   m_Direction: 0
-  m_Value: 0
-  m_Size: 0.9999882
+  m_Value: 1
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -26563,7 +26562,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e56a9f3411461f24da0c36e8248c7d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillName: 0
+  skillName: 5
   cost: 5
   isUnlocked: 0
   prerequisites: []
@@ -33391,8 +33390,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 859907231}
   m_HandleRect: {fileID: 859907230}
   m_Direction: 0
-  m_Value: -0.000025103132
-  m_Size: 0.98635453
+  m_Value: -0.000016735421
+  m_Size: 0.9895049
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -33683,7 +33682,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1668677991}
   m_Direction: 2
   m_Value: 1.0000002
-  m_Size: 0.5429926
+  m_Size: 0.54472685
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -41398,7 +41397,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.50109863, y: -534.1249}
+  m_AnchoredPosition: {x: 0.5011902, y: -534.1249}
   m_SizeDelta: {x: 650, y: 1068.248}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1862180812
@@ -44342,7 +44341,7 @@ GameObject:
   - component: {fileID: 1973536155}
   - component: {fileID: 1973536174}
   m_Layer: 7
-  m_Name: Paladin WProp J Nordstrom (3)
+  m_Name: Sakib Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44680,6 +44679,7 @@ MonoBehaviour:
   maxSlopeAngle: 90
   maxDownwardSpeed: 10
   PlayerStatsText: {fileID: 1862180812}
+  attributesManager: {fileID: 0}
   acceleration: 4
   deceleration: 10
   maxVelocityZ: 2.5
@@ -44691,10 +44691,8 @@ MonoBehaviour:
   idleTransform: {fileID: 1973536173}
   cameraTransform: {fileID: 1120253802}
   rotationSpeed: 0.5
-  verticalRotationSpeed: 60
   smoothRotationTime: 0.1
   inputSmoothTime: 1
-  mouseSensitivity: 2
   rotateToTargetTime: 0.25
   pauseMenuPanel: {fileID: 219862950}
   movingThreashold: 0.01
@@ -44784,6 +44782,8 @@ Transform:
   - {fileID: 890559041}
   - {fileID: 113254217}
   - {fileID: 497413238}
+  - {fileID: 251310475}
+  - {fileID: 742931239}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1973536174
@@ -44805,7 +44805,7 @@ MonoBehaviour:
   scanFrequency: 30
   layers:
     serializedVersion: 2
-    m_Bits: 4096
+    m_Bits: 1024
   occlusionLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -46651,7 +46651,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e56a9f3411461f24da0c36e8248c7d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillName: 0
+  skillName: 3
   cost: 2
   isUnlocked: 0
   prerequisites: []
@@ -46935,7 +46935,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0.000012688843, y: 374.99194}
+  m_AnchoredPosition: {x: -0.000062768326, y: 374.9921}
   m_SizeDelta: {x: -1, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &2077370676
@@ -59558,8 +59558,6 @@ SceneRoots:
   - {fileID: 3211980488173227024}
   - {fileID: 984296600}
   - {fileID: 1973536173}
-  - {fileID: 251310475}
-  - {fileID: 742931239}
   - {fileID: 804675136}
   - {fileID: 517958137}
   - {fileID: 719515849}

@@ -92,9 +92,8 @@ namespace SG
             Endurance = data.Endurance;
             Intelligence = data.Intelligence;
 
-            Debug.Log("Player attributes updated from saved data.");
+            RecalculateAttributes();
         }
-
         //void OnEnable()
         //{
         //    Skill.OnSkillUnlocked += HandleSkillUnlocked;
@@ -606,6 +605,56 @@ namespace SG
             }
         }
         public event Action<int> OnLevelChanged;
+
+        /// <summary>
+        /// Adjusts player attributes based on the difficulty multiplier.
+        /// </summary>
+        /// <param name="difficulty">The difficulty level ("Normal" or "Hardcore").</param>
+        public void SetDifficultyMultiplier(string difficulty)
+        {
+            float healthMultiplier = 1f;
+            float staminaMultiplier = 1f;
+            float damageMultiplier = 1f;
+            float regenMultiplier = 1f;
+
+            switch (difficulty)
+            {
+                case "Normal":
+                    healthMultiplier = 1.0f;
+                    staminaMultiplier = 1.0f;
+                    damageMultiplier = 1.0f;
+                    regenMultiplier = 1.0f;
+                    break;
+
+                case "Hardcore":
+                    healthMultiplier = 0.8f;   // Reduce health by 20%
+                    staminaMultiplier = 0.8f; // Reduce stamina by 20%
+                    damageMultiplier = 0.9f;  // Reduce damage by 10%
+                    regenMultiplier = 0.7f;   // Reduce regen rates by 30%
+                    break;
+
+                default:
+                    Debug.LogWarning($"Unknown difficulty: {difficulty}. Defaulting to Normal.");
+                    break;
+            }
+
+            // Apply multipliers to attributes
+            MaxHealth *= healthMultiplier;
+            CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth); // Adjust current health to fit new max
+            MaxStamina *= staminaMultiplier;
+            CurrentStamina = Mathf.Clamp(CurrentStamina, 0, MaxStamina); // Adjust current stamina to fit new max
+            BaseDamage *= damageMultiplier;
+            StaminaRegenRate *= regenMultiplier;
+            HealthRegenRate *= regenMultiplier;
+
+            // Log changes
+            Debug.Log($"Difficulty set to {difficulty}. Attributes adjusted accordingly:\n" +
+                    $"- MaxHealth: {MaxHealth}\n" +
+                    $"- MaxStamina: {MaxStamina}\n" +
+                    $"- BaseDamage: {BaseDamage}\n" +
+                    $"- StaminaRegenRate: {StaminaRegenRate}\n" +
+                    $"- HealthRegenRate: {HealthRegenRate}");
+        }
 
         public void LevelUp()
         {

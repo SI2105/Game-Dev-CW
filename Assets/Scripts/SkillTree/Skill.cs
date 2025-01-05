@@ -58,6 +58,7 @@ namespace SG
                 //Trigger the even when the skill is unlocked, used on the player end to make it take effect
 
                 OnSkillUnlocked?.Invoke(skillName);
+                Debug.Log("Skill Unlocked: " + skillName);
                 UpdateUI();
             }
         }

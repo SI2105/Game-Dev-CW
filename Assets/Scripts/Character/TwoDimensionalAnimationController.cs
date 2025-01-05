@@ -79,7 +79,7 @@ namespace SG{
 
         #region Player Stats Display
         [SerializeField] private TextMeshProUGUI PlayerStatsText;
-        private PlayerAttributesManager attributesManager;
+        public PlayerAttributesManager attributesManager;
 
         public void UpdatePlayerStats() {
             if (PlayerStatsText != null) {
@@ -124,10 +124,10 @@ namespace SG{
 
         [Header("Rotation Settings")]
         [SerializeField] private float rotationSpeed = 10f;
-        [SerializeField] private float verticalRotationSpeed = 180f;
+        public float verticalRotationSpeed { get; set; } = 180f;
         [SerializeField] private float smoothRotationTime = 0.05f;
         [SerializeField] private float inputSmoothTime = 0.02f;
-        [SerializeField] private float mouseSensitivity = 2.0f;
+        [SerializeField] public float mouseSensitivity  { get; set; } = 2.0f;
         public float RotationMismatch {get; private set;} = 0f;
         public bool IsRotatingToTarget {get; private set;} = false;
         public float rotateToTargetTime = 0.25f;
@@ -879,7 +879,8 @@ namespace SG{
             ClampVerticalVelocity();
             PreventSliding();
             Movement();
-            HandleMovement(); // your rb.MovePosition in here
+            HandleMovement();
+            
         }
 
         
@@ -905,15 +906,22 @@ namespace SG{
                 moveDirection.Normalize();
             } else {
                 // Regular movement using player's transform when not locked on
-                moveDirection = (transform.forward * moveInput.y) + (transform.right * moveInput.x);
-                moveDirection.Normalize();
+                Vector3 forward = transform.forward;
+                Vector3 right = transform.right;
+
+                // Combine input with player's facing directions
+                moveDirection = (forward * moveInput.y) + (right * moveInput.x);
+
+                // Normalize the direction to prevent overscaling
+                if (moveDirection != Vector3.zero)
+                    moveDirection.Normalize();
             }
 
             // Handle slope movement
-            RaycastHit slopeHit;
-            if (IsOnSlope(out slopeHit)) {
-                moveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
-            }
+            // RaycastHit slopeHit;
+            // if (IsOnSlope(out slopeHit)) {
+            //     moveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
+            // }
 
             float movementSpeed = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
             Vector3 targetPosition = rb.position + moveDirection * movementSpeed * Time.deltaTime;

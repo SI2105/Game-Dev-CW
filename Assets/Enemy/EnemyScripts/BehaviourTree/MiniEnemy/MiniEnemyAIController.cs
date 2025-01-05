@@ -77,6 +77,7 @@ public class MiniEnemyAIController : MonoBehaviour
         if(currentHealth<0.0f){
             currentHealth=0.0f;
         }
+        print("health: " + currentHealth);
     }
 
 

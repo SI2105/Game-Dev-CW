@@ -73,6 +73,11 @@ public class MiniEnemyAIController : MonoBehaviour
         audio_controller.playWalk();
     }
 
+   private void Die()
+    {
+        Destroy(this.gameObject);
+    }
+    
     private void playAttack(){
         audio_controller.playAttack();
     }

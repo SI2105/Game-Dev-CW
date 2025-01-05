@@ -376,9 +376,10 @@ GameObject:
   - component: {fileID: 5574799990821945158}
   - component: {fileID: 8109542009000489584}
   - component: {fileID: 3681924685660898564}
+  - component: {fileID: 3828679493163487794}
   m_Layer: 0
   m_Name: Ganfaul M Aure
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -462,12 +463,14 @@ MonoBehaviour:
   wall_sensor: {fileID: 0}
   lockOnSensor: {fileID: 0}
   attackSensor: {fileID: 0}
+  hudManager: {fileID: 0}
+  enemyName: '                Ganfaul'
   isPlayedSensed: 0
   isMusicPlaying: 0
   isRoaring: 0
   audio_controller: {fileID: 0}
   enemyTransform: {fileID: 0}
-  enemyCurrentHealth: 10
+  enemyCurrentHealth: 100
   lowHealthThreshold: 50
   senseDistance: 0
   playerState: {fileID: 0}
@@ -584,6 +587,21 @@ MonoBehaviour:
   roarSound: {fileID: 0}
   enemyBackgroundClip: {fileID: 8300000, guid: 4622da3e0099f4a05b16f2dca7573f39, type: 3}
   fadeDuration: 2
+--- !u!114 &3828679493163487794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 778029418579591857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 685d8ac5848d447d5951bfd909564e26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EnemyHealthBar: {fileID: 0}
+  EnemyName: {fileID: 0}
+  enemyBar: {fileID: 0}
 --- !u!1 &1282690920939605867
 GameObject:
   m_ObjectHideFlags: 0

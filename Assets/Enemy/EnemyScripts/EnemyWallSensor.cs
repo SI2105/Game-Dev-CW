@@ -36,7 +36,6 @@ public class EnemyWallSensor : MonoBehaviour
         for(int i=0; i<count; ++i){
             GameObject obj = colliders[i].gameObject;
             if(isInSight(obj)){
-                Debug.LogError("Wall detected");
                 objects.Add(obj);
             }
         }

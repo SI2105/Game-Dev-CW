@@ -651,7 +651,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -5.1871424, y: 817.0001}
+  m_AnchoredPosition: {x: -5.1871424, y: 817.0002}
   m_SizeDelta: {x: 5.1871, y: 1000}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &36988176
@@ -12721,15 +12721,15 @@ PrefabInstance:
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[7]'
       value: 
-      objectReference: {fileID: 7715629861314003715, guid: a9b2a2175804f644db0708cdb489d1c4, type: 3}
+      objectReference: {fileID: 8288261727852810387, guid: 69b65844224074e57aa1e8032612c9f9, type: 3}
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[8]'
       value: 
-      objectReference: {fileID: 145956313539727972, guid: fc0926d2b2492c4488b3d253e2b24279, type: 3}
+      objectReference: {fileID: 8288261727852810387, guid: 69b65844224074e57aa1e8032612c9f9, type: 3}
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[9]'
       value: 
-      objectReference: {fileID: 3391153055627780824, guid: 295585f08c4d1cc41978183b442c5d76, type: 3}
+      objectReference: {fileID: 8288261727852810387, guid: 69b65844224074e57aa1e8032612c9f9, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13024,6 +13024,76 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0
+--- !u!1001 &648139163
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6995876
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.71454686
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 91.212
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2211139671561190733, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_Name
+      value: Skeletonzombie T Avelange
+      objectReference: {fileID: 0}
+    - target: {fileID: 2211139671561190733, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6611173696106219451, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: playerTransform
+      value: 
+      objectReference: {fileID: 697972143}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+--- !u!4 &648139164 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+  m_PrefabInstance: {fileID: 648139163}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &650840509
 GameObject:
   m_ObjectHideFlags: 0
@@ -15721,8 +15791,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 420662290}
   m_HandleRect: {fileID: 420662289}
   m_Direction: 0
-  m_Value: 1.0000088
-  m_Size: 0.9755417
+  m_Value: 1.000003
+  m_Size: 0.9755416
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -17134,8 +17204,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 308218381}
   m_HandleRect: {fileID: 308218380}
   m_Direction: 2
-  m_Value: -0.000000112059666
-  m_Size: 0.18283589
+  m_Value: -0.00000011205966
+  m_Size: 0.18298726
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -19132,6 +19202,7 @@ MonoBehaviour:
   playerLevelText: {fileID: 1067575656}
   selectorDot: {fileID: 0}
   onHit: {fileID: 0}
+  LevelUpText: {fileID: 0}
   icon: {fileID: 2139371824}
   allAttributesBoostTimerText: {fileID: 659899295}
   strengthBoostTimerText: {fileID: 0}
@@ -20823,77 +20894,6 @@ Transform:
   - {fileID: 247263487}
   m_Father: {fileID: 17938031}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1377980539
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.07
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.28
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.86
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2211139671561190733, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_Name
-      value: Skeletonzombie T Avelange
-      objectReference: {fileID: 0}
-    - target: {fileID: 4053972849754308996, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_UseGravity
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6611173696106219451, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: playerTransform
-      value: 
-      objectReference: {fileID: 697972143}
-    m_RemovedComponents:
-    - {fileID: 4053972849754308996, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
---- !u!4 &1377980540 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-  m_PrefabInstance: {fileID: 1377980539}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1378149688
 GameObject:
   m_ObjectHideFlags: 0
@@ -33825,7 +33825,7 @@ MonoBehaviour:
   _archwayWithDoorPrefab: {fileID: 586035234153134435, guid: a38f771191aac35468a677efeaba8cca, type: 3}
   _plainWallPrefab: {fileID: 8568622115684081567, guid: 8d84db6b0a32c904d9f84753871ea95f, type: 3}
   _roomBufferSize: 2
-  enemy: {fileID: 1377980540}
+  enemy: {fileID: 648139164}
   _maze_configuration: 6
   _roomCount: 1
   _minRoomSize: 3
@@ -33840,7 +33840,8 @@ MonoBehaviour:
   zombieSpawnRadius: 20
   zombieDespawnRadius: 25
   maxZombies: 15
-  zombieSpawnInterval: 60
+  zombieSpawnInterval: 10
+  level: 0
 --- !u!154 &1822333673
 TerrainCollider:
   m_ObjectHideFlags: 0
@@ -42893,4 +42894,4 @@ SceneRoots:
   - {fileID: 697972143}
   - {fileID: 618961211}
   - {fileID: 1935845666}
-  - {fileID: 1377980539}
+  - {fileID: 648139163}

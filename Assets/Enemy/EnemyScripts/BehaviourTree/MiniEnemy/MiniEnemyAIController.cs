@@ -69,10 +69,30 @@ public class MiniEnemyAIController : MonoBehaviour
         hit=false;
     }
 
+    //method for taking damage to be used by player class
+    public void takeDamage(float damage){
+
+        currentHealth-=damage;
+        //check if health is below 0 and if so reset it
+        if(currentHealth<0.0f){
+            currentHealth=0.0f;
+        }
+    }
+
+
     private void playWalk(){
         audio_controller.playWalk();
     }
 
+   private void Die()
+    {
+        SG.PlayerAttributesManager pam = player.GetComponent<SG.PlayerAttributesManager>();
+
+        pam.OnEnemyDefeated(false);
+
+        Destroy(this.gameObject);
+    }
+    
     private void playAttack(){
         audio_controller.playAttack();
     }

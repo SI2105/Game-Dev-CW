@@ -17,4 +17,6 @@ MonoBehaviour:
   icon: {fileID: 1833180537, guid: efe8b13bbb0a0664fbbd7891ec6def78, type: 3}
   prefab: {fileID: 1000012970591572, guid: 7cafb89b5a0f61f479d0a748962abbbc, type: 3}
   Stackable: 1
+  damage: 0
   IsPotion: 1
+  healAmount: 20

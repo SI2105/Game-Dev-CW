@@ -79,7 +79,7 @@ namespace SG{
 
         #region Player Stats Display
         [SerializeField] private TextMeshProUGUI PlayerStatsText;
-        private PlayerAttributesManager attributesManager;
+        public PlayerAttributesManager attributesManager;
 
         public void UpdatePlayerStats() {
             if (PlayerStatsText != null) {
@@ -95,12 +95,12 @@ namespace SG{
                 $"<align=left>Strength:<line-height=0>\n<align=right>{attributesManager.Strength}<line-height=1em>\n" +
                 $"<align=left>Agility:<line-height=0>\n<align=right>{attributesManager.Agility}<line-height=1em>\n" +
                 $"<align=left>Endurance:<line-height=0>\n<align=right>{attributesManager.Endurance}<line-height=1em>\n" +
-
+                $"<align=left>Intelligence:<line-height=0>\n<align=right>{attributesManager.Intelligence}<line-height=1em>\n" +
                 $"<align=left>Base Damage:<line-height=0>\n<align=right>{attributesManager.BaseDamage}<line-height=1em>\n" +
                 $"<align=left>Critical Hit Chance:<line-height=0>\n<align=right>{attributesManager.CriticalHitChance}<line-height=1em>\n" +
                 $"<align=left>Critical Hit Multiplier:<line-height=0>\n<align=right>{attributesManager.CriticalHitMultiplier}<line-height=1em>\n" +
                 $"<align=left>Attack Speed:<line-height=0>\n<align=right>{attributesManager.AttackSpeed}<line-height=1em>\n" +
-              
+                $"<align=left>Armor:<line-height=0>\n<align=right>{attributesManager.Armor}<line-height=1em>\n" +
                 $"<align=left>Block Chance:<line-height=0>\n<align=right>{attributesManager.BlockChance}<line-height=1em>\n" +
                 $"<align=left>Dodge Chance:<line-height=0>\n<align=right>{attributesManager.DodgeChance}<line-height=1em>\n\n";
         }
@@ -124,10 +124,10 @@ namespace SG{
 
         [Header("Rotation Settings")]
         [SerializeField] private float rotationSpeed = 10f;
-        [SerializeField] private float verticalRotationSpeed = 180f;
+        public float verticalRotationSpeed { get; set; } = 180f;
         [SerializeField] private float smoothRotationTime = 0.05f;
         [SerializeField] private float inputSmoothTime = 0.02f;
-        [SerializeField] private float mouseSensitivity = 2.0f;
+        [SerializeField] public float mouseSensitivity  { get; set; } = 2.0f;
         public float RotationMismatch {get; private set;} = 0f;
         public bool IsRotatingToTarget {get; private set;} = false;
         public float rotateToTargetTime = 0.25f;
@@ -219,26 +219,12 @@ namespace SG{
         private CinemachinePOV mainCamPov;  // reference to your main camera's POV
         public CinemachineVirtualCamera mainVC;
 
-        #region KeybindPage
-        private GameObject KeybindsPanel;
-        private void HandleKeybinds(InputAction.CallbackContext context)
-        {
-            // Toggle the visibility of the KeybindsPanel
-            if (KeybindsPanel != null)
-            {
-                KeybindsPanel.SetActive(!KeybindsPanel.activeSelf);
-            }
-        }
-
-        #endregion
-        // e.g. in Awake/Start:
+// e.g. in Awake/Start:
 
         private void Awake()
         {
             inputActions = new GameDevCW();
 
-            KeybindsPanel =GameObject.Find("KeybindsPanel");
-            KeybindsPanel.SetActive(false);
             // Subscribe to the Move action's performed and canceled events
             inputActions.Player.Move.performed += HandleMove;
             inputActions.Player.Move.canceled += HandleMove;
@@ -275,8 +261,7 @@ namespace SG{
                 inputActions.Player.Objective.canceled += onObjective;
                 inputActions.UI.Skills.performed += HandleSkills;
                 inputActions.UI.Skills.canceled += HandleSkills;
-                inputActions.UI.Keybinds.performed += HandleKeybinds;
-                inputActions.UI.Keybinds.canceled += HandleKeybinds;
+
                 UpdatePlayerStats();
             }
         }

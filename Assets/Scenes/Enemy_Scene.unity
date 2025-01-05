@@ -4648,7 +4648,7 @@ Transform:
   m_GameObject: {fileID: 401415811}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 1, z: 4}
+  m_LocalPosition: {x: 15, y: 1, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6894,6 +6894,7 @@ MonoBehaviour:
   playerLevelText: {fileID: 906776179}
   selectorDot: {fileID: 0}
   onHit: {fileID: 0}
+  LevelUpText: {fileID: 0}
   icon: {fileID: 555919287}
   allAttributesBoostTimerText: {fileID: 1706127372}
   strengthBoostTimerText: {fileID: 0}
@@ -6963,7 +6964,7 @@ Transform:
   m_GameObject: {fileID: 588471259}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0061678886, y: 1.6625295, z: 0.006143093}
+  m_LocalPosition: {x: -0.006167412, y: 1.6625295, z: 0.006143093}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7299,7 +7300,7 @@ Transform:
   m_GameObject: {fileID: 602962735}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0061678886, y: 1.6625295, z: 0.006143093}
+  m_LocalPosition: {x: -0.006167412, y: 1.6625295, z: 0.006143093}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7407,7 +7408,7 @@ Transform:
   m_GameObject: {fileID: 607023317}
   serializedVersion: 2
   m_LocalRotation: {x: -0.000000007450581, y: 7.2333255e-12, z: 1.0572876e-10, w: 1}
-  m_LocalPosition: {x: -0.0050001107, y: 0.17799993, z: 0.05700022}
+  m_LocalPosition: {x: -0.004999634, y: 0.17799993, z: 0.05700022}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8054,6 +8055,10 @@ PrefabInstance:
     - target: {fileID: 2662363423373375942, guid: 0764d59664510486da5605185137b21d, type: 3}
       propertyPath: m_Name
       value: Mutant
+      objectReference: {fileID: 0}
+    - target: {fileID: 2662363423373375942, guid: 0764d59664510486da5605185137b21d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3438865282261181308, guid: 0764d59664510486da5605185137b21d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10196,7 +10201,7 @@ Transform:
   m_GameObject: {fileID: 839627940}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0061678886, y: 1.6625295, z: 0.006143093}
+  m_LocalPosition: {x: -0.006167412, y: 1.6625295, z: 0.006143093}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -24793,6 +24798,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Prisoner B Styperek
       objectReference: {fileID: 0}
+    - target: {fileID: 1872783855188931281, guid: eb655a5461e8841e8972d162d10cea9f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7604346590043265978, guid: eb655a5461e8841e8972d162d10cea9f, type: 3}
       propertyPath: player
       value: 
@@ -24853,6 +24862,10 @@ PrefabInstance:
     - target: {fileID: 1785754302362930377, guid: 7765f2a87e0c041e2b62e588f00a4c2e, type: 3}
       propertyPath: m_Name
       value: Zombiegirl W Kurniawan
+      objectReference: {fileID: 0}
+    - target: {fileID: 1785754302362930377, guid: 7765f2a87e0c041e2b62e588f00a4c2e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3294827374368558643, guid: 7765f2a87e0c041e2b62e588f00a4c2e, type: 3}
       propertyPath: player
@@ -24915,6 +24928,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ganfaul M Aure
       objectReference: {fileID: 0}
+    - target: {fileID: 778029418579591857, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3828679493163487794, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
       propertyPath: enemyBar
       value: 
@@ -24947,6 +24964,10 @@ PrefabInstance:
     - target: {fileID: 8687916375194475, guid: 5be63a37b960245cf933ba043d1557c8, type: 3}
       propertyPath: m_Name
       value: Maynard
+      objectReference: {fileID: 0}
+    - target: {fileID: 8687916375194475, guid: 5be63a37b960245cf933ba043d1557c8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 816573414559048145, guid: 5be63a37b960245cf933ba043d1557c8, type: 3}
       propertyPath: m_LocalPosition.x

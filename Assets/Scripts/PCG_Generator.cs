@@ -87,7 +87,6 @@ public class PCG_Generator : MonoBehaviour
         foreach (GameObject obj in allObjects)
         {
             if (obj == null) continue; // Skip if object is destroyed
-
             float distanceToPlayer = Vector3.Distance(playerTransform.position, obj.transform.position);
 
             // Activate objects within the radius, deactivate objects outside
@@ -113,7 +112,6 @@ public class PCG_Generator : MonoBehaviour
             {
                 MazeCell cell =_mazeGrid[x, z];
               
-
                 GameObject floor = cell.floorObj;
 
                 if (floor == null) continue; // Skip if object is destroyed
@@ -126,7 +124,7 @@ public class PCG_Generator : MonoBehaviour
                     if (!cell.floorObj.activeSelf) // Only activate if not already active
                     {
                         cell.floorObj.SetActive(true);
-                        // cell.ceilingObject.SetActive(true);
+                        cell.ceilingObject.SetActive(true);
                     }
                 }
                 else

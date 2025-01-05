@@ -205,6 +205,7 @@ GameObject:
   - component: {fileID: 7604346590043265978}
   - component: {fileID: 2883613503513943226}
   - component: {fileID: 4274401428162581288}
+  - component: {fileID: 6637538196429910257}
   m_Layer: 0
   m_Name: Prisoner B Styperek
   m_TagString: Zombie
@@ -315,6 +316,29 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!136 &6637538196429910257
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1872783855188931281}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &1889576373157007754
 GameObject:
   m_ObjectHideFlags: 0

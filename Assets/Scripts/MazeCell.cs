@@ -100,7 +100,6 @@ public class MazeCell : MonoBehaviour
         newCeiling.transform.Rotate(0, 0, -180f);
 
         ceilingObject=newCeiling;
-        ceilingObject.SetActive(false);
     }
 
    // Replace the floor object with a single random tile
@@ -110,9 +109,11 @@ public class MazeCell : MonoBehaviour
 
         // Store the position and size of the current floor object
         Vector3 floorPosition = floorObject.transform.position;
+
+        Vector3 adjustedPosition = new Vector3(floorPosition.x, floorPosition.y, floorPosition.z+2);
         Vector3 floorScale = floorObject.transform.localScale;
 
-        Vector3 adjustedScale = new Vector3(floorScale.x / 4.8f, 1f, floorScale.z / 4.8f); // Adjust x and z, leave y as default
+        Vector3 adjustedScale = new Vector3(floorScale.x / 10f, 0.3f, floorScale.z / 10f); // Adjust x and z, leave y as default
 
         // Destroy the existing floor object
         Destroy(floorObject);
@@ -121,11 +122,11 @@ public class MazeCell : MonoBehaviour
         GameObject randomTilePrefab = GetRandomTile();
 
         // Instantiate the new tile at the same position
-        GameObject newTile = Instantiate(randomTilePrefab, floorPosition, Quaternion.identity, this.transform);
+        GameObject newTile = Instantiate(randomTilePrefab, adjustedPosition, Quaternion.identity, this.transform);
 
         // Apply the adjusted scale, preserving the prefab's y scale
         Vector3 tileScale = newTile.transform.localScale;
-        newTile.transform.localScale = new Vector3(adjustedScale.x, tileScale.y/3f, adjustedScale.z);
+        newTile.transform.localScale = new Vector3(adjustedScale.x, adjustedScale.y, adjustedScale.z);
 
         
         floorObj=newTile;

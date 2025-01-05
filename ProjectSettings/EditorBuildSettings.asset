@@ -31,9 +31,12 @@ EditorBuildSettings:
     guid: cd003b705a0374adabae1f513b336f7b
   - enabled: 0
     path: Assets/Scenes/learnAnimations.unity
-    guid: 181578b4484005845a10aaca720c1660
-  - enabled: 1
+    guid: b331f44de75d92241bae309bb16fa926
+  - enabled: 0
     path: Assets/Scenes/DevScene_Andrej NEW.unity
     guid: 6b10661b666e1495e85cd738c3ee4951
+  - enabled: 1
+    path: Assets/Scenes/BURAK.unity
+    guid: 7ce1412f706973c45b0b7f2e813db89d
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

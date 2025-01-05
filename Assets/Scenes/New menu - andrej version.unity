@@ -9520,11 +9520,11 @@ MonoBehaviour:
   texturemedtextLINE: {fileID: 464209956}
   texturehightextLINE: {fileID: 1962842757}
   difficultyeasyttext: {fileID: 0}
-  difficultyeasytextLINE: {fileID: 0}
+  difficultyeasytextLINE: {fileID: 464041222}
   difficultynormaltext: {fileID: 0}
   difficultynormaltextLINE: {fileID: 1210451264}
   difficultyadvancedtext: {fileID: 0}
-  difficultyadvancedtextLINE: {fileID: 0}
+  difficultyadvancedtextLINE: {fileID: 1804393699}
   difficultyhardcoretext: {fileID: 0}
   difficultyhardcoretextLINE: {fileID: 76727889}
   musicSlider: {fileID: 2077733323}

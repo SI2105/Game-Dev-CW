@@ -2716,8 +2716,8 @@ MonoBehaviour:
   probabilityOfLightningSummer: 0.1
   probabilityOfLightningFall: 0
   probabilityOfLightningWinter: 0.8
-  probabilityOfSandstormSpring: 0.3
-  probabilityOfSandstormSummer: 0.6
+  probabilityOfSandstormSpring: 0
+  probabilityOfSandstormSummer: 0
   probabilityOfSandstormFall: 0
   probabilityOfSandstormWinter: 0
   probabilityOfFogSpring: 0.2
@@ -5038,7 +5038,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 249935248}
   m_Direction: 0
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.9999983
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -5991,8 +5991,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2002194613}
   m_HandleRect: {fileID: 2002194612}
   m_Direction: 2
-  m_Value: 1.0000002
-  m_Size: 0.54472685
+  m_Value: 1.0000007
+  m_Size: 0.54472595
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -23329,8 +23329,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 232345625}
   - {fileID: 1402701810}
+  - {fileID: 232345625}
   - {fileID: 1025170502}
   - {fileID: 1779986150}
   - {fileID: 158985683}
@@ -26748,6 +26748,18 @@ PrefabInstance:
       propertyPath: playerTransform
       value: 
       objectReference: {fileID: 1137174264}
+    - target: {fileID: 4344648472805752734, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: enemyCurrentHealth
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 4344648472805752734, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: lowHealthThreshold
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 4344648472805752734, guid: 10ad90d12d48a4062914063384cd4335, type: 3}
+      propertyPath: enemyStartingHealth
+      value: 1000
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -29743,7 +29755,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -687.7053, y: 301.99405}
+  m_AnchoredPosition: {x: -687.705, y: 301.9939}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1095947041
@@ -37598,7 +37610,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1402701810
 RectTransform:
   m_ObjectHideFlags: 0
@@ -37607,7 +37619,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1402701809}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -6.124331}
+  m_LocalPosition: {x: 0, y: 0, z: -6.1243324}
   m_LocalScale: {x: 2.2351599, y: 2.2351599, z: 2.2351599}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -37616,7 +37628,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 1.1845703, y: 0}
+  m_AnchoredPosition: {x: 1.1845703, y: 0.000061035156}
   m_SizeDelta: {x: -1061, y: -594.1106}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1402701811
@@ -51122,7 +51134,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -261.01733, y: 310.4941}
+  m_AnchoredPosition: {x: -261.01733, y: 310.4939}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1598453711
@@ -56437,8 +56449,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1704907770}
   m_HandleRect: {fileID: 1704907769}
   m_Direction: 0
-  m_Value: -0.000033471122
-  m_Size: 0.98950493
+  m_Value: -0.00005439012
+  m_Size: 0.989503
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -56763,22 +56775,24 @@ MonoBehaviour:
   _archwayWithDoorPrefab: {fileID: 8644115839786080152, guid: 4963b55652180e946b10fda98efef25e, type: 3}
   _plainWallPrefab: {fileID: 1159351990771520630, guid: 91ad7bf144749b04ab484a680630a040, type: 3}
   _roomBufferSize: 2
+  bossRoomWidth: 20
+  bossRoomDepth: 20
   enemy: {fileID: 973922687}
   _maze_configuration: 6
   _roomCount: 1
   _minRoomSize: 2
-  _maxRoomSize: 5
+  _maxRoomSize: 2
   _mazeCellPrefab: {fileID: 618961212}
-  _mazeWidth: 10
-  _mazeDepth: 10
-  activationRadius: 60
+  _mazeWidth: 15
+  _mazeDepth: 15
+  activationRadius: 10
   playerTransform: {fileID: 1137174264}
   terrain: {fileID: 1822333674}
   zombiePrefab: {fileID: 1785754302362930377, guid: 7765f2a87e0c041e2b62e588f00a4c2e, type: 3}
-  zombieSpawnRadius: 45
-  zombieDespawnRadius: 45
-  maxZombies: 15
-  zombieSpawnInterval: 7
+  zombieSpawnRadius: 5
+  zombieDespawnRadius: 5
+  maxZombies: 5
+  zombieSpawnInterval: 10
   level: 0
 --- !u!154 &1822333673
 TerrainCollider:
@@ -63439,7 +63453,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 440216054}
   m_Direction: 2
   m_Value: 1.0000001
-  m_Size: 0.11618584
+  m_Size: 0.11618561
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -67533,7 +67547,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.50112915, y: -534.12445}
+  m_AnchoredPosition: {x: 0.5013428, y: -534.12445}
   m_SizeDelta: {x: 650, y: 1068.248}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2109005291
@@ -68307,7 +68321,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2023247463}
   m_Direction: 2
   m_Value: 1
-  m_Size: 1
+  m_Size: 0.99999815
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

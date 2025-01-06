@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using SlimUI.ModernMenu;
 
-public class PlayerController : MonoBehaviour
+public class MouseController : MonoBehaviour
 {
     private Vector2 lookInput;
     private float pitch; // X-axis rotation

@@ -844,7 +844,7 @@ namespace SG{
                 return;
             }
             
-            // lookInput = context.ReadValue<Vector2>();
+            lookInput = context.ReadValue<Vector2>();
             // Read raw input
             Vector2 rawLookInput = context.ReadValue<Vector2>();
 

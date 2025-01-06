@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.AI;
 public class MiniEnemyAIController : MonoBehaviour
 {
-
     private NavMeshAgent miniEnemyAgent;
     private Animator miniEnemyAnimator;
     public Transform player;

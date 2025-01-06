@@ -651,7 +651,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -5.1871424, y: 817.0002}
+  m_AnchoredPosition: {x: -5.1871424, y: 817.00006}
   m_SizeDelta: {x: 5.1871, y: 1000}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &36988176
@@ -12693,23 +12693,23 @@ PrefabInstance:
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[0]'
       value: 
-      objectReference: {fileID: 3859014342223311775, guid: 639111cce55d71740a498547e1e1ca4a, type: 3}
+      objectReference: {fileID: 2416784190440744716, guid: 8e17e6f92c38af9498ce41a76692093b, type: 3}
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[1]'
       value: 
-      objectReference: {fileID: 3391153055627780824, guid: 295585f08c4d1cc41978183b442c5d76, type: 3}
+      objectReference: {fileID: 7012863081766717096, guid: 1262945c5d623fa44b4692a337482779, type: 3}
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[2]'
       value: 
-      objectReference: {fileID: 4080000227936717014, guid: 298e6726e6963fe45b4dfc0da39f36ff, type: 3}
+      objectReference: {fileID: 1529111584686818173, guid: fc9550a368deb4ae287a4fb2e1ec2a2a, type: 3}
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[3]'
       value: 
-      objectReference: {fileID: 7073585760438575414, guid: 250544ed5dc777040adf182d1c97d7cb, type: 3}
+      objectReference: {fileID: 7804705617808966546, guid: 0835aacb563144f25a309c468923c942, type: 3}
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[4]'
       value: 
-      objectReference: {fileID: 7715629861314003715, guid: a9b2a2175804f644db0708cdb489d1c4, type: 3}
+      objectReference: {fileID: 1439363143675212437, guid: 9fa3d5e6eb61f4e028f457515ab378b3, type: 3}
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[5]'
       value: 
@@ -12717,7 +12717,7 @@ PrefabInstance:
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[6]'
       value: 
-      objectReference: {fileID: 1439363143675212437, guid: 9fa3d5e6eb61f4e028f457515ab378b3, type: 3}
+      objectReference: {fileID: 1746134095381147815, guid: d52e1bde9d5f88447b0d529376e76068, type: 3}
     - target: {fileID: 8894952092312843540, guid: a7a75b288c71447299b1b401ef46de10, type: 3}
       propertyPath: 'tilePrefabs.Array.data[7]'
       value: 
@@ -12925,15 +12925,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5478496307011490295, guid: 2666b8d01aa9b487c91d0d112534ee40, type: 3}
       propertyPath: m_LocalScale.x
-      value: 17.2
+      value: 5.8
       objectReference: {fileID: 0}
     - target: {fileID: 5478496307011490295, guid: 2666b8d01aa9b487c91d0d112534ee40, type: 3}
       propertyPath: m_LocalScale.z
-      value: 17.2
+      value: 5.8
       objectReference: {fileID: 0}
     - target: {fileID: 5478496307011490295, guid: 2666b8d01aa9b487c91d0d112534ee40, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 25.300003
+      value: -73.4
       objectReference: {fileID: 0}
     - target: {fileID: 5478496307011490295, guid: 2666b8d01aa9b487c91d0d112534ee40, type: 3}
       propertyPath: m_LocalPosition.y
@@ -12941,7 +12941,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5478496307011490295, guid: 2666b8d01aa9b487c91d0d112534ee40, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 22.700005
+      value: -75.4
       objectReference: {fileID: 0}
     - target: {fileID: 5478496307011490295, guid: 2666b8d01aa9b487c91d0d112534ee40, type: 3}
       propertyPath: m_LocalRotation.w
@@ -13024,76 +13024,6 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0
---- !u!1001 &648139163
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.07
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.6995876
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.71454686
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 91.212
-      objectReference: {fileID: 0}
-    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2211139671561190733, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_Name
-      value: Skeletonzombie T Avelange
-      objectReference: {fileID: 0}
-    - target: {fileID: 2211139671561190733, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6611173696106219451, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-      propertyPath: playerTransform
-      value: 
-      objectReference: {fileID: 697972143}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
---- !u!4 &648139164 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
-  m_PrefabInstance: {fileID: 648139163}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &650840509
 GameObject:
   m_ObjectHideFlags: 0
@@ -17204,8 +17134,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 308218381}
   m_HandleRect: {fileID: 308218380}
   m_Direction: 2
-  m_Value: -0.00000011205966
-  m_Size: 0.18298726
+  m_Value: -0.00000003735322
+  m_Size: 0.18287562
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -33822,25 +33752,25 @@ MonoBehaviour:
   _wall: {fileID: 5171958558729961388, guid: 30788332f9fecb346b63183d306b820a, type: 3}
   roomPrefab: {fileID: 5999752013328667120, guid: e13317052c65aab438a71b77e22f161d, type: 3}
   _archwayPrefab: {fileID: 6951061165051718770, guid: bd21eb3d024e716408ff2b1c2c2f63ec, type: 3}
-  _archwayWithDoorPrefab: {fileID: 586035234153134435, guid: a38f771191aac35468a677efeaba8cca, type: 3}
+  _archwayWithDoorPrefab: {fileID: 6951061165051718770, guid: bd21eb3d024e716408ff2b1c2c2f63ec, type: 3}
   _plainWallPrefab: {fileID: 8568622115684081567, guid: 8d84db6b0a32c904d9f84753871ea95f, type: 3}
   _roomBufferSize: 2
-  enemy: {fileID: 648139164}
+  enemy: {fileID: 1947630033}
   _maze_configuration: 6
   _roomCount: 1
-  _minRoomSize: 3
-  _maxRoomSize: 3
+  _minRoomSize: 2
+  _maxRoomSize: 2
   _mazeCellPrefab: {fileID: 618961212}
-  _mazeWidth: 15
-  _mazeDepth: 15
-  activationRadius: 50
+  _mazeWidth: 6
+  _mazeDepth: 6
+  activationRadius: 40
   playerTransform: {fileID: 697972143}
   terrain: {fileID: 1822333674}
   zombiePrefab: {fileID: 8687916375194475, guid: 5be63a37b960245cf933ba043d1557c8, type: 3}
-  zombieSpawnRadius: 20
-  zombieDespawnRadius: 25
-  maxZombies: 15
-  zombieSpawnInterval: 10
+  zombieSpawnRadius: 30
+  zombieDespawnRadius: 45
+  maxZombies: 5
+  zombieSpawnInterval: 20
   level: 0
 --- !u!154 &1822333673
 TerrainCollider:
@@ -40161,6 +40091,72 @@ Transform:
   - {fileID: 228390121}
   m_Father: {fileID: 91241831}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1947630032
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6995876
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.71454686
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 91.212
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2211139671561190733, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: m_Name
+      value: Skeletonzombie T Avelange
+      objectReference: {fileID: 0}
+    - target: {fileID: 6611173696106219451, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+      propertyPath: playerTransform
+      value: 
+      objectReference: {fileID: 697972143}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+--- !u!4 &1947630033 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1577486359409321975, guid: 9f6cd5b09ecea4d44b99b45ba5894195, type: 3}
+  m_PrefabInstance: {fileID: 1947630032}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1962203515
 GameObject:
   m_ObjectHideFlags: 0
@@ -42894,4 +42890,4 @@ SceneRoots:
   - {fileID: 697972143}
   - {fileID: 618961211}
   - {fileID: 1935845666}
-  - {fileID: 648139163}
+  - {fileID: 1947630032}

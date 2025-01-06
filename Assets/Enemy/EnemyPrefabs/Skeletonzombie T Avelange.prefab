@@ -404,9 +404,9 @@ GameObject:
   - component: {fileID: 1627236779659442101}
   - component: {fileID: 790403698053784933}
   - component: {fileID: 9030907890244000352}
-  - component: {fileID: 4053972849754308996}
   - component: {fileID: 1052808730725248020}
   - component: {fileID: 5080364695775599559}
+  - component: {fileID: 1087001825762693680}
   m_Layer: 0
   m_Name: Skeletonzombie T Avelange
   m_TagString: Enemy
@@ -466,11 +466,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e45b8e59787b40e991e291a60c21cf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyStartingHealth: 100
+  enemyStartingHealth: 1000
   player_sensor: {fileID: 0}
   wall_sensor: {fileID: 0}
   lockOnSensor: {fileID: 0}
   attackSensor: {fileID: 0}
+  enemyObjective: 
   hudManager: {fileID: 0}
   enemyName: Skeleton Zombie
   isPlayedSensed: 0
@@ -478,8 +479,8 @@ MonoBehaviour:
   isRoaring: 0
   audio_controller: {fileID: 0}
   enemyTransform: {fileID: 1577486359409321975}
-  enemyCurrentHealth: 100
-  lowHealthThreshold: 50
+  enemyCurrentHealth: 1000
+  lowHealthThreshold: 500
   senseDistance: 15
   playerState: {fileID: 0}
   playerTransform: {fileID: 0}
@@ -617,33 +618,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!54 &4053972849754308996
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2211139671561190733}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &1052808730725248020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -675,6 +649,29 @@ MonoBehaviour:
   EnemyHealthBar: {fileID: 0}
   EnemyName: {fileID: 0}
   enemyBar: {fileID: 0}
+--- !u!136 &1087001825762693680
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2211139671561190733}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &2325882632291234325
 GameObject:
   m_ObjectHideFlags: 0
@@ -1123,7 +1120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1813d08807aa94ca8a72896e319d20fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 20
+  damage: 10
 --- !u!1 &3264919680721313729
 GameObject:
   m_ObjectHideFlags: 0

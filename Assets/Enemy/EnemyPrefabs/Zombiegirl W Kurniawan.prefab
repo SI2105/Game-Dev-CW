@@ -450,6 +450,7 @@ GameObject:
   - component: {fileID: 3294827374368558643}
   - component: {fileID: 62379916457320347}
   - component: {fileID: 8680197231467708751}
+  - component: {fileID: 6195493386424668146}
   m_Layer: 0
   m_Name: Zombiegirl W Kurniawan
   m_TagString: Zombie
@@ -562,6 +563,29 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!136 &6195493386424668146
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1785754302362930377}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &1902561093239363821
 GameObject:
   m_ObjectHideFlags: 0
@@ -1323,7 +1347,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 825de361ad3024c099c451da9f8702d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 5
+  damage: 2.5
 --- !u!1 &3678549703770979638
 GameObject:
   m_ObjectHideFlags: 0

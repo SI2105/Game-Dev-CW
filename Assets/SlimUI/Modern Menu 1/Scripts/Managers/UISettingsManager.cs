@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using TMPro;
@@ -7,6 +7,7 @@ namespace SlimUI.ModernMenu{
 	public class UISettingsManager : MonoBehaviour {
 
 		public enum Platform {Desktop, Mobile};
+		public static UISettingsManager Instance { get; private set; }
 		public Platform platform;
 		// toggle buttons
 		[Header("MOBILE SETTINGS")]
@@ -54,7 +55,20 @@ namespace SlimUI.ModernMenu{
 		private float sliderValueXSensitivity = 0.0f;
 		private float sliderValueYSensitivity = 0.0f;
 		private float sliderValueSmoothing = 0.0f;
-		
+        
+		private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
+
 
 		public void  Start (){
 			// check difficulty

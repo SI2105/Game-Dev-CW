@@ -377,9 +377,10 @@ GameObject:
   - component: {fileID: 8109542009000489584}
   - component: {fileID: 3681924685660898564}
   - component: {fileID: 3828679493163487794}
+  - component: {fileID: 8393361156977972191}
   m_Layer: 0
   m_Name: Ganfaul M Aure
-  m_TagString: Player
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -458,11 +459,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e45b8e59787b40e991e291a60c21cf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyStartingHealth: 100
+  enemyStartingHealth: 1000
   player_sensor: {fileID: 0}
   wall_sensor: {fileID: 0}
   lockOnSensor: {fileID: 0}
   attackSensor: {fileID: 0}
+  enemyObjective: 
   hudManager: {fileID: 0}
   enemyName: '                Ganfaul'
   isPlayedSensed: 0
@@ -470,8 +472,8 @@ MonoBehaviour:
   isRoaring: 0
   audio_controller: {fileID: 0}
   enemyTransform: {fileID: 0}
-  enemyCurrentHealth: 100
-  lowHealthThreshold: 50
+  enemyCurrentHealth: 1000
+  lowHealthThreshold: 500
   senseDistance: 0
   playerState: {fileID: 0}
   playerTransform: {fileID: 0}
@@ -602,6 +604,29 @@ MonoBehaviour:
   EnemyHealthBar: {fileID: 0}
   EnemyName: {fileID: 0}
   enemyBar: {fileID: 0}
+--- !u!136 &8393361156977972191
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 778029418579591857}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &1282690920939605867
 GameObject:
   m_ObjectHideFlags: 0
@@ -2542,7 +2567,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1813d08807aa94ca8a72896e319d20fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 20
+  damage: 10
 --- !u!54 &2827895997167167387
 Rigidbody:
   m_ObjectHideFlags: 0

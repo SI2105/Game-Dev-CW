@@ -351,7 +351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1813d08807aa94ca8a72896e319d20fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 20
+  damage: 10
 --- !u!1 &1872885109350479503
 GameObject:
   m_ObjectHideFlags: 0
@@ -529,9 +529,11 @@ GameObject:
   - component: {fileID: 7307387449053106464}
   - component: {fileID: 135918067219138504}
   - component: {fileID: 2173071431495209991}
+  - component: {fileID: 5222468890828371852}
+  - component: {fileID: -3226262390411103228}
   m_Layer: 0
   m_Name: Mutant
-  m_TagString: Player
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -544,7 +546,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2662363423373375942}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.07537201, y: 0.9789677, z: -0.016799757, w: -0.18883604}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.93, y: -0.01, z: -5.4}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
@@ -553,7 +555,7 @@ Transform:
   - {fileID: 3545840707764862842}
   - {fileID: 958102905606266498}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0.254, y: 201.855, z: 8.854}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6274940498973578671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -566,11 +568,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e45b8e59787b40e991e291a60c21cf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyStartingHealth: 100
+  enemyStartingHealth: 1000
   player_sensor: {fileID: 0}
   wall_sensor: {fileID: 0}
   lockOnSensor: {fileID: 0}
   attackSensor: {fileID: 0}
+  enemyObjective: 
   hudManager: {fileID: 0}
   enemyName: '                 Mutant'
   isPlayedSensed: 0
@@ -578,8 +581,8 @@ MonoBehaviour:
   isRoaring: 0
   audio_controller: {fileID: 0}
   enemyTransform: {fileID: 3438865282261181308}
-  enemyCurrentHealth: 100
-  lowHealthThreshold: 50
+  enemyCurrentHealth: 1000
+  lowHealthThreshold: 500
   senseDistance: 15
   playerState: {fileID: 0}
   playerTransform: {fileID: 0}
@@ -754,6 +757,56 @@ MonoBehaviour:
   EnemyHealthBar: {fileID: 0}
   EnemyName: {fileID: 0}
   enemyBar: {fileID: 0}
+--- !u!136 &5222468890828371852
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2662363423373375942}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.4
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0.2}
+--- !u!54 &-3226262390411103228
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2662363423373375942}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 1
 --- !u!1 &2764535370897731042
 GameObject:
   m_ObjectHideFlags: 0

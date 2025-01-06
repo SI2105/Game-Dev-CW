@@ -32,6 +32,8 @@ public class PCG_Generator : MonoBehaviour
     [SerializeField]
     private int _roomBufferSize = 2; // Minimum buffer between rooms  
 
+    [SerializeField]
+    private float roomWallActivationDistance = 30.0f; // Adjust this value based on room size and layout
 
     public Transform enemy;
 
@@ -82,64 +84,84 @@ public class PCG_Generator : MonoBehaviour
     private float zombieSpawnTimer = 0f; // Timer for spawn control
 
 
+    private Vector3 previousPlayerpos;
 
     void Update(){
-        foreach (GameObject obj in allObjects)
-        {
-            if (obj == null) continue; // Skip if object is destroyed
+        
+        
 
-            float distanceToPlayer = Vector3.Distance(playerTransform.position, obj.transform.position);
+        // if (Vector3.Distance(previousPlayerpos, playerTransform.position) < 5f){
+        //     return;
+        // }
 
-            // Activate objects within the radius, deactivate objects outside
-            if (distanceToPlayer <= activationRadius)
-            {
-                if (!obj.activeSelf) // Only activate if not already active
-                {
-                    obj.SetActive(true);
-                }
-            }
-            else
-            {
-                if (obj.activeSelf) // Only deactivate if currently active
-                {
-                    obj.SetActive(false);
-                }
-            }
-        }
+        // previousPlayerpos = playerTransform.position;
 
-        for (int x = 0; x < _mazeWidth; x++)
-        {
-            for (int z = 0; z < _mazeDepth; z++)
-            {
-                MazeCell cell =_mazeGrid[x, z];
+        // foreach (GameObject obj in allObjects)
+        // {
+        //     print("here");
+        //     if (obj == null) continue; // Skip if object is destroyed
+        //     float distanceToPlayer = Vector3.Distance(playerTransform.position, obj.transform.position);
+
+        //     // Check if the object is near any room
+        //     if (IsWallNearRoom(obj.transform.position))
+        //     {
+        //         if (!obj.activeSelf) // Ensure it's always active
+        //         {
+        //             obj.SetActive(true);
+        //         }
+        //         continue; // Skip further processing for walls near rooms
+        //     }
+
+
+        //     // Activate objects within the radius, deactivate objects outside
+        //     if (distanceToPlayer <= activationRadius)
+        //     {
+        //         if (!obj.activeSelf) // Only activate if not already active
+        //         {
+        //             obj.SetActive(true);
+        //         }
+        //     }
+        //     else
+        //     {
+        //         if (obj.activeSelf) // Only deactivate if currently active
+        //         {
+        //             obj.SetActive(false);
+        //         }
+        //     }
+        // }
+
+        // for (int x = 0; x < _mazeWidth; x++)
+        // {
+        //     for (int z = 0; z < _mazeDepth; z++)
+        //     {
+        //         MazeCell cell =_mazeGrid[x, z];
               
+        //         GameObject floor = cell.floorObj;
 
-                GameObject floor = cell.floorObj;
-
-                if (floor == null) continue; // Skip if object is destroyed
+        //         if (floor == null) continue; // Skip if object is destroyed
                
-                float distanceToPlayerFloor = Vector3.Distance(playerTransform.position, floor.transform.position);
+        //         float distanceToPlayerFloor = Vector3.Distance(playerTransform.position, floor.transform.position);
 
-                    // Activate objects within the radius, deactivate objects outside
-                if (distanceToPlayerFloor <= activationRadius)
-                {
-                    if (!cell.floorObj.activeSelf) // Only activate if not already active
-                    {
-                        cell.floorObj.SetActive(true);
-                        // cell.ceilingObject.SetActive(true);
-                    }
-                }
-                else
-                {
-                    if (cell.floorObj.activeSelf) // Only activate if not already active
-                    {
-                        cell.floorObj.SetActive(false);
-                        cell.ceilingObject.SetActive(false);
-                    }
-                }
+        //             // Activate objects within the radius, deactivate objects outside
+        //         if (distanceToPlayerFloor <= activationRadius)
+        //         {
+        //             if (!cell.floorObj.activeSelf) // Only activate if not already active
+        //             {
+        //                 cell.floorObj.SetActive(true);
+        //                 cell.ceilingObject.SetActive(true);
+        //             }
+        //         }
+        //         else
+        //         {
+        //             if (cell.floorObj.activeSelf) // Only activate if not already active
+        //             {
+        //                 cell.floorObj.SetActive(false);
+        //                 cell.ceilingObject.SetActive(false);
+        //             }
+        //         }
                 
-            }
-        }
+        //     }
+        // }
 
 
         // Update zombie spawn timer
@@ -322,6 +344,7 @@ private void SpawnPlayerAndEnemy()
     // Offset the player position to the right
     Vector3 offset = new Vector3(2.0f, 0, 0); // Adjust the X offset as needed
     Vector3 playerPosition = randomCell.transform.position + offset;
+    previousPlayerpos = playerPosition;
 
     if (playerTransform != null)
     {
@@ -589,6 +612,28 @@ private void ReplaceWallsInMaze()
     }
 }
 
+    private bool IsWallNearRoom(Vector3 wallPosition)
+    {
+        foreach (Room room in _rooms)
+        {
+            // Get the room's center position
+            Vector3 roomCenter = room.position;
+            Debug.Log(roomCenter);
+
+            // Calculate the distance from the wall to the room's center
+            float distanceToRoom = Vector3.Distance(wallPosition, roomCenter);
+
+            // Check if the distance is within the threshold
+            if (distanceToRoom <= roomWallActivationDistance)
+            {
+                return true; // Wall is near the room
+            }
+        }
+
+        return false; // Wall is not near any room
+    }
+
+
     public int GetMazeDepth()
     {
         return _mazeDepth;
@@ -664,12 +709,11 @@ private void ReplaceWallsInMaze()
             {
                 _rooms.Add(newRoom);
 
-                // Get the position of the top-left cell (or any reference cell for the room)
-                MazeCell referenceCell = _mazeGrid[x, z];
-                Vector3 basePosition = referenceCell.transform.position;
+                // Initialize a vector to calculate the center
+                Vector3 roomCenter = Vector3.zero;
+                int cellCount = 0;
 
-                // Store a reference to the instance in the room object
-                newRoom.position = basePosition;
+               
 
                 // Mark cells as rooms and clear their walls
                 for (int dx = 0; dx < roomWidth; dx++)
@@ -679,8 +723,20 @@ private void ReplaceWallsInMaze()
                         MazeCell cell = _mazeGrid[x + dx, z + dz];
                         cell.MarkAsRoom();
                         cell.Visit(); // Prevent maze generation here
+                        // Add cell position to the center accumulator
+                        roomCenter += cell.transform.position;
+                        cellCount++;
                     }
                 }
+
+                // Calculate the center of the room
+                if (cellCount > 0)
+                {
+                    roomCenter /= cellCount; // Average the positions
+                }
+
+                // Store the calculated center in the room object
+                newRoom.position = roomCenter;
             }
 
             attempts++;
@@ -844,4 +900,3 @@ public class Room
         Depth = depth;
     }
 }
-

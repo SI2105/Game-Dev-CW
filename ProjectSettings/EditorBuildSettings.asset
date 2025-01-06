@@ -26,11 +26,23 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Project_Save_The_Game.unity
     guid: c6d5ee02b86f74ad9815cafeb87144db
-  - enabled: 1
-    path: Assets/Scenes/BURAK 1.unity
+  - enabled: 0
+    path: Assets/Scenes/BURAK 1 save.unity
     guid: 99348ede7447c8842ba757142c3b016c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/BURAK.unity
     guid: 7ce1412f706973c45b0b7f2e813db89d
+  - enabled: 1
+    path: Assets/Scenes/L1.unity
+    guid: 6c75f2d9751222b4e9caacdcdb88dc3f
+  - enabled: 1
+    path: Assets/Scenes/L2.unity
+    guid: c3606571a4f63754caca6f38d95fad44
+  - enabled: 1
+    path: Assets/Scenes/L3.unity
+    guid: 8bf8f741e6857bf44b012ea204aaa671
+  - enabled: 1
+    path: Assets/Scenes/Lose.unity
+    guid: 5fb1d7ee1a819864197df810114f0850
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

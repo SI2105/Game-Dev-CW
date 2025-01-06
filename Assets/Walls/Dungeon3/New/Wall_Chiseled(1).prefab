@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2070677642309771617}
   - component: {fileID: 2919990163391306601}
   - component: {fileID: 311112026048118094}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wall_Chiseled(1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

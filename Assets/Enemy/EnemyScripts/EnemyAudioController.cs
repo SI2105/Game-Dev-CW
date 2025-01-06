@@ -20,6 +20,7 @@ public class EnemyAudioController : MonoBehaviour
 
     public void playBackgroundMusic(){
         audioSource.clip = enemyBackgroundClip;
+        audioSource.volume = 0.5f;
         audioSource.Play();
     }
 

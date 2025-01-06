@@ -15,7 +15,7 @@ namespace SG
         private List<InventoryManager.InventoryItemData> savedInventoryData;
         private bool isPlayerDead = false;
         [SerializeField] private Animator transitionAnimation;
-        [SerializeField] private float transitionDuration = 3.0f;
+        [SerializeField] private float transitionDuration = 10.0f;
         private string lastSceneName;
 
         // Settings Management
@@ -150,6 +150,7 @@ namespace SG
             if (playerAttributesManager != null && savedAttributesData != null)
             {
                 playerAttributesManager.SetAttributesData(savedAttributesData);
+                playerAttributesManager.ResetHealth();
                 Debug.Log($"GameManager: Restored Player attributes: {savedAttributesData.MaxHealth}, {savedAttributesData.CurrentHealth}, {savedAttributesData.Strength}");
             }
             else

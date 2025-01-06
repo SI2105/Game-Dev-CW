@@ -459,7 +459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e45b8e59787b40e991e291a60c21cf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyStartingHealth: 100
+  enemyStartingHealth: 1000
   player_sensor: {fileID: 0}
   wall_sensor: {fileID: 0}
   lockOnSensor: {fileID: 0}
@@ -472,8 +472,8 @@ MonoBehaviour:
   isRoaring: 0
   audio_controller: {fileID: 0}
   enemyTransform: {fileID: 0}
-  enemyCurrentHealth: 100
-  lowHealthThreshold: 50
+  enemyCurrentHealth: 1000
+  lowHealthThreshold: 500
   senseDistance: 0
   playerState: {fileID: 0}
   playerTransform: {fileID: 0}

@@ -95,20 +95,20 @@ namespace SG
                 MiniEnemyAIController miniEnemy = other.GetComponent<MiniEnemyAIController>();
 
                 print($"Hit {other.name} with damage: {temporaryDamage}");
-                // if (_playerState.IsInState(PlayerAttackState.Attacking))
-                // {
-                OnHit?.Invoke();
-                if (enemy != null) {
-                    enemy.takeDamage(temporaryDamage);
-                }
-
-                if (miniEnemy != null)
+                if (_playerState.IsInState(PlayerAttackState.Attacking))
                 {
-                    print("here");
-                    miniEnemy.takeDamage(temporaryDamage);
+                    OnHit?.Invoke();
+                    if (enemy != null) {
+                        enemy.takeDamage(temporaryDamage);
+                    }
+
+                    if (miniEnemy != null)
+                    {
+                        print("here");
+                        miniEnemy.takeDamage(temporaryDamage);
+                    }
+                    PlayHitSound();
                 }
-                PlayHitSound();
-                // }
             }
         }
 

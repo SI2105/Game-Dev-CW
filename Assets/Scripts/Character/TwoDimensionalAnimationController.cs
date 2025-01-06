@@ -75,6 +75,8 @@ namespace SG{
         private float currentRotationVelocity;
         private float targetRotation;
         private float lastTargetRotation;
+
+        public Transform player;
         #endregion
 
         #region Player Stats Display
@@ -214,8 +216,19 @@ namespace SG{
 
             attributesManager.SkillTreeManager.ToggleSkillTree();
         }
-
         #endregion
+        #region KeybindPage
+        private GameObject KeybindsPanel;
+        private void HandleKeybinds(InputAction.CallbackContext context)
+        {
+            // Toggle the visibility of the KeybindsPanel
+            if (KeybindsPanel != null)
+            {
+                KeybindsPanel.SetActive(!KeybindsPanel.activeSelf);
+            }
+        }
+        #endregion
+        
         private CinemachinePOV mainCamPov;  // reference to your main camera's POV
         public CinemachineVirtualCamera mainVC;
 
@@ -224,6 +237,9 @@ namespace SG{
         private void Awake()
         {
             inputActions = new GameDevCW();
+
+            KeybindsPanel =GameObject.Find("KeybindsPanel");
+            KeybindsPanel.SetActive(false);
 
             // Subscribe to the Move action's performed and canceled events
             inputActions.Player.Move.performed += HandleMove;
@@ -261,7 +277,8 @@ namespace SG{
                 inputActions.Player.Objective.canceled += onObjective;
                 inputActions.UI.Skills.performed += HandleSkills;
                 inputActions.UI.Skills.canceled += HandleSkills;
-
+                inputActions.UI.Keybinds.performed += HandleKeybinds;
+                inputActions.UI.Keybinds.canceled += HandleKeybinds;
                 UpdatePlayerStats();
             }
         }
@@ -390,6 +407,7 @@ namespace SG{
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+            // AdjustPOVSensitivity(rotationSpeed * 305f, rotationSpeed * 305f);
         }
 
         private void Update()
@@ -623,7 +641,7 @@ namespace SG{
 
         private bool hasPrintedTransformAfterLocking = false;
 
-       private void HandleRotation()
+        private void HandleRotation()
         {
             // Safety check
             if (cameraTransform == null || InventoryVisible) 
@@ -858,6 +876,23 @@ namespace SG{
             HandleRotation(); // Update camera and player rotation
         }
 
+        private void AdjustPOVSensitivity(float horizontalSensitivity, float verticalSensitivity)
+        {
+            if (mainCamPov != null)
+            {
+                // Set horizontal and vertical sensitivity based on rotationSpeed
+                mainCamPov.m_HorizontalAxis.m_MaxSpeed = horizontalSensitivity;
+                mainCamPov.m_VerticalAxis.m_MaxSpeed = verticalSensitivity;
+
+                Debug.Log($"POV Sensitivity Updated - Horizontal: {horizontalSensitivity}, Vertical: {verticalSensitivity}");
+            }
+            else
+            {
+                Debug.LogWarning("Cinemachine POV component not found!");
+            }
+        }
+
+
         private void FixedUpdate()
         {
             CheckGrounded();
@@ -874,37 +909,58 @@ namespace SG{
             if (InventoryVisible) return;
 
             Vector3 moveDirection;
-            
+
             // Check if we have an active lock-on target
             if (playerLockOn != null && playerLockOn.IsTargetLocked && playerLockOn.CurrentTarget != null) {
                 // Get direction to target
                 Vector3 targetDirection = (playerLockOn.CurrentTarget.transform.position - transform.position).normalized;
                 targetDirection.y = 0; // Keep movement on the horizontal plane
-                
+
                 // Calculate movement direction relative to target
                 Vector3 forward = targetDirection;
                 Vector3 right = Vector3.Cross(Vector3.up, forward);
-                
+
                 // Combine input with target-relative directions
                 moveDirection = (forward * moveInput.y) + (right * moveInput.x);
                 moveDirection.Normalize();
-            } else {
-                // Regular movement using player's transform when not locked on
-                moveDirection = (transform.forward * moveInput.y) + (transform.right * moveInput.x);
-                moveDirection.Normalize();
+            } else
+            {
+                // --- Free Movement ---
+                // Use the camera's forward and right directions for movement
+                Vector3 cameraForward = cameraTransform.forward;
+                Vector3 cameraRight = cameraTransform.right;
+
+                // Ignore vertical components for planar movement
+                cameraForward.y = 0f;
+                cameraRight.y = 0f;
+
+                // Normalize to maintain consistent movement
+                cameraForward.Normalize();
+                cameraRight.Normalize();
+
+                // Calculate movement direction based on input
+                moveDirection = (cameraForward * moveInput.y) + (cameraRight * moveInput.x);
             }
+
+            // Normalize movement direction
+            moveDirection.Normalize();
 
             // Handle slope movement
             RaycastHit slopeHit;
-            if (IsOnSlope(out slopeHit)) {
+            if (IsOnSlope(out slopeHit))
+            {
                 moveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
             }
 
+            // Determine movement speed
             float movementSpeed = isRunning ? sprintMaxVelocityZ : maxVelocityZ;
-            Vector3 targetPosition = rb.position + moveDirection * movementSpeed * Time.deltaTime;
+
+            // Calculate the target position
+            Vector3 targetPosition = rb.position + moveDirection * movementSpeed * Time.fixedDeltaTime;
+
+            // Move the player
             rb.MovePosition(targetPosition);
         }
-
         // Called when the Move action is performed or canceled
         private void HandleMove(InputAction.CallbackContext context)
         {

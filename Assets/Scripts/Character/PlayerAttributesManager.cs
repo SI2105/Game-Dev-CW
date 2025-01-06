@@ -124,7 +124,7 @@ namespace SG
         //}
         #endregion
 
-        public float MaxHealth { get; set; } = 100f;
+        public float MaxHealth { get; set; } = 200f;
         public float HealthRegenRate { get; set; } = 10f;
         public float MaxStamina { get; set; } = 100f;
         public float StaminaCostPerSecond { get; set; } = 6f;

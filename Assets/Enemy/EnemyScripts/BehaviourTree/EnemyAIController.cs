@@ -96,6 +96,7 @@ public class EnemyAIController : MonoBehaviour
         SG.PlayerAttributesManager pam = playerTransform.GetComponent<SG.PlayerAttributesManager>();
 
         pam.OnEnemyDefeated(true);
+        Destroy(this.gameObject);
     }
 
     void Update(){

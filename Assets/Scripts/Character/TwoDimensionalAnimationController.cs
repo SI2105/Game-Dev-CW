@@ -851,9 +851,11 @@ namespace SG{
             // Apply mouse sensitivity from SettingsManager
             float sensitivityX = SettingsManager.Instance?.MouseSensitivityX ?? 1.0f; // Fallback to 1.0f if null
             float sensitivityY = SettingsManager.Instance?.MouseSensitivityY ?? 1.0f;
+            Debug.Log($"Mouse sensitivity: {sensitivityX}, {sensitivityY}");
 
             // Apply mouse smoothing
             float smoothing = SettingsManager.Instance?.MouseSmoothing ?? 0.05f;
+            Debug.Log($"Mouse smoothing: {smoothing}");
 
             // Smooth look input using Vector2.SmoothDamp
             smoothedLookInput = Vector2.SmoothDamp(

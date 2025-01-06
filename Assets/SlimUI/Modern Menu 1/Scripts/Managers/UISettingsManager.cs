@@ -256,18 +256,41 @@ namespace SlimUI.ModernMenu{
 			}
 		}
 
-		public void SensitivityXSlider (){
-			PlayerPrefs.SetFloat("XSensitivity", sliderValueXSensitivity);
-		}
+		public void SensitivityXSlider()
+        {
+            float sliderValueXSensitivity = sensitivityXSlider.GetComponent<Slider>().value;
+            PlayerPrefs.SetFloat("XSensitivity", sliderValueXSensitivity);
+            PlayerPrefs.Save();
 
-		public void SensitivityYSlider (){
-			PlayerPrefs.SetFloat("YSensitivity", sliderValueYSensitivity);
-		}
+            if (SettingsManager.Instance != null)
+            {
+                SettingsManager.Instance.SetMouseSensitivity(sliderValueXSensitivity, SettingsManager.Instance.MouseSensitivityY);
+            }
+        }
 
-		public void SensitivitySmoothing (){
-			PlayerPrefs.SetFloat("MouseSmoothing", sliderValueSmoothing);
-			Debug.Log(PlayerPrefs.GetFloat("MouseSmoothing"));
-		}
+        public void SensitivityYSlider()
+        {
+            float sliderValueYSensitivity = sensitivityYSlider.GetComponent<Slider>().value;
+            PlayerPrefs.SetFloat("YSensitivity", sliderValueYSensitivity);
+            PlayerPrefs.Save();
+
+            if (SettingsManager.Instance != null)
+            {
+                SettingsManager.Instance.SetMouseSensitivity(SettingsManager.Instance.MouseSensitivityX, sliderValueYSensitivity);
+            }
+        }
+
+        public void SensitivitySmoothing()
+        {
+            float sliderValueSmoothing = mouseSmoothSlider.GetComponent<Slider>().value;
+            PlayerPrefs.SetFloat("MouseSmoothing", sliderValueSmoothing);
+            PlayerPrefs.Save();
+
+            if (SettingsManager.Instance != null)
+            {
+                SettingsManager.Instance.SetMouseSmoothing(sliderValueSmoothing);
+            }
+        }
 
 		// the playerprefs variable that is checked to enable hud while in game
 		// public void ShowHUD (){

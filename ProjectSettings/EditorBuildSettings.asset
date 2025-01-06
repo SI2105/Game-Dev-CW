@@ -20,7 +20,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Lose Screen - OLD.unity
     guid: b3d82187ef78146ba887f65b16e7565f
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/New menu.unity
     guid: 358451cf1570a41a9848e06df7d5b71e
   - enabled: 0
@@ -35,6 +35,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/DevScene_Andrej NEW.unity
     guid: 6b10661b666e1495e85cd738c3ee4951
+  - enabled: 1
+    path: Assets/Scenes/New menu - andrej version.unity
+    guid: ce1bbbd83e7314e3595060096c871148
   - enabled: 1
     path: Assets/Scenes/BURAK.unity
     guid: 7ce1412f706973c45b0b7f2e813db89d
